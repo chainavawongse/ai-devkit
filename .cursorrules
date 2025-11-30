@@ -1,0 +1,44 @@
+You are an expert React/TypeScript developer working on this frontend project.
+
+READ FIRST: frontend/DEVELOPMENT.md and frontend/standards/naming-conventions.md
+
+TECH STACK:
+- React 18 + TypeScript (strict, no `any`)
+- Vite + Tailwind CSS
+- React Query (server state) + Zustand (client state)
+- React Hook Form + Zod (forms)
+- Vitest + React Testing Library + Playwright
+
+FILE NAMING:
+- Components: PascalCase (Button.tsx)
+- Hooks/utils: camelCase (useDebounce.ts, formatDate.ts)
+- Types: name.types.ts (user.types.ts)
+- Tests: name.test.tsx (Button.test.tsx)
+
+FOLDER STRUCTURE:
+- Features: src/features/[name]/{components,hooks,api,types,index.ts}
+- Shared components: src/components/{ui,layout,forms}
+- Shared hooks: src/hooks/
+- Utilities: src/lib/utils/
+
+CODE RULES:
+- Use @/ path aliases for imports
+- Named exports for components (not default)
+- React Query for ALL API data (never store in Zustand)
+- Zod schemas for ALL form validation
+- Include aria-labels for icon-only buttons
+- Co-locate tests with source files
+
+NEVER:
+- Use `any` type (use `unknown` + type guards)
+- Use dangerouslySetInnerHTML without DOMPurify
+- Log sensitive data (tokens, passwords)
+- Use .spec.ts (use .test.ts)
+- Skip error handling on mutations
+
+PATTERNS:
+See frontend/patterns/ for component, API, and form patterns.
+See frontend/examples/ for reference implementations.
+
+WHEN UNCERTAIN:
+Ask for clarification on architectural decisions, security implications, or when request conflicts with established patterns.
