@@ -1,6 +1,6 @@
 # AI DevKit
 
-A comprehensive development kit that provides standardized instructions and documentation for AI coding assistants working on React/TypeScript projects.
+A comprehensive development kit that provides standardized instructions and documentation for AI coding assistants working on full-stack projects (React/TypeScript frontend and .NET backend).
 
 ## What is this?
 
@@ -28,39 +28,30 @@ ai-devkit/
 │   └── copilot-instructions.md  # Symlink → AGENTS.md
 ├── .gemini/
 │   └── instructions.md          # Symlink → AGENTS.md
-├── frontend/                    # Development documentation
+├── frontend/                    # React/TypeScript frontend docs
 │   ├── DEVELOPMENT.md           # Entry point & quick reference
 │   ├── architecture/            # Architectural decisions
-│   │   ├── folder-structure.md
-│   │   ├── state-management.md
-│   │   ├── error-handling.md
-│   │   ├── security.md
-│   │   └── ...
 │   ├── patterns/                # Code patterns
-│   │   ├── component-patterns.md
-│   │   ├── api-integration.md
-│   │   ├── form-patterns.md
-│   │   └── performance.md
 │   ├── standards/               # Coding standards
-│   │   ├── naming-conventions.md
-│   │   ├── typescript-guidelines.md
-│   │   ├── accessibility.md
-│   │   └── code-quality.md
 │   ├── testing/                 # Testing strategies
-│   │   ├── testing-strategy.md
-│   │   ├── unit-testing.md
-│   │   └── e2e-testing.md
 │   └── examples/                # Reference implementations
-│       ├── component-template.tsx
-│       ├── api-template.ts
-│       ├── hook-template.ts
-│       └── test-template.test.tsx
-└── backend/                     # (placeholder for backend docs)
+│
+└── backend-dotnet/              # .NET backend API docs
+    ├── DEVELOPMENT.md           # Entry point & quick reference
+    └── api/
+        ├── architecture/        # Solution structure, DI, configuration
+        ├── patterns/            # Controllers, CQRS, validation, OData
+        ├── data/                # Entity Framework Core
+        ├── security/            # Authentication & authorization
+        ├── standards/           # Naming conventions
+        ├── observability/       # Logging & monitoring
+        ├── testing/             # Testing strategies
+        └── examples/            # Template files (.cs)
 ```
 
 ## Tech Stack (Documented)
 
-The documentation covers a modern React frontend stack:
+### Frontend (React/TypeScript)
 
 - **Framework**: React 18
 - **Language**: TypeScript (strict mode)
@@ -71,6 +62,21 @@ The documentation covers a modern React frontend stack:
 - **HTTP Client**: Axios
 - **Testing**: Vitest + React Testing Library + Playwright
 - **Code Quality**: ESLint + Prettier + Husky
+
+### Backend (.NET)
+
+- **Framework**: ASP.NET Core 8
+- **Language**: C# 12
+- **Architecture**: Clean Architecture + CQRS
+- **Mediator**: MediatR
+- **Validation**: FluentValidation
+- **ORM**: Entity Framework Core 8
+- **Database**: PostgreSQL (with pgvector, PostGIS support)
+- **Query**: OData
+- **Mapping**: AutoMapper
+- **Authentication**: JWT + OAuth (Google, GitHub, Apple, Microsoft)
+- **Logging**: Serilog
+- **Testing**: xUnit + Moq + FluentAssertions
 
 ## Usage
 

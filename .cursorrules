@@ -1,44 +1,53 @@
-You are an expert React/TypeScript developer working on this frontend project.
+You are an expert full-stack developer working on this project.
 
-READ FIRST: frontend/DEVELOPMENT.md and frontend/standards/naming-conventions.md
+Identify the stack (frontend or backend) and read the appropriate docs first.
 
-TECH STACK:
-- React 18 + TypeScript (strict, no `any`)
-- Vite + Tailwind CSS
-- React Query (server state) + Zustand (client state)
-- React Hook Form + Zod (forms)
-- Vitest + React Testing Library + Playwright
+---
+FRONTEND (React/TypeScript)
+---
+
+READ FIRST: frontend/DEVELOPMENT.md, frontend/standards/naming-conventions.md
+
+TECH STACK: React 18 + TypeScript (strict) + Vite + Tailwind CSS + React Query + Zustand + React Hook Form + Zod
 
 FILE NAMING:
 - Components: PascalCase (Button.tsx)
-- Hooks/utils: camelCase (useDebounce.ts, formatDate.ts)
-- Types: name.types.ts (user.types.ts)
-- Tests: name.test.tsx (Button.test.tsx)
+- Hooks/utils: camelCase (useDebounce.ts)
+- Types: name.types.ts | Tests: name.test.tsx
 
 FOLDER STRUCTURE:
 - Features: src/features/[name]/{components,hooks,api,types,index.ts}
-- Shared components: src/components/{ui,layout,forms}
-- Shared hooks: src/hooks/
-- Utilities: src/lib/utils/
+- Shared: src/components/{ui,layout} | src/hooks/ | src/lib/utils/
 
-CODE RULES:
-- Use @/ path aliases for imports
-- Named exports for components (not default)
-- React Query for ALL API data (never store in Zustand)
-- Zod schemas for ALL form validation
-- Include aria-labels for icon-only buttons
-- Co-locate tests with source files
+RULES:
+- Use @/ path aliases, named exports, React Query for API data
+- Zod for validation, aria-labels for icon buttons
+- Never: `any`, dangerouslySetInnerHTML without DOMPurify, .spec.ts
 
-NEVER:
-- Use `any` type (use `unknown` + type guards)
-- Use dangerouslySetInnerHTML without DOMPurify
-- Log sensitive data (tokens, passwords)
-- Use .spec.ts (use .test.ts)
-- Skip error handling on mutations
+PATTERNS: frontend/patterns/ and frontend/examples/
 
-PATTERNS:
-See frontend/patterns/ for component, API, and form patterns.
-See frontend/examples/ for reference implementations.
+---
+BACKEND (.NET API)
+---
 
-WHEN UNCERTAIN:
-Ask for clarification on architectural decisions, security implications, or when request conflicts with established patterns.
+READ FIRST: backend-dotnet/DEVELOPMENT.md, backend-dotnet/api/standards/naming-conventions.md
+
+TECH STACK: ASP.NET Core 8 + C# 12 + Clean Architecture + CQRS + MediatR + FluentValidation + EF Core 8 + PostgreSQL + OData + Serilog
+
+SOLUTION STRUCTURE:
+- MyApp.Api (controllers, middleware)
+- MyApp.Services (handlers, validators)
+- MyApp.Contracts (DTOs, commands, queries)
+- MyApp.Data (entities, DbContext, repositories)
+- MyApp.Shared (exceptions, utilities)
+
+RULES:
+- Primary constructors for DI, records for DTOs/commands/queries
+- FluentValidation for all input, MediatR for dispatch
+- AsNoTracking() for reads, CancellationToken on all async
+- Never: DateTime.Now (use UtcNow), expose entities (use DTOs), .Result/.Wait()
+
+PATTERNS: backend-dotnet/api/patterns/ and backend-dotnet/api/examples/
+
+---
+WHEN UNCERTAIN: Ask for clarification on architecture, security, or conflicting patterns.

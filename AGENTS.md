@@ -11,11 +11,19 @@ This file provides instructions for AI coding assistants (Claude Code, GitHub Co
 
 ## Project Overview
 
-This is a React frontend application using TypeScript, Vite, Tailwind CSS, React Query, and Zustand. All development guidelines are in the `frontend/` folder.
+This is a full-stack application with:
+- **Frontend**: React/TypeScript with Vite, Tailwind CSS, React Query, and Zustand. Guidelines in `frontend/`
+- **Backend**: .NET 8 API with Clean Architecture, CQRS, MediatR, and Entity Framework Core. Guidelines in `backend-dotnet/`
+
+Identify the relevant stack based on the task and read the appropriate documentation.
 
 ## Documentation Priority
 
 When implementing features, read documentation in this order:
+
+---
+
+### Frontend (React/TypeScript)
 
 1. **Always read first:**
    - `frontend/DEVELOPMENT.md` - Entry point and quick reference
@@ -40,9 +48,45 @@ When implementing features, read documentation in this order:
    - `frontend/standards/accessibility.md`
    - `frontend/standards/code-quality.md`
 
+---
+
+### Backend (.NET API)
+
+1. **Always read first:**
+   - `backend-dotnet/DEVELOPMENT.md` - Entry point and quick reference
+   - `backend-dotnet/api/standards/naming-conventions.md` - File and code naming rules
+
+2. **Read based on task type:**
+
+   | Task | Required Reading |
+   |------|------------------|
+   | New endpoint | `backend-dotnet/api/patterns/controller-patterns.md`, `backend-dotnet/api/examples/ControllerTemplate.cs` |
+   | Command handler | `backend-dotnet/api/patterns/cqrs-mediatr.md`, `backend-dotnet/api/examples/CommandHandlerTemplate.cs` |
+   | Query handler | `backend-dotnet/api/patterns/cqrs-mediatr.md`, `backend-dotnet/api/examples/QueryHandlerTemplate.cs` |
+   | Validation | `backend-dotnet/api/patterns/validation-patterns.md`, `backend-dotnet/api/examples/ValidatorTemplate.cs` |
+   | Entity/DbContext | `backend-dotnet/api/data/entity-framework.md`, `backend-dotnet/api/examples/EntityTemplate.cs` |
+   | Repository | `backend-dotnet/api/data/entity-framework.md`, `backend-dotnet/api/examples/RepositoryTemplate.cs` |
+   | OData queries | `backend-dotnet/api/patterns/odata-patterns.md` |
+   | Error handling | `backend-dotnet/api/patterns/error-handling.md` |
+   | Authentication | `backend-dotnet/api/security/authentication.md` |
+   | Authorization | `backend-dotnet/api/security/authorization.md` |
+   | Middleware | `backend-dotnet/api/patterns/middleware-patterns.md` |
+   | Logging | `backend-dotnet/api/observability/logging-monitoring.md` |
+   | Writing tests | `backend-dotnet/api/testing/testing-strategy.md` |
+
+3. **Reference as needed:**
+   - `backend-dotnet/api/architecture/solution-structure.md`
+   - `backend-dotnet/api/architecture/dependency-injection.md`
+   - `backend-dotnet/api/architecture/configuration.md`
+   - `backend-dotnet/api/patterns/mapping-patterns.md`
+
 ## Code Generation Rules
 
-### Always Do
+---
+
+### Frontend (React/TypeScript)
+
+#### Always Do
 
 - Follow naming conventions exactly (PascalCase components, camelCase hooks, etc.)
 - Use TypeScript strict mode - no `any` types
@@ -54,7 +98,7 @@ When implementing features, read documentation in this order:
 - Co-locate tests with source files (`Component.test.tsx` next to `Component.tsx`)
 - Export from feature's `index.ts` for public API
 
-### Never Do
+#### Never Do
 
 - Never use `any` type - use `unknown` with type guards
 - Never store API data in Zustand - use React Query
@@ -64,6 +108,36 @@ When implementing features, read documentation in this order:
 - Never use `.spec.ts` for unit tests (use `.test.ts`)
 - Never skip error handling for mutations
 - Never create files outside the established folder structure
+
+---
+
+### Backend (.NET API)
+
+#### Always Do
+
+- Follow Clean Architecture layer separation (Api → Services → Contracts/Data → Shared)
+- Use primary constructors for DI in classes
+- Use records for DTOs, commands, queries, and events
+- Use FluentValidation for all input validation
+- Return `IActionResult` from controllers, dispatch via MediatR
+- Use `AsNoTracking()` for read-only queries
+- Include XML documentation for public APIs
+- Use strongly-typed configuration with `IOptions<T>`
+- Log with structured logging (Serilog) including correlation IDs
+- Use `CancellationToken` on all async operations
+
+#### Never Do
+
+- Never inject DbContext directly into controllers (use repositories/handlers)
+- Never use `DateTime.Now` (use `DateTime.UtcNow`)
+- Never catch generic `Exception` without re-throwing or logging
+- Never store secrets in appsettings.json (use user secrets or environment variables)
+- Never skip validation on commands/queries
+- Never use `.Result` or `.Wait()` on async calls (async all the way)
+- Never expose entities directly from API (use DTOs)
+- Never use `Include()` without considering query performance
+
+---
 
 ### When Uncertain
 
@@ -80,6 +154,8 @@ Do NOT ask when:
 - The decision is easily reversible
 
 ## File Structure Decisions
+
+### Frontend
 
 ```
 Is it a new feature?
@@ -98,9 +174,22 @@ Is it a new feature?
          └── NO → Keep in the feature that owns it
 ```
 
+### Backend (.NET)
+
+```
+src/
+├── MyApp.Api/              # Controllers, middleware, Program.cs
+├── MyApp.Services/         # Command/query handlers, validators, services
+├── MyApp.Contracts/        # DTOs, commands, queries, interfaces
+├── MyApp.Data/             # DbContext, entities, repositories, migrations
+└── MyApp.Shared/           # Exceptions, utilities, cross-cutting concerns
+```
+
 ## Code Patterns Quick Reference
 
-### Component Structure
+### Frontend
+
+#### Component Structure
 
 ```typescript
 // 1. Imports
@@ -122,7 +211,7 @@ export const ProductCard = memo(function ProductCard({
 });
 ```
 
-### API Hook Structure
+#### API Hook Structure
 
 ```typescript
 // Query keys factory
@@ -159,7 +248,7 @@ export function useCreateProduct() {
 }
 ```
 
-### Form Structure
+#### Form Structure
 
 ```typescript
 // 1. Zod schema
@@ -177,13 +266,88 @@ const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
 });
 ```
 
+### Backend (.NET)
+
+#### Command Handler
+
+```csharp
+public class CreateProductCommandHandler(
+    IProductRepository repository,
+    IMapper mapper,
+    ILogger<CreateProductCommandHandler> logger
+) : IRequestHandler<CreateProductCommand, ProductDto>
+{
+    public async Task<ProductDto> Handle(
+        CreateProductCommand request,
+        CancellationToken cancellationToken)
+    {
+        var entity = mapper.Map<ProductEntity>(request.Dto);
+        entity.CreatedBy = request.UserId;
+        entity.CreatedAt = DateTime.UtcNow;
+
+        await repository.AddAsync(entity, cancellationToken);
+
+        logger.LogInformation("Product {ProductId} created", entity.Id);
+
+        return mapper.Map<ProductDto>(entity);
+    }
+}
+
+public record CreateProductCommand(CreateProductDto Dto, Guid UserId)
+    : IRequest<ProductDto>;
+```
+
+#### Controller Action
+
+```csharp
+[HttpPost]
+[ProducesResponseType(typeof(ProductDto), StatusCodes.Status201Created)]
+public async Task<IActionResult> Create(
+    [FromBody] CreateProductDto dto,
+    CancellationToken ct)
+{
+    var command = new CreateProductCommand(dto, CurrentUserId);
+    var result = await _mediator.Send(command, ct);
+    return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+}
+```
+
+#### Validator
+
+```csharp
+public class CreateProductDtoValidator : AbstractValidator<CreateProductDto>
+{
+    public CreateProductDtoValidator(IProductRepository repository)
+    {
+        RuleFor(x => x.Name)
+            .NotEmpty().WithMessage("Name is required")
+            .MaximumLength(200);
+
+        RuleFor(x => x.Sku)
+            .NotEmpty()
+            .MustAsync(async (sku, ct) => !await repository.ExistsBySkuAsync(sku, ct))
+            .WithMessage("SKU already exists");
+    }
+}
+```
+
 ## Testing Requirements
+
+### Frontend
 
 - Unit tests required for: components, hooks, utility functions
 - E2E tests required for: critical user flows (auth, checkout, etc.)
 - Use `renderWithProviders` for components needing React Query/Router
 - Use `vi.mock()` to mock API client in unit tests
 - Use accessible queries: `getByRole`, `getByLabelText` over `getByTestId`
+
+### Backend (.NET)
+
+- Unit tests for: handlers, validators, services
+- Integration tests for: repository queries, API endpoints
+- Use xUnit + Moq + FluentAssertions
+- Use `WebApplicationFactory<Program>` for API tests
+- Mock repositories and external services in handler tests
 
 ## Commit Message Format
 
@@ -196,7 +360,9 @@ Example: feat(auth): add password reset flow
 
 ## Common Tasks
 
-### Creating a new feature
+### Frontend
+
+#### Creating a new feature
 
 ```bash
 # 1. Create folder structure
@@ -208,16 +374,35 @@ touch src/features/[name]/index.ts
 # 3. Follow patterns in frontend/architecture/folder-structure.md
 ```
 
-### Adding a new API endpoint
+#### Adding a new API endpoint
 
 1. Add types in `src/features/[name]/types/[name].types.ts`
 2. Create query/mutation hooks in `src/features/[name]/api/[name]Api.ts`
 3. Export from `src/features/[name]/index.ts`
 4. Follow patterns in `frontend/patterns/api-integration.md`
 
-### Adding a new form
+#### Adding a new form
 
 1. Define Zod schema
 2. Create form component using React Hook Form
 3. Handle both client and server validation errors
 4. Follow patterns in `frontend/patterns/form-patterns.md`
+
+### Backend (.NET)
+
+#### Adding a new endpoint
+
+1. Create DTO in `MyApp.Contracts/Dtos/`
+2. Create Command/Query in `MyApp.Contracts/Commands/` or `Queries/`
+3. Create Handler in `MyApp.Services/Handlers/`
+4. Create Validator in `MyApp.Services/Validators/`
+5. Add controller action in `MyApp.Api/Controllers/`
+6. Follow patterns in `backend-dotnet/api/patterns/`
+
+#### Adding a new entity
+
+1. Create entity in `MyApp.Data/Entities/`
+2. Create configuration in `MyApp.Data/Configurations/`
+3. Add DbSet to `AppDbContext`
+4. Create migration: `dotnet ef migrations add MigrationName`
+5. Follow patterns in `backend-dotnet/api/data/entity-framework.md`
