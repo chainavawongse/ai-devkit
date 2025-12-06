@@ -13,7 +13,8 @@ This file provides instructions for AI coding assistants (Claude Code, GitHub Co
 
 This is a full-stack application with:
 - **Frontend**: React/TypeScript with Vite, Tailwind CSS, React Query, and Zustand. Guidelines in `frontend/`
-- **Backend**: .NET 8 API with Clean Architecture, CQRS, MediatR, and Entity Framework Core. Guidelines in `backend-dotnet/`
+- **Backend (.NET)**: .NET 8 API with Clean Architecture, CQRS, MediatR, and Entity Framework Core. Guidelines in `backend-dotnet/`
+- **Backend (Python)**: FastAPI with Pydantic, SQLAlchemy 2.0, and async PostgreSQL. Guidelines in `backend-python/`
 
 Identify the relevant stack based on the task and read the appropriate documentation.
 
@@ -80,6 +81,36 @@ When implementing features, read documentation in this order:
    - `backend-dotnet/api/architecture/configuration.md`
    - `backend-dotnet/api/patterns/mapping-patterns.md`
 
+---
+
+### Backend (Python/FastAPI)
+
+1. **Always read first:**
+   - `backend-python/DEVELOPMENT.md` - Entry point and quick reference
+   - `backend-python/api/standards/naming-conventions.md` - File and code naming rules
+
+2. **Read based on task type:**
+
+   | Task | Required Reading |
+   |------|------------------|
+   | New endpoint | `backend-python/api/patterns/router-patterns.md`, `backend-python/api/examples/router_template.py` |
+   | Business logic | `backend-python/api/patterns/service-patterns.md`, `backend-python/api/examples/service_template.py` |
+   | Pydantic schemas | `backend-python/api/patterns/pydantic-patterns.md`, `backend-python/api/examples/schema_template.py` |
+   | SQLAlchemy model | `backend-python/api/data/sqlalchemy.md`, `backend-python/api/examples/model_template.py` |
+   | Database migration | `backend-python/api/data/alembic.md` |
+   | Vector search | `backend-python/api/data/pgvector.md` |
+   | Error handling | `backend-python/api/patterns/error-handling.md` |
+   | Async patterns | `backend-python/api/patterns/async-patterns.md` |
+   | Authentication | `backend-python/api/security/authentication.md` |
+   | Authorization | `backend-python/api/security/authorization.md` |
+   | Logging/tracing | `backend-python/api/observability/logging-tracing.md` |
+   | Unit tests | `backend-python/api/testing/unit-testing.md`, `backend-python/api/examples/test_templates/unit_test_template.py` |
+   | Integration tests | `backend-python/api/testing/integration-testing.md`, `backend-python/api/examples/test_templates/integration_test_template.py` |
+
+3. **Reference as needed:**
+   - `backend-python/api/architecture/project-structure.md`
+   - `backend-python/api/architecture/dependency-injection.md`
+
 ## Code Generation Rules
 
 ---
@@ -139,6 +170,33 @@ When implementing features, read documentation in this order:
 
 ---
 
+### Backend (Python/FastAPI)
+
+#### Always Do
+
+- Follow PEP 8 naming conventions (snake_case functions, PascalCase classes)
+- Use type hints on all functions and methods
+- Use Pydantic models for all request/response validation
+- Use `async`/`await` for all I/O operations (database, HTTP)
+- Use FastAPI's `Depends()` for dependency injection
+- Use structlog for structured logging with context
+- Use `datetime.now(timezone.utc)` instead of `datetime.utcnow()`
+- Handle exceptions with custom exception classes, not HTTPException in services
+- Use SQLAlchemy 2.0 style with `select()` not legacy `query()`
+
+#### Never Do
+
+- Never use `any` type - use proper type hints or `object`
+- Never use sync database operations (use asyncpg)
+- Never block the event loop (no `time.sleep()`, use `asyncio.sleep()`)
+- Never use `.Result` or `.Wait()` patterns from sync code
+- Never store secrets in code or config files (use environment variables)
+- Never skip Pydantic validation for API inputs
+- Never use lazy loading for relationships (use explicit `selectinload`)
+- Never catch generic `Exception` without re-raising or logging
+
+---
+
 ### When Uncertain
 
 Ask the user for clarification when:
@@ -183,6 +241,21 @@ src/
 ├── MyApp.Contracts/        # DTOs, commands, queries, interfaces
 ├── MyApp.Data/             # DbContext, entities, repositories, migrations
 └── MyApp.Shared/           # Exceptions, utilities, cross-cutting concerns
+```
+
+### Backend (Python)
+
+```
+src/
+├── main.py                 # FastAPI app entry point
+├── api/                    # Routers (endpoints)
+│   ├── routes/
+│   └── dependencies.py     # Shared Depends() functions
+├── services/               # Business logic
+├── models/                 # SQLAlchemy models
+├── schemas/                # Pydantic DTOs
+├── core/                   # Config, security, exceptions
+└── utils/                  # Shared utilities
 ```
 
 ## Code Patterns Quick Reference
@@ -331,6 +404,58 @@ public class CreateProductDtoValidator : AbstractValidator<CreateProductDto>
 }
 ```
 
+### Backend (Python)
+
+#### Router Structure
+
+```python
+from fastapi import APIRouter, Depends, status
+from src.api.dependencies import get_current_user, get_product_service
+
+router = APIRouter(prefix="/products", tags=["products"])
+
+@router.get("/{product_id}", response_model=ProductResponse)
+async def get_product(
+    product_id: UUID,
+    service: ProductService = Depends(get_product_service),
+    current_user: User = Depends(get_current_user),
+) -> ProductResponse:
+    return await service.get_by_id(product_id)
+```
+
+#### Service Structure
+
+```python
+class ProductService:
+    def __init__(self, db: AsyncSession):
+        self.db = db
+
+    async def get_by_id(self, product_id: UUID) -> Product:
+        result = await self.db.execute(
+            select(Product).where(Product.id == product_id)
+        )
+        product = result.scalar_one_or_none()
+        if not product:
+            raise NotFoundError(f"Product {product_id} not found")
+        return product
+```
+
+#### Pydantic Schema
+
+```python
+class ProductCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=200)
+    price: Decimal = Field(gt=0)
+    sku: str = Field(pattern=r"^[A-Z0-9-]+$")
+
+class ProductResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: UUID
+    name: str
+    price: Decimal
+    created_at: datetime
+```
+
 ## Testing Requirements
 
 ### Frontend
@@ -348,6 +473,14 @@ public class CreateProductDtoValidator : AbstractValidator<CreateProductDto>
 - Use xUnit + Moq + FluentAssertions
 - Use `WebApplicationFactory<Program>` for API tests
 - Mock repositories and external services in handler tests
+
+### Backend (Python)
+
+- Unit tests for: services, validators, utility functions
+- Integration tests for: API endpoints with real database
+- Use pytest + pytest-asyncio + pytest-mock
+- Use testcontainers for PostgreSQL in integration tests
+- Mock database session in unit tests with AsyncMock
 
 ## Commit Message Format
 
@@ -406,3 +539,22 @@ touch src/features/[name]/index.ts
 3. Add DbSet to `AppDbContext`
 4. Create migration: `dotnet ef migrations add MigrationName`
 5. Follow patterns in `backend-dotnet/api/data/entity-framework.md`
+
+### Backend (Python)
+
+#### Adding a new endpoint
+
+1. Create/update schema in `src/schemas/`
+2. Create/update service in `src/services/`
+3. Add route in `src/api/routes/`
+4. Register router in `src/main.py`
+5. Add tests in `tests/unit/` and `tests/integration/`
+6. Follow patterns in `backend-python/api/patterns/`
+
+#### Adding a new model
+
+1. Create model in `src/models/`
+2. Import in `src/models/__init__.py`
+3. Create migration: `uv run alembic revision --autogenerate -m "description"`
+4. Run migration: `uv run alembic upgrade head`
+5. Follow patterns in `backend-python/api/data/sqlalchemy.md`
