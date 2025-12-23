@@ -68,57 +68,24 @@ if 'feature' not in ticket.labels:
     STOP
 ```
 
-### Step 1.5: Load Relevant Documentation
+### Step 1.5: Documentation Context (Pre-loaded)
 
-**Automatically load best practices based on file types involved:**
+**Documentation is automatically injected by `executing-plans` before this skill is invoked.**
 
-Analyze the ticket's "Files to Touch" section and Technical Plan to predict file types. Load relevant docs at task start:
+When dispatched via `/execute`, relevant documentation based on file patterns is pre-loaded into your context. You do NOT need to manually load docs.
 
-| File Pattern | Documentation to Load |
+**What's pre-loaded (based on "Files to Touch" in ticket):**
+
+| File Pattern | Documentation Injected |
 |--------------|----------------------|
-| `.tsx`, `.jsx`, `.ts` in `components/`, `hooks/`, `stores/` | `docs/frontend/DEVELOPMENT.md` → deeper pattern docs |
-| `.cs` in `Controllers/`, `Services/`, `Handlers/` | `docs/backend-dotnet/DEVELOPMENT.md` → deeper pattern docs |
-| `.py` in `api/`, `services/`, `models/` | `docs/backend-python/DEVELOPMENT.md` → deeper pattern docs |
-| EF Core migrations, `Migrations/` (.NET) | `docs/backend-dotnet/api/data/entity-framework.md` |
-| Alembic migrations (`migrations/`) (Python) | `docs/backend-python/api/data/alembic.md` |
+| `.tsx`, `.jsx`, `.ts` in `components/`, `hooks/`, `stores/` | `docs/frontend/DEVELOPMENT.md` |
+| `.cs` in `Controllers/`, `Services/`, `Handlers/` | `docs/backend-dotnet/DEVELOPMENT.md` |
+| `.py` in `api/`, `services/`, `models/` | `docs/backend-python/DEVELOPMENT.md` |
+| `Migrations/` (.NET) | `docs/backend-dotnet/api/data/entity-framework.md` |
+| `migrations/` (Python) | `docs/backend-python/api/data/alembic.md` |
 | `.spec.ts`, `.test.ts` in `e2e/`, `playwright/` | `docs/frontend/testing/e2e-testing.md` |
 
-```python
-# Predict file types from ticket
-files_to_touch = extract_section(ticket.description, "## Files to Touch")
-technical_plan = extract_section(ticket.description, "## Technical Plan Guidance")
-
-# Load relevant docs based on predicted file types
-if contains_frontend_files(files_to_touch, technical_plan):
-    Read("docs/frontend/DEVELOPMENT.md")
-    # For specific patterns, also read:
-    # - docs/frontend/patterns/component-patterns.md
-    # - docs/frontend/patterns/form-patterns.md
-    # - docs/frontend/architecture/state-management.md
-
-if contains_dotnet_backend_files(files_to_touch, technical_plan):
-    Read("docs/backend-dotnet/DEVELOPMENT.md")
-    # For specific patterns, also read:
-    # - docs/backend-dotnet/api/patterns/cqrs-mediatr.md
-    # - docs/backend-dotnet/api/patterns/controller-patterns.md
-
-if contains_python_backend_files(files_to_touch, technical_plan):
-    Read("docs/backend-python/DEVELOPMENT.md")
-    # For specific patterns, also read:
-    # - docs/backend-python/api/patterns/router-patterns.md
-    # - docs/backend-python/api/patterns/service-patterns.md
-
-if contains_dotnet_migration_files(files_to_touch, technical_plan):
-    Read("docs/backend-dotnet/api/data/entity-framework.md")
-
-if contains_python_migration_files(files_to_touch, technical_plan):
-    Read("docs/backend-python/api/data/alembic.md")
-
-if contains_e2e_test_files(files_to_touch, technical_plan):
-    Read("docs/frontend/testing/e2e-testing.md")
-```
-
-**On-demand loading:** If you encounter file types not predicted at task start, load the relevant docs before working on those files.
+**On-demand loading:** If you encounter file types not covered by pre-loaded docs, load additional docs as needed before working on those files.
 
 ### Step 2: TDD Implementation
 

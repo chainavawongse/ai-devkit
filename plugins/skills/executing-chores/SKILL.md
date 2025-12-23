@@ -111,43 +111,24 @@ Loaded chore: "<title>"
 Ready to proceed?
 ```
 
-### Step 1.5: Load Relevant Documentation
+### Step 1.5: Documentation Context (Pre-loaded)
 
-**Automatically load best practices based on file types involved:**
+**Documentation is automatically injected by `executing-plans` before this skill is invoked.**
 
-Analyze the chore description and "Files to Touch" section to predict file types. Load relevant docs at task start:
+When dispatched via `/execute`, relevant documentation based on file patterns is pre-loaded into your context. You do NOT need to manually load docs.
 
-| File Pattern | Documentation to Load |
+**What's pre-loaded (based on chore description and files involved):**
+
+| File Pattern | Documentation Injected |
 |--------------|----------------------|
-| `.tsx`, `.jsx`, `.ts` in `components/`, `hooks/`, `stores/` | `docs/frontend/DEVELOPMENT.md` → deeper pattern docs |
-| `.cs` in `Controllers/`, `Services/`, `Handlers/` | `docs/backend-dotnet/DEVELOPMENT.md` → deeper pattern docs |
-| `.py` in `api/`, `services/`, `models/` | `docs/backend-python/DEVELOPMENT.md` → deeper pattern docs |
-| EF Core migrations, `Migrations/` (.NET) | `docs/backend-dotnet/api/data/entity-framework.md` |
-| Alembic migrations (`migrations/`) (Python) | `docs/backend-python/api/data/alembic.md` |
+| `.tsx`, `.jsx`, `.ts` in `components/`, `hooks/`, `stores/` | `docs/frontend/DEVELOPMENT.md` |
+| `.cs` in `Controllers/`, `Services/`, `Handlers/` | `docs/backend-dotnet/DEVELOPMENT.md` |
+| `.py` in `api/`, `services/`, `models/` | `docs/backend-python/DEVELOPMENT.md` |
+| `Migrations/` (.NET) | `docs/backend-dotnet/api/data/entity-framework.md` |
+| `migrations/` (Python) | `docs/backend-python/api/data/alembic.md` |
 | `.spec.ts`, `.test.ts` in `e2e/`, `playwright/` | `docs/frontend/testing/e2e-testing.md` |
 
-```python
-# Predict file types from chore details
-if contains_frontend_files(chore_description):
-    Read("docs/frontend/DEVELOPMENT.md")
-
-if contains_dotnet_backend_files(chore_description):
-    Read("docs/backend-dotnet/DEVELOPMENT.md")
-
-if contains_python_backend_files(chore_description):
-    Read("docs/backend-python/DEVELOPMENT.md")
-
-if contains_dotnet_migration_files(chore_description):
-    Read("docs/backend-dotnet/api/data/entity-framework.md")
-
-if contains_python_migration_files(chore_description):
-    Read("docs/backend-python/api/data/alembic.md")
-
-if contains_e2e_test_files(chore_description):
-    Read("docs/frontend/testing/e2e-testing.md")
-```
-
-**On-demand loading:** If you encounter file types not predicted at task start, load the relevant docs before working on those files.
+**On-demand loading:** If you encounter file types not covered by pre-loaded docs, load additional docs as needed before working on those files.
 
 ### Step 2: Implement Chore
 

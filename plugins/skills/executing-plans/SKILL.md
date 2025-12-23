@@ -212,6 +212,85 @@ Starting with {ready_count} ready tasks...
 - Addressing feedback (some sub-issues from original implementation, some from feedback)
 - Manual fixes mixed with automated execution
 
+### Step 2.5: Prepare Documentation Context
+
+**Before dispatching each subagent, load relevant documentation based on file patterns.**
+
+This ensures agents have the right context without needing to remember to load docs themselves.
+
+**File Pattern → Documentation Mapping:**
+
+| File Pattern | Documentation to Load |
+|--------------|----------------------|
+| `.tsx`, `.jsx`, `.ts` in `components/`, `hooks/`, `stores/` | `docs/frontend/DEVELOPMENT.md` |
+| `.cs` in `Controllers/`, `Services/`, `Handlers/` | `docs/backend-dotnet/DEVELOPMENT.md` |
+| `.py` in `api/`, `services/`, `models/` | `docs/backend-python/DEVELOPMENT.md` |
+| `Migrations/` directory (.NET) | `docs/backend-dotnet/api/data/entity-framework.md` |
+| `migrations/` directory (Python/Alembic) | `docs/backend-python/api/data/alembic.md` |
+| `.spec.ts`, `.test.ts` in `e2e/`, `playwright/` | `docs/frontend/testing/e2e-testing.md` |
+
+**For each task, before dispatching:**
+
+```python
+def get_relevant_docs(task):
+    """Analyze task and return list of docs to inject."""
+    files_to_touch = extract_section(task.description, "## Files to Touch")
+    implementation_guide = extract_section(task.description, "## Implementation Guide")
+    content = files_to_touch + implementation_guide
+
+    docs_to_load = []
+
+    # Frontend patterns
+    if matches_pattern(content, r'\.(tsx|jsx|ts)') and \
+       matches_pattern(content, r'(components|hooks|stores)/'):
+        docs_to_load.append("docs/frontend/DEVELOPMENT.md")
+
+    # .NET backend patterns
+    if matches_pattern(content, r'\.cs') and \
+       matches_pattern(content, r'(Controllers|Services|Handlers)/'):
+        docs_to_load.append("docs/backend-dotnet/DEVELOPMENT.md")
+
+    # Python backend patterns
+    if matches_pattern(content, r'\.py') and \
+       matches_pattern(content, r'(api|services|models)/'):
+        docs_to_load.append("docs/backend-python/DEVELOPMENT.md")
+
+    # .NET migrations
+    if matches_pattern(content, r'Migrations/'):
+        docs_to_load.append("docs/backend-dotnet/api/data/entity-framework.md")
+
+    # Python/Alembic migrations
+    if matches_pattern(content, r'migrations/') and \
+       matches_pattern(content, r'\.py'):
+        docs_to_load.append("docs/backend-python/api/data/alembic.md")
+
+    # E2E tests
+    if matches_pattern(content, r'\.(spec|test)\.(ts|tsx)') and \
+       matches_pattern(content, r'(e2e|playwright)/'):
+        docs_to_load.append("docs/frontend/testing/e2e-testing.md")
+
+    return docs_to_load
+
+def load_doc_content(doc_paths):
+    """Read and combine doc content for injection."""
+    content = []
+    for path in doc_paths:
+        if file_exists(path):
+            doc = Read(path)
+            content.append(f"## Reference: {path}\n\n{doc}")
+    return "\n\n---\n\n".join(content)
+```
+
+**Inject docs into subagent context:**
+
+```python
+# Before dispatching subagent
+relevant_docs = get_relevant_docs(current_task)
+doc_content = load_doc_content(relevant_docs)
+
+# Include in Task prompt (see Step 4)
+```
+
 ### Step 3: Execute Tasks Sequentially
 
 Implement tasks one at a time, respecting dependencies:
@@ -262,24 +341,43 @@ while remaining_tasks:
 
 **Each subagent receives via Task prompt:**
 
-```
-Use Skill('devkit:executing-{type}') for issue {ticket_id}
+```python
+# Build comprehensive context for subagent
+task_prompt = f"""
+Use Skill('devkit:executing-{task_type}') for issue {ticket_id}
+
+## Pre-loaded Documentation
+
+The following documentation has been loaded based on the files you'll be working with.
+Follow these patterns and conventions:
+
+{doc_content}
+
+---
+
+Execute the task following the skill's workflow.
+"""
+
+Task(prompt=task_prompt, subagent_type="general-purpose")
 ```
 
-**The execution skill will load:**
+**The subagent receives:**
 
-- Task description with TDD checklist from sub-issue
-- Specification context (WHAT) from parent issue
-- Technical Plan guidance (HOW) from parent issue
+- **Pre-loaded docs** - Relevant documentation injected by executing-plans (no need to load)
+- **Task description** - With TDD checklist from sub-issue
+- **Specification context** - (WHAT) from parent issue
+- **Technical Plan guidance** - (HOW) from parent issue
 
 **Subagent responsibilities:**
 
 1. Follow TDD checklist in sub-issue
 2. Use test-driven-development skill
-3. Reference patterns from Technical Plan
+3. Reference patterns from Technical Plan AND pre-loaded docs
 4. Verify with `just test` and `just lint`
 5. Update PM system status (Jira or Notion)
 6. Report completion
+
+**Note:** Subagents do NOT need to load documentation themselves - it's pre-injected.
 
 ### Step 5: Continue Until Complete
 

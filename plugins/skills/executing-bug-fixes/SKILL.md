@@ -64,43 +64,24 @@ if 'bug' not in ticket.labels:  # or ticket.properties.Type != 'bug' for Notion
     STOP
 ```
 
-### Step 1.5: Load Relevant Documentation
+### Step 1.5: Documentation Context (Pre-loaded)
 
-**Automatically load best practices based on file types involved:**
+**Documentation is automatically injected by `executing-plans` before this skill is invoked.**
 
-Analyze the bug description to predict which areas of the codebase will be touched. Load relevant docs at task start:
+When dispatched via `/execute`, relevant documentation based on file patterns is pre-loaded into your context. You do NOT need to manually load docs.
 
-| File Pattern | Documentation to Load |
+**What's pre-loaded (based on bug description and affected areas):**
+
+| File Pattern | Documentation Injected |
 |--------------|----------------------|
-| `.tsx`, `.jsx`, `.ts` in `components/`, `hooks/`, `stores/` | `docs/frontend/DEVELOPMENT.md` → deeper pattern docs |
-| `.cs` in `Controllers/`, `Services/`, `Handlers/` | `docs/backend-dotnet/DEVELOPMENT.md` → deeper pattern docs |
-| `.py` in `api/`, `services/`, `models/` | `docs/backend-python/DEVELOPMENT.md` → deeper pattern docs |
-| EF Core migrations, `Migrations/` (.NET) | `docs/backend-dotnet/api/data/entity-framework.md` |
-| Alembic migrations (`migrations/`) (Python) | `docs/backend-python/api/data/alembic.md` |
+| `.tsx`, `.jsx`, `.ts` in `components/`, `hooks/`, `stores/` | `docs/frontend/DEVELOPMENT.md` |
+| `.cs` in `Controllers/`, `Services/`, `Handlers/` | `docs/backend-dotnet/DEVELOPMENT.md` |
+| `.py` in `api/`, `services/`, `models/` | `docs/backend-python/DEVELOPMENT.md` |
+| `Migrations/` (.NET) | `docs/backend-dotnet/api/data/entity-framework.md` |
+| `migrations/` (Python) | `docs/backend-python/api/data/alembic.md` |
 | `.spec.ts`, `.test.ts` in `e2e/`, `playwright/` | `docs/frontend/testing/e2e-testing.md` |
 
-```python
-# Predict file types from bug description
-if bug_appears_frontend_related(bug_description, actual_behavior):
-    Read("docs/frontend/DEVELOPMENT.md")
-
-if bug_appears_dotnet_backend_related(bug_description, actual_behavior):
-    Read("docs/backend-dotnet/DEVELOPMENT.md")
-
-if bug_appears_python_backend_related(bug_description, actual_behavior):
-    Read("docs/backend-python/DEVELOPMENT.md")
-
-if bug_involves_dotnet_database_or_migrations(bug_description, actual_behavior):
-    Read("docs/backend-dotnet/api/data/entity-framework.md")
-
-if bug_involves_python_database_or_migrations(bug_description, actual_behavior):
-    Read("docs/backend-python/api/data/alembic.md")
-
-if bug_involves_e2e_tests(bug_description):
-    Read("docs/frontend/testing/e2e-testing.md")
-```
-
-**On-demand loading:** During root cause investigation, if you discover the bug is in a different area than predicted, load the relevant docs before proceeding with the fix.
+**On-demand loading:** During root cause investigation, if you discover the bug is in a different area than predicted, load additional relevant docs before proceeding with the fix.
 
 ### Step 2: Root Cause Investigation
 
