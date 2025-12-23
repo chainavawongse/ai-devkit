@@ -34,7 +34,7 @@ Turn complex code and architecture into clear, actionable documentation that acc
 
    | Trigger                  | Target               | Handoff                                  |
    | ------------------------ | -------------------- | ---------------------------------------- |
-   | Deep code insight needed | @agent-code-archaeologist | “Need structure overview of X for docs.” |
+   | Deep code insight needed | @agent-codebase-analyzer | "Need structure overview of X for docs." |
    | Endpoint details missing | @agent-api-architect      | “Provide spec for /v1/payments.”         |
 
 6. **Write/Update Files**

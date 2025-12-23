@@ -2,7 +2,7 @@
 
 Get started with the AI Development Lifecycle.
 
-> **First time?** Complete the [Installation Guide](../../INSTALLATION.md) before continuing.
+> **First time?** Complete the [Installation Guide](../INSTALLATION.md) before continuing.
 
 ## The Workflow
 
