@@ -90,6 +90,14 @@ issue = mcp__notion__notion-fetch(id=issue_id)
 
 chore_title = issue.title  # or issue.properties.Name for Notion
 chore_description = issue.description  # or issue.content for Notion
+
+# Verify ticket has `chore` label
+# For Jira: check issue.labels
+# For Notion: check issue.properties.Type
+if 'chore' not in issue.labels:  # or issue.properties.Type != 'chore' for Notion
+    ERROR: "This skill is for chore tickets only. Wrong skill called."
+    SUGGEST: "Use executing-tasks for feature label, executing-bug-fixes for bug label"
+    STOP
 ```
 
 **Present plan:**
@@ -333,13 +341,31 @@ mcp__notion__notion-create-comment({
 Report completion and remind about next steps:
 
 ```markdown
-✅ Chore complete!
+## Chore Complete: {ticket_id}
+
+**Skill Used:** `devkit:executing-chores` (maintenance task)
+
+**Changes Made:**
+- {change_summary}
+
+**Verification:**
+- ✅ All tests passing ({total} tests, 0 failures)
+- ✅ Lint checks passing
+- ✅ Format checks passing
+- ✅ Build successful
+
+**Commit:** {sha}
+
+**Files Changed:**
+- {file1}
+- {file2}
 
 **Next steps:**
 1. Create PR: `/pr`
 2. Or if part of larger work, continue with next task
 
-All tests passing, code committed.
+---
+📋 Skill Signature: `executing-chores v1.1.0` | Label: `chore`
 ```
 
 ## Checklist

@@ -321,6 +321,39 @@ while remaining_tasks:
 - `chore` → `Skill('devkit:executing-chores')` - Verification-focused
 - `bug` → `Skill('devkit:executing-bug-fixes')` - Reproduction + TDD fix
 
+**Log skill dispatch for audit trail:**
+
+```python
+def dispatch_task(task):
+    """Route task to appropriate skill and log dispatch."""
+    label = get_task_label(task)  # feature, chore, or bug
+    skill_map = {
+        'feature': 'executing-tasks',
+        'chore': 'executing-chores',
+        'bug': 'executing-bug-fixes'
+    }
+
+    skill_name = skill_map.get(label)
+
+    if not skill_name:
+        ERROR: f"Task {task.id} has invalid/missing label: '{label}'"
+        SUGGEST: "Add one of: feature, chore, bug"
+        return None
+
+    # Log dispatch for audit
+    print(f"""
+    ┌─────────────────────────────────────────────────────────────────
+    │ DISPATCH LOG
+    │ Task: {task.id} - {task.title}
+    │ Label: {label}
+    │ Skill: devkit:{skill_name}
+    │ Time: {timestamp()}
+    └─────────────────────────────────────────────────────────────────
+    """)
+
+    return skill_name
+```
+
 **Each agent will:**
 
 1. Load task details from PM system (Jira or Notion)

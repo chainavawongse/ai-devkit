@@ -340,6 +340,8 @@ mcp__notion__notion-create-comment({
 ```markdown
 ## Bug Fix Complete: {ticket_id}
 
+**Skill Used:** `devkit:executing-bug-fixes` (bug fix with TDD)
+
 **Root Cause:** {root_cause_summary}
 
 **Fix:** {what_was_changed}
@@ -361,6 +363,9 @@ mcp__notion__notion-create-comment({
 - {file2}
 
 **Ready:** Bug fixed, ticket closed, no blockers
+
+---
+📋 Skill Signature: `executing-bug-fixes v2.1.0` | Label: `bug`
 ```
 
 ## Error Handling

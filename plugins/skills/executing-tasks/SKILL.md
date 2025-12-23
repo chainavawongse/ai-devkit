@@ -306,6 +306,8 @@ mcp__notion__notion-create-comment({
 ```markdown
 ## Task Complete: {ticket_id}
 
+**Skill Used:** `devkit:executing-tasks` (feature implementation)
+
 **Implemented:** {summary}
 
 **Tests Added:**
@@ -325,6 +327,9 @@ mcp__notion__notion-create-comment({
 - {file2}
 
 **Ready:** Task complete, ticket closed, no blockers
+
+---
+📋 Skill Signature: `executing-tasks v1.1.0` | Label: `feature`
 ```
 
 ## Error Handling
