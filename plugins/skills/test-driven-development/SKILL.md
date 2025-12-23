@@ -121,23 +121,53 @@ Vague name, tests mock not code
 - Clear name
 - Real code (no mocks unless unavoidable)
 
-### Verify RED - Watch It Fail
+### Verify RED - Watch It Fail (MANDATORY CHECKPOINT)
 
-**MANDATORY. Never skip.**
+**MANDATORY. Never skip. This is a gate - you cannot proceed without completing it.**
 
 ```bash
-just test path/to/test.test.ts
+# Run the test and capture output
+just test path/to/test.test.ts 2>&1 | tee .tdd-red-phase.log
+
+# Verify the log shows failure (not error, not pass)
+grep -E "(FAIL|failed|failing|✗|×)" .tdd-red-phase.log
 ```
 
-Confirm:
+**RED Phase Checkpoint Requirements:**
+
+1. **Run the test** - Execute the test you just wrote
+2. **Capture failure output** - Save to `.tdd-red-phase.log`
+3. **Verify correct failure** - Confirm test fails because feature is missing (not typos/errors)
+4. **Document the failure** - Report the failure message before proceeding
+
+**Report format (REQUIRED before proceeding to GREEN):**
+
+```markdown
+## RED Phase Complete ✓
+
+**Test file:** path/to/test.test.ts
+**Test name:** "should do expected behavior"
+**Failure output:**
+```
+FAIL path/to/test.test.ts
+  ✗ should do expected behavior
+    Expected: <expected value>
+    Received: undefined (or error message)
+```
+**Failure reason:** Feature not implemented yet (correct RED state)
+```
+
+**Confirm:**
 
 - Test fails (not errors)
-- Failure message is expected
+- Failure message matches expected behavior
 - Fails because feature missing (not typos)
 
-**Test passes?** You're testing existing behavior. Fix test.
+**Test passes immediately?** You're testing existing behavior. Fix or delete test.
 
-**Test errors?** Fix error, re-run until it fails correctly.
+**Test errors (syntax, import)?** Fix error, re-run until it fails correctly.
+
+**CANNOT proceed to GREEN without documenting RED phase completion.**
 
 ### GREEN - Minimal Code
 

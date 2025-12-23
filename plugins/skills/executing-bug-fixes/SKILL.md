@@ -130,13 +130,37 @@ describe('Bug fix: <ticket-id>', () => {
 });
 ```
 
-**Verify test fails correctly:**
+**Run test and capture failure output:**
 
 ```bash
-just test <test-file>
+just test <test-file> 2>&1 | tee .tdd-red-phase.log
 # Must fail with same error as bug report
 # Confirms test actually reproduces the bug
 ```
+
+**⚠️ RED PHASE CHECKPOINT (MANDATORY - Cannot skip):**
+
+Before proceeding to implement the fix, you MUST document the RED phase completion:
+
+```markdown
+## RED Phase Complete ✓
+
+**Test file:** path/to/bug-fix.test.ts
+**Test name:** "should <expected behavior>"
+**Failure output:**
+```
+FAIL path/to/bug-fix.test.ts
+  ✗ should <expected behavior>
+    Expected: <correct behavior>
+    Received: <buggy behavior matching bug report>
+```
+**Confirms bug reproduction:** Failure matches reported bug behavior
+```
+
+**STOP if:**
+- Test passes immediately (bug already fixed or wrong test)
+- Test fails for different reason than bug report (wrong reproduction)
+- Cannot capture failure output (something is wrong)
 
 ### Step 4: Implement Fix
 

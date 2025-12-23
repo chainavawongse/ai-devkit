@@ -98,8 +98,35 @@ Follow strict TDD cycle:
 1. Review Specification Context (expected behaviors)
 2. Review Technical Plan Guidance (patterns to follow)
 3. Write tests for each behavior specified
-4. Run tests - verify they fail correctly
+4. Run tests and capture failure output:
+   ```bash
+   just test path/to/test.test.ts 2>&1 | tee .tdd-red-phase.log
+   ```
 5. Confirm each test fails because feature is missing (not typos/errors)
+
+**⚠️ RED PHASE CHECKPOINT (MANDATORY - Cannot skip):**
+
+Before proceeding to GREEN, you MUST document the RED phase completion:
+
+```markdown
+## RED Phase Complete ✓
+
+**Test file:** path/to/test.test.ts
+**Test name:** "should do expected behavior"
+**Failure output:**
+```
+FAIL path/to/test.test.ts
+  ✗ should do expected behavior
+    Expected: <expected value>
+    Received: undefined
+```
+**Failure reason:** Feature not implemented yet
+```
+
+**STOP if:**
+- Tests pass immediately (wrong test - fix it)
+- Tests error instead of fail (fix syntax/imports first)
+- Cannot capture failure output (something is wrong)
 
 **GREEN Phase - Minimal Implementation:**
 

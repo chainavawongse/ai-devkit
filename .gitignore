@@ -1,0 +1,17 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# TDD enforcement
+.tdd-red-phase.log
+
+# Editor directories
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Dependencies (if any)
+node_modules/
+__pycache__/
+*.pyc

@@ -65,6 +65,37 @@ cd "$JUSTFILE_DIR"
 # Track overall status
 VALIDATION_PASSED=true
 
+# 0. Check for TDD RED phase completion (for feature/bug tasks)
+echo "" >&2
+echo -e "${BLUE}Step 0: Checking TDD RED phase completion...${NC}" >&2
+
+RED_PHASE_LOG=".tdd-red-phase.log"
+if [ -f "$RED_PHASE_LOG" ]; then
+    # Check if the log contains failure indicators (not just errors)
+    if grep -qE "(FAIL|failed|failing|✗|×|Expected.*Received)" "$RED_PHASE_LOG" 2>/dev/null; then
+        echo -e "${GREEN}✓${NC} RED phase completed - test failure documented" >&2
+        echo -e "  ${BLUE}→${NC} Found failure evidence in $RED_PHASE_LOG" >&2
+    else
+        echo -e "${YELLOW}⚠${NC}  RED phase log exists but no failure evidence found" >&2
+        echo -e "${YELLOW}💡 Tip: Ensure tests failed before implementation (TDD requirement)${NC}" >&2
+    fi
+else
+    # Check if this looks like a feature/bug task (has test files modified)
+    if git diff --cached --name-only 2>/dev/null | grep -qE "\.(test|spec)\.(ts|tsx|js|jsx|py)$"; then
+        echo -e "${YELLOW}⚠${NC}  No RED phase log found (.tdd-red-phase.log)" >&2
+        echo -e "${YELLOW}💡 Tip: For TDD, capture test failure before implementing:${NC}" >&2
+        echo -e "${YELLOW}   just test path/to/test.ts 2>&1 | tee .tdd-red-phase.log${NC}" >&2
+        # Note: This is a warning, not a blocker, to avoid breaking chore tasks
+    else
+        echo -e "${GREEN}ℹ${NC}  No test files in changes - RED phase check skipped (likely a chore)" >&2
+    fi
+fi
+
+# Clean up RED phase log after validation
+if [ -f "$RED_PHASE_LOG" ]; then
+    rm -f "$RED_PHASE_LOG"
+fi
+
 # 1. Run unit tests (fast feedback)
 echo "" >&2
 echo -e "${BLUE}Step 1: Running unit tests...${NC}" >&2
