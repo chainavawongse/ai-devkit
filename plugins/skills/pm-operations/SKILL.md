@@ -1,12 +1,11 @@
-# PM Operations Skill
-
-## Metadata
-
-```yaml
+---
 name: pm-operations
 description: Abstract interface for project management operations across different PM systems
+when_to_use: reference skill for understanding PM abstraction layer - not invoked directly, but used by other skills
 version: 1.0.0
-```
+---
+
+# PM Operations Skill
 
 ## Purpose
 
