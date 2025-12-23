@@ -1,123 +1,85 @@
-# AI DevKit
+# AI Configs
 
-A comprehensive development kit that provides standardized instructions and documentation for AI coding assistants working on full-stack projects (React/TypeScript frontend and .NET backend).
+Centralized AI-assisted development configurations for Ncontracts. Contains the **Plugin** and shared Claude Code configurations.
 
-## What is this?
+## Plugin
 
-AI DevKit is a collection of configuration files, guidelines, and documentation templates designed to help AI coding assistants (Claude Code, GitHub Copilot, Cursor, Gemini, etc.) understand your project structure and generate consistent, high-quality code.
-
-## Supported AI Tools
-
-| Tool | Configuration File | Auto-detected |
-|------|-------------------|---------------|
-| Claude Code | `CLAUDE.md` (symlink to `AGENTS.md`) | Yes |
-| GitHub Copilot | `.github/copilot-instructions.md` (symlink) | Yes |
-| Gemini Code Assist | `GEMINI.md`, `.gemini/instructions.md` (symlinks) | Yes |
-| Cursor | `.cursorrules` | Yes |
-| Others | Reference `AGENTS.md` in your prompt | Manual |
-
-## Project Structure
+AI DevKit is a spec-driven development workflow integrated with JIRA:
 
 ```
-ai-devkit/
-├── AGENTS.md                    # Main AI instructions (source of truth)
-├── CLAUDE.md                    # Symlink → AGENTS.md
-├── GEMINI.md                    # Symlink → AGENTS.md
-├── .cursorrules                 # Condensed version for Cursor
-├── .github/
-│   └── copilot-instructions.md  # Symlink → AGENTS.md
-├── .gemini/
-│   └── instructions.md          # Symlink → AGENTS.md
-├── frontend/                    # React/TypeScript frontend docs
-│   ├── DEVELOPMENT.md           # Entry point & quick reference
-│   ├── architecture/            # Architectural decisions
-│   ├── patterns/                # Code patterns
-│   ├── standards/               # Coding standards
-│   ├── testing/                 # Testing strategies
-│   └── examples/                # Reference implementations
-│
-└── backend-dotnet/              # .NET backend API docs
-    ├── DEVELOPMENT.md           # Entry point & quick reference
-    └── api/
-        ├── architecture/        # Solution structure, DI, configuration
-        ├── patterns/            # Controllers, CQRS, validation, OData
-        ├── data/                # Entity Framework Core
-        ├── security/            # Authentication & authorization
-        ├── standards/           # Naming conventions
-        ├── observability/       # Logging & monitoring
-        ├── testing/             # Testing strategies
-        └── examples/            # Template files (.cs)
+/refine → /plan → /breakdown → /execute → /pr → /address-feedback
 ```
 
-## Tech Stack (Documented)
+**Core features:**
+- **Spec-driven** - Separates WHAT (Specification) from HOW (Technical Plan)
+- **Test-driven** - TDD enforced at all levels (RED → GREEN → REFACTOR)
+- **Sequential execution** - Tasks run in dependency order in isolated worktrees
+- **Stack-agnostic** - Uses `just` commands, works with any language/framework
+- **JIRA integration** - All context lives in tickets, real-time status updates
 
-### Frontend (React/TypeScript)
+**Get started:**
+- [Installation Guide](INSTALLATION.md)
+- [Quick Start & Usage](plugins/QUICK-START.md)
+- [Full Documentation](plugins/README.md)
 
-- **Framework**: React 18
-- **Language**: TypeScript (strict mode)
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS
-- **State Management**: Zustand (client) + TanStack Query (server)
-- **Forms**: React Hook Form + Zod
-- **HTTP Client**: Axios
-- **Testing**: Vitest + React Testing Library + Playwright
-- **Code Quality**: ESLint + Prettier + Husky
+## Shared Configurations
 
-### Backend (.NET)
+Copy these to other repositories for consistent Claude Code setup.
 
-- **Framework**: ASP.NET Core 8
-- **Language**: C# 12
-- **Architecture**: Clean Architecture + CQRS
-- **Mediator**: MediatR
-- **Validation**: FluentValidation
-- **ORM**: Entity Framework Core 8
-- **Database**: PostgreSQL (with pgvector, PostGIS support)
-- **Query**: OData
-- **Mapping**: AutoMapper
-- **Authentication**: JWT + OAuth (Google, GitHub, Apple, Microsoft)
-- **Logging**: Serilog
-- **Testing**: xUnit + Moq + FluentAssertions
+### Custom Agents
+
+Specialized agents for the Task tool (`subagent_type`):
+
+| Agent | Purpose |
+|-------|---------|
+| `codebase-analyzer` | Deep-dive implementation analysis |
+| `codebase-locator` | Find files and components |
+| `codebase-pattern-finder` | Find similar implementations |
+| `web-search-researcher` | Research modern information |
+
+### Custom Commands
+
+Development workflow commands:
+
+| Command | Purpose |
+|---------|---------|
+| `/commit` | Context-aware git commits |
+| `/fix` | Systematic debugging |
+| `/review` | Code review |
+| `/describe_pr` | Generate PR descriptions |
+
+### GitHub Actions
+
+| Workflow | Trigger |
+|----------|---------|
+| `claude-code-review.yml` | `@claude-review` mention in PR |
+| `pr-size-labeler.yml` | Automatic on all PRs |
 
 ## Usage
 
-### For Your Own Project
+**Copy to another repository:**
 
-1. **Clone or copy** this repository into your project
-2. **Customize** the documentation in `frontend/` to match your project
-3. **Update** `AGENTS.md` with your specific rules and patterns
-4. The symlinks will automatically provide instructions to supported AI tools
+```bash
+# Claude configurations
+cp -r ai-devkit/.claude your-repo/
 
-### How It Works
+# GitHub workflows (optional)
+cp ai-devkit/.github/workflows/*.yml your-repo/.github/workflows/
+```
 
-When you use an AI coding assistant in a project containing these files:
+## Repository Structure
 
-1. The tool reads its configuration file (e.g., `CLAUDE.md` for Claude Code)
-2. The AI receives context about your project structure, patterns, and rules
-3. Generated code follows your established conventions automatically
+```
+ai-devkit/
+├── .claude/                 # Shared configurations (copy to other repos)
+│   ├── agents/              # Custom agents
+│   ├── commands/            # Slash commands
+│   └── settings.json        # Permissions
+├── .claude-plugin/          # Marketplace config
+├── plugins/            # plugin
+└── .github/workflows/       # GitHub Actions
+```
 
-## Key Features
+## Support
 
-- **Unified instructions**: Single source of truth (`AGENTS.md`) for all AI tools
-- **Comprehensive documentation**: Architecture, patterns, standards, and examples
-- **Ready-to-use templates**: Component, hook, API, and test templates
-- **Best practices baked in**: TypeScript strict mode, accessibility, security
-- **Tool-specific optimizations**: Condensed `.cursorrules` for Cursor's format
-
-## Customization
-
-1. **Edit `AGENTS.md`** to change the main instructions
-2. **Modify documentation** in `frontend/` folders for detailed guidelines
-3. **Update examples** in `frontend/examples/` with your patterns
-4. **Adjust `.cursorrules`** separately (it's a condensed version, not a symlink)
-
-## Contributing
-
-Feel free to submit issues and pull requests for:
-- Additional AI tool configurations
-- Improved documentation templates
-- New code patterns and examples
-- Bug fixes and clarifications
-
-## License
-
-MIT
+- [GitHub Issues](https://github.com/chainavawongse/ai-devkit/issues)
