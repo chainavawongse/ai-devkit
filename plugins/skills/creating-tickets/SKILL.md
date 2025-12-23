@@ -274,32 +274,79 @@ Follow systematic-debugging and test-driven-development skills:
 
 ## Creating Tickets in PM System
 
-**Use PM MCP tools (JIRA):**
+**Check CLAUDE.md for configured PM system, then use appropriate MCP tools:**
+
+### If Jira (Atlassian MCP):
 
 ```python
-# Example with JIRA
 ticket = mcp__atlassian__create_issue({
     'title': '[Clear, concise title]',
     'description': '[Use appropriate template above]',
-    'team': '[Team name or ID]',
+    'team': '[Team name or ID from CLAUDE.md]',
     'parentId': '[Parent ticket ID for sub-tickets]',
     'labels': ['feature' or 'chore' or 'bug'],  # REQUIRED
     'state': 'Todo',
     'priority': '[Only if explicitly specified]'
 })
+```
 
-# Example with JIRA
+### If Jira (Alternative MCP):
+
+```python
 ticket = mcp__jira__create_issue({
     'summary': '[Clear, concise title]',
     'description': '[Use appropriate template above]',
-    'project': '[Project key]',
+    'project': '[Project key from CLAUDE.md]',
     'parent': '[Parent ticket key for sub-tasks]',
     'issuetype': '[Task/Story/Bug]',
     'labels': ['feature' or 'chore' or 'bug'],  # REQUIRED
 })
-
-# Adapt to your PM system's MCP tools
 ```
+
+### If Notion:
+
+```python
+# Get database ID from CLAUDE.md: ## Project Management > Data Source ID
+database_id = "[data_source_id from CLAUDE.md]"
+
+ticket = mcp__notion__notion-create-pages({
+    'parent': { 'data_source_id': database_id },
+    'pages': [{
+        'properties': {
+            'Name': '[Clear, concise title]',
+            'Status': 'Todo',
+            'Type': 'feature' or 'chore' or 'bug',  # REQUIRED - select property
+            'Parent': '[Parent page ID for sub-tickets]',  # Relation property
+            'Priority': '[Only if explicitly specified]'
+        },
+        'content': '[Use appropriate template above - markdown format]'
+    }]
+})
+
+# For dependencies, update the Blocks relation:
+if blocks_ids:
+    mcp__notion__notion-update-page({
+        'data': {
+            'page_id': ticket.id,
+            'command': 'update_properties',
+            'properties': {
+                'Blocks': blocks_ids  # Array of page IDs this ticket blocks
+            }
+        }
+    })
+```
+
+### Property Mapping Reference
+
+| Field | Jira | Notion |
+|-------|------|--------|
+| Title | `title` / `summary` | `Name` (title property) |
+| Description | `description` | Page content (markdown) |
+| Status | `state` / `status` | `Status` (select) |
+| Type/Label | `labels[]` | `Type` (select: feature/chore/bug) |
+| Parent | `parentId` / `parent` | `Parent` (relation) |
+| Dependencies | `blocks` relationship | `Blocks` (relation) |
+| Priority | `priority` | `Priority` (select) |
 
 ## Validation Rules
 
