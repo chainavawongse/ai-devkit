@@ -1,5 +1,5 @@
 ---
-description: Break down refined and planned issues into implementation sub-issues with dependencies in JIRA
+description: Break down refined and planned issues into implementation sub-issues with dependencies
 ---
 
 # Breakdown - Implementation Task Creation Command
@@ -19,7 +19,7 @@ This command uses the `breakdown-planning` skill to:
 1. Load issue and verify Specification + Technical Plan exist
 2. Break Technical Plan phases into independent, implementable tasks
 3. Each task is a complete feature/behavior (TDD: tests + implementation together)
-4. Create sub-issues in JIRA with full context
+4. Create sub-issues in configured PM system with full context
 5. Map dependencies between tasks
 6. Optionally chain to `/execute`
 
@@ -36,14 +36,16 @@ This command uses the `breakdown-planning` skill to:
 
 ### Step 1: Verify Prerequisites
 
+**Read PM configuration from CLAUDE.md** and load issue via `pm-operations`:
+
 ```bash
-# Load issue
-if mcp__atlassian available:
-  issue = mcp__atlassian__get_issue(id)
-elif jira available:
-  issue = jira_get_issue(id)
-else:
+# Load issue using configured PM system
+issue = pm_operations.get_issue(id)
+
+# If no PM system configured:
+if not pm_configured:
   ERROR: No PM system configured
+  SUGGEST: Run `/setup` first
 
 # Verify sections
 if "## Specification" not in issue.description:
@@ -84,7 +86,8 @@ Ready to begin execution? Run `/execute <issue-id>`
 
 ```markdown
 ERROR: No project management system configured
-Set up JIRA MCP server first.
+
+Run `/setup` to configure your PM system (Jira, Notion, or GitHub Issues).
 ```
 
 ### Missing Sections
@@ -156,7 +159,7 @@ ERROR: Run `/plan FEAT-45` first to create technical plan
 
 **Requires:**
 
-- JIRA MCP configured
+- PM system configured (via `/setup`)
 - Issue with Specification + Technical Plan
 - `breakdown-planning` skill
 

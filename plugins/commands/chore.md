@@ -10,7 +10,7 @@ Execute maintenance tasks like dependency upgrades, refactoring, and other chore
 
 ```bash
 /chore <description>              # Execute chore from description
-/chore <issue-id>                 # Execute chore from JIRA issue
+/chore <issue-id>                 # Execute chore from PM system (Jira/Notion/GitHub)
 ```
 
 ## Overview
@@ -37,8 +37,8 @@ This command is designed for maintenance tasks that:
 
 **Optional:**
 
-- JIRA issue with chore details
-- JIRA MCP server for issue integration
+- Issue with chore details in configured PM system
+- PM system configured (via `/setup`)
 
 ## Workflow
 
@@ -46,7 +46,7 @@ This command is designed for maintenance tasks that:
 
 **Parse input to determine source:**
 
-- If matches `[A-Z]+-\d+` pattern: fetch from JIRA via `mcp__atlassian__get_issue`
+- If matches issue ID pattern for configured PM system: fetch via `pm-operations`
 - Otherwise: treat as chore description
 
 **Extract chore details:**
@@ -90,7 +90,7 @@ I'm using the executing-chores skill to handle this maintenance task.
 
 - **Dirty working directory:** Commit/stash changes or use git worktree
 - **Missing justfile:** Create justfile or continue with manual verification
-- **JIRA issue not found:** Check issue ID, access, and MCP configuration
+- **Issue not found:** Check issue ID format for your PM system, access, and configuration
 - **Test/build failures:** Review skill output and fix issues iteratively
 
 ## Examples
@@ -101,10 +101,12 @@ I'm using the executing-chores skill to handle this maintenance task.
 /chore "Upgrade React from v17 to v18"
 ```
 
-**From JIRA issue:**
+**From issue:**
 
 ```bash
-/chore MAINT-42
+/chore MAINT-42           # Jira
+/chore <notion-page-id>   # Notion
+/chore 42                 # GitHub issue number
 ```
 
 Both invoke the executing-chores skill which handles implementation, verification, fixes, and commit.

@@ -9,13 +9,13 @@ Orchestrates systematic bug fixing using `Skill(devkit:executing-bug-fixes)`.
 ## Usage
 
 ```bash
-/bug-fix <issue-id>          # Fix bug from JIRA
+/bug-fix <issue-id>          # Fix bug from PM system (Jira/Notion/GitHub)
 /bug-fix <description>       # Create issue and fix
 ```
 
 ## Overview
 
-1. Load or create bug issue (MCP integration)
+1. Load or create bug issue (via configured PM system)
 2. Setup progress tracking (TodoWrite)
 3. Invoke `Skill(devkit:executing-bug-fixes)` (investigation, TDD, review, commit)
 4. Offer to create PR
@@ -24,7 +24,7 @@ Orchestrates systematic bug fixing using `Skill(devkit:executing-bug-fixes)`.
 
 ## Requirements
 
-- PM MCP (atlassian or jira)
+- PM system configured (via `/setup`)
 - Test framework configured
 - Justfile (recommended)
 
@@ -32,13 +32,13 @@ Orchestrates systematic bug fixing using `Skill(devkit:executing-bug-fixes)`.
 
 ### 1. Load or Create Issue
 
+**Read PM configuration from CLAUDE.md** and use `pm-operations` abstraction.
+
 **Existing issue:**
 
 ```bash
-# Detect PM MCP
-if mcp__atlassian: issue = get_issue(id)
-elif jira MCP: issue = jira_get_issue(id)
-else: ERROR("No PM MCP")
+# Load issue using configured PM system
+issue = pm_operations.get_issue(id)
 
 # Present
 "Loaded: ${id} - ${title}"
@@ -49,10 +49,10 @@ else: ERROR("No PM MCP")
 
 ```bash
 # Extract or ask: what's broken, expected, actual, team, priority
-issue = create_issue(
+issue = pm_operations.create_issue(
     title: <extracted>,
     description: "## Bug\n${desc}\n## Expected\n${exp}\n## Actual\n${act}",
-    team: <ask>, labels: ["bug"], priority: <ask>
+    type: "bug", priority: <ask>
 )
 "Created: ${id} - ${title}"
 ```
@@ -117,14 +117,14 @@ Testing: ${tests}
 
 | Error | Response |
 |-------|----------|
-| **No PM MCP** | "Need JIRA MCP. Setup: <docs>. Alternative: /bug-fix \"description\"" |
-| **Issue not found** | "Verify ID (TEAM-123), access, existence. Create new: /bug-fix \"desc\"" |
+| **No PM system** | "Run `/setup` to configure PM system. Alternative: /bug-fix \"description\"" |
+| **Issue not found** | "Verify ID format for your PM system. Create new: /bug-fix \"desc\"" |
 | **Cannot reproduce** | executing-bug-fixes reports: "Tests pass. Reasons: Fixed/Env/Steps. Options: Details/Env/Close" |
 | **Breaking changes** | executing-bug-fixes reports: "Architectural flaw. Use /refine, /breakdown, or workaround" |
 
 ## Integration
 
-**Required:** PM MCP, test framework
+**Required:** PM system configured (via `/setup`), test framework
 
 **Uses:**
 

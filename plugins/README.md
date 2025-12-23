@@ -3,7 +3,7 @@
 **Version:** 1.0.0
 **Plugin Type:** Claude Code Plugin for Development Workflow Automation
 
-The AI DevKit plugin provides a complete workflow for taking ideas from concept to production-ready code, deeply integrated with JIRA project management.
+The AI DevKit plugin provides a complete workflow for taking ideas from concept to production-ready code, with deep integration into your project management system of choice (Jira, Notion, or GitHub Issues).
 
 ## Overview
 
@@ -30,7 +30,7 @@ Each command can run standalone or chain automatically to the next, creating a s
 
 **Proper Classification:** Every ticket labeled as feature/chore/bug. Label determines execution workflow (TDD vs verification-only).
 
-**Deep Integration:** JIRA tickets are the source of truth. All work tracked, context preserved, decisions documented in PM system.
+**Deep Integration:** PM system tickets are the source of truth. All work tracked, context preserved, decisions documented in your chosen PM system (Jira, Notion, or GitHub Issues).
 
 ## Complete Workflow Diagram
 
@@ -41,7 +41,7 @@ Each command can run standalone or chain automatically to the next, creating a s
   │                          SPECIFICATION PHASE                              │
   └──────────────────────────────────────────────────────────────────────────┘
                                        │
-                    User idea or existing JIRA ticket
+                    User idea or existing PM ticket
                                        │
                                        ▼
                               ┌─────────────────┐
@@ -188,12 +188,12 @@ Transform rough feature descriptions into validated Specifications through Socra
 
 **Accepts:**
 
-- Existing JIRA issue ID: `/refine TEAM-123`
+- Existing issue ID: `/refine TEAM-123` (Jira), `/refine <page-id>` (Notion), `/refine 42` (GitHub)
 - Free text description: `/refine "Add user authentication with email and password"`
 
 **Process:**
 
-1. Loads or creates issue in JIRA
+1. Loads or creates issue in configured PM system
 2. Asks clarifying questions about WHAT to build (user needs, behaviors, success criteria)
 3. Presents Specification incrementally for validation
 4. Writes validated Specification to issue
@@ -279,7 +279,7 @@ Break down Specification + Technical Plan into sub-tickets with proper labels an
 6. Uses `creating-tickets` skill for consistent structure
 7. Offers to proceed to `/execute`
 
-**Output:** Sub-tickets with proper labels and dependencies, ready for sequential execution.
+**Output:** Sub-issues with proper labels and dependencies, ready for sequential execution.
 
 **Ticket Classification:**
 
@@ -395,7 +395,7 @@ Handle maintenance tasks and chores with comprehensive quality verification, wit
 **Accepts:**
 
 - Description: `/chore "Upgrade React from v17 to v18"`
-- JIRA issue ID: `/chore MAINT-42`
+- Issue ID: `/chore MAINT-42` (Jira), `/chore <page-id>` (Notion), `/chore 42` (GitHub)
 
 **Process:**
 
@@ -451,7 +451,7 @@ Systematically investigate, fix, and validate bugs using TDD and root cause anal
 - Bug description: `/bug-fix "Login fails with valid credentials"`
 
 **Process:**
-1. Loads or creates bug issue in JIRA
+1. Loads or creates bug issue in configured PM system
 2. Investigates root cause systematically
 3. Writes failing test that reproduces bug
 4. Implements fix following TDD
@@ -566,9 +566,9 @@ Commands leverage these skills for detailed guidance:
 # ✓ Build successful
 # ✓ PR created
 
-# Refactoring from JIRA issue
+# Refactoring from PM system issue
 /chore MAINT-56
-# JIRA issue: "Extract validation logic into utility functions"
+# Issue: "Extract validation logic into utility functions"
 # ✓ Refactoring complete
 # ✓ All tests passing
 # ✓ Committed and PR created
@@ -598,33 +598,43 @@ Commands leverage these skills for detailed guidance:
 
 ## Integration Requirements
 
-### Required MCP Integration
+### Project Management Integration
 
 **IMPORTANT:** The plugin does NOT install MCP servers. You must install and configure them separately in your Claude Code settings.
 
-**JIRA (via Atlassian Rovo MCP Server):**
+The plugin supports multiple PM systems. Choose the one your team uses:
 
-Atlassian provides an official, centrally-hosted MCP server. Install via Claude Code CLI:
+#### Option 1: Jira (via Atlassian MCP Server)
 
 ```bash
-# Add Atlassian MCP server
 claude mcp add --transport sse atlassian https://mcp.atlassian.com/v1/sse
 ```
 
-**Authentication:**
+Then authenticate:
+1. Restart Claude Code
+2. Open "Search & Tools" menu
+3. Select "Connect Atlassian Account"
+4. Complete OAuth flow
 
-1. Start a new chat in Claude and open the "Search & Tools" menu
-2. Select "Connect Atlassian Account"
-3. Follow the OAuth prompts to log in to your Atlassian account
-4. Grant access to your JIRA site during the OAuth flow
-5. Enable JIRA tools in Claude
+See [Atlassian MCP Server Setup](https://support.atlassian.com/atlassian-rovo-mcp-server/docs/setting-up-claude-ai/) for details.
 
-**Note:** No Node.js or proxy configuration required—Claude communicates directly with the Atlassian-hosted server.
+#### Option 2: Notion
 
-- Tools needed: `mcp__atlassian__*`
-- Verify: Run `/setup` to check if MCP server is available
+The Notion MCP server may already be available in Claude. If not:
+1. Configure Notion MCP in your Claude settings
+2. Authenticate with your Notion workspace
+3. Grant access to the databases you want to use
 
-For detailed setup instructions, see: [Atlassian MCP Server Setup](https://support.atlassian.com/atlassian-rovo-mcp-server/docs/setting-up-claude-ai/)
+#### Option 3: GitHub Issues
+
+No MCP server needed. Uses the `gh` CLI:
+```bash
+gh auth login
+```
+
+### Verify Configuration
+
+Run `/setup` in your repository to configure and verify PM integration.
 
 ### Optional But Recommended
 
@@ -642,17 +652,34 @@ For detailed setup instructions, see: [Atlassian MCP Server Setup](https://suppo
 
 ## Configuration
 
-### Optional CLAUDE.md Metadata
+### CLAUDE.md Project Management Metadata
 
-Add project management context to your CLAUDE.md:
+Add project management context to your CLAUDE.md (created by `/setup`):
 
+**For Jira:**
 ```markdown
 ## Project Management
 
-- System: JIRA
-- Default Team: CORE
-- Default Project: core-platform
-- Epic: Onboarding Improvements (CORE-100)
+**System:** Jira
+**Project Key:** CORE
+```
+
+**For Notion:**
+```markdown
+## Project Management
+
+**System:** Notion
+**Database:** Project Tasks
+**Database ID:** <uuid>
+**Data Source ID:** collection://<uuid>
+```
+
+**For GitHub Issues:**
+```markdown
+## Project Management
+
+**System:** GitHub Issues
+**Repository:** owner/repo
 ```
 
 This helps commands determine where to create issues automatically.
@@ -710,7 +737,7 @@ Default: Lean towards fine-grained for better tracking and testability.
 - Maps all blocking relationships
 - Identifies task execution order
 - Calculates critical path
-- Documents dependencies in JIRA
+- Documents dependencies in PM system
 
 `/execute` respects these dependencies:
 
@@ -750,7 +777,7 @@ The breakdown skill analyzes multiple factors. If it suggests fine-grained, ther
 
 ### 3. Review Before Executing
 
-After `/breakdown`, review the sub-issues in JIRA:
+After `/breakdown`, review the sub-issues in your PM system:
 
 - Check dependencies make sense
 - Verify task descriptions are clear
@@ -774,31 +801,20 @@ Keeps execution isolated from your current work.
 
 Code review happens after every task. Critical and Important issues MUST be fixed before proceeding. Don't skip this step.
 
-### 6. Keep JIRA Updated
+### 6. Keep PM System Updated
 
-Status updates provide visibility to your team. `/execute` handles this automatically, but if you implement manually, update JIRA regularly.
+Status updates provide visibility to your team. `/execute` handles this automatically, but if you implement manually, update your PM system regularly.
 
 ## Troubleshooting
 
-### "No project management MCP configured"
+### "No project management system configured"
 
-**IMPORTANT:** MCP servers must be installed separately by the user.
+Run `/setup` to configure your PM system. The setup wizard will:
+- Detect available MCP servers
+- Guide you through authentication
+- Configure project/database settings
 
-Install and configure JIRA MCP server (Atlassian Rovo):
-
-```bash
-# Add Atlassian MCP server via CLI
-claude mcp add --transport sse atlassian https://mcp.atlassian.com/v1/sse
-
-# Authenticate: Start a new chat and open "Search & Tools" menu
-# Select "Connect Atlassian Account" and follow OAuth prompts
-```
-
-For detailed setup instructions, see: [Atlassian MCP Server Setup](https://support.atlassian.com/atlassian-rovo-mcp-server/docs/setting-up-claude-ai/)
-
-Verify tools are available with `/setup`
-
-The plugin does NOT install MCP servers automatically.
+See INSTALLATION.md for MCP server installation instructions.
 
 ### "Issue missing design section"
 
@@ -818,7 +834,7 @@ The issue needs breakdown first:
 
 ### "Circular dependency detected"
 
-Review sub-issue dependencies in JIRA. One task is blocking another that blocks it back. Fix the dependency chain and re-run `/execute`.
+Review sub-issue dependencies in your PM system. One task is blocking another that blocks it back. Fix the dependency chain and re-run `/execute`.
 
 ### "Working directory has uncommitted changes"
 
@@ -864,12 +880,12 @@ User Input
     ↓
 /refine
     ├─> refining-issues skill
-    ├─> Creates/updates JIRA issue
+    ├─> Creates/updates PM issue
     └─> Offers /breakdown
         ↓
 /breakdown
     ├─> breakdown-planning skill
-    ├─> Creates sub-issues in JIRA
+    ├─> Creates sub-issues in PM system
     └─> Offers /execute
         ↓
 /execute
@@ -878,7 +894,7 @@ User Input
     │   ├─> Implementation subagent (uses TDD skill)
     │   ├─> Automatic checks (justfile)
     │   ├─> Code review subagent
-    │   └─> Update JIRA status
+    │   └─> Update PM status
     ├─> Interactive rebase
     └─> Create PR
 ```
@@ -916,7 +932,7 @@ Edit skills to match your stack:
 
 - `/refine`, `/breakdown`, `/execute` commands
 - `refining-issues`, `breakdown-planning` skills
-- JIRA deep integration
+- Deep PM system integration (Jira, Notion, GitHub Issues)
 - Subagent-driven development pattern
 - TDD enforcement
 - Automatic code review

@@ -9,7 +9,7 @@ Transform rough ideas into validated specifications (WHAT to build), ready for t
 ## Usage
 
 ```bash
-/refine <issue-id>          # Refine existing JIRA issue
+/refine <issue-id>          # Refine existing issue (Jira/Notion/GitHub)
 /refine <free text>         # Create new issue and refine it
 ```
 
@@ -17,7 +17,7 @@ Transform rough ideas into validated specifications (WHAT to build), ready for t
 
 This command uses the `refining-issues` skill to:
 
-1. Load or create issue in JIRA
+1. Load or create issue in configured PM system
 2. **Assess if requirements are already sufficient** (may short-circuit to `/plan` or `/breakdown`)
 3. Ask questions about user needs (WHAT, not HOW)
 4. Explore expected behaviors and edge cases
@@ -33,19 +33,18 @@ This command uses the `refining-issues` skill to:
 
 ### Step 1: Load or Create Issue
 
+**Read PM configuration from CLAUDE.md** to determine which system to use (Jira, Notion, or GitHub Issues).
+
 **Existing issue:**
 
-```bash
-issue = mcp__atlassian__get_issue(id)
-```
+Use PM operations from `pm-operations` skill:
+- Jira: `mcp__atlassian__get_issue(id)` or `mcp__jira__get_issue(issue_key)`
+- Notion: `mcp__notion__notion-fetch(id)`
+- GitHub: `gh issue view <number>`
 
 **New issue from text:**
 
-```bash
-# Determine team (from CLAUDE.md or ask user)
-# Create issue with description
-issue = mcp__atlassian__create_issue(title, description, team)
-```
+Create via configured PM system using `pm-operations` abstraction.
 
 ### Step 2: Run Refining-Issues Skill
 
@@ -77,10 +76,9 @@ Ready to create technical plan? Run `/plan <ISSUE-ID>`
 ```markdown
 ERROR: No project management system configured
 
-Install JIRA MCP server:
-- Atlassian: https://mcp.atlassian.com/v1/sse
-- Configure OAuth in Claude Code settings
-- Restart Claude Code
+Run `/setup` to configure your PM system (Jira, Notion, or GitHub Issues).
+
+See INSTALLATION.md for MCP server setup instructions.
 ```
 
 ### Issue Not Found
@@ -89,8 +87,9 @@ Install JIRA MCP server:
 ERROR: Issue <ISSUE-ID> not found
 
 Check issue ID format:
-- JIRA: TEAM-123
-- JIRA: PROJECT-456
+- Jira: TEAM-123
+- Notion: Page URL or UUID
+- GitHub: Issue number (e.g., 42)
 
 Or create new: `/refine "your feature description"`
 ```
@@ -99,7 +98,7 @@ Or create new: `/refine "your feature description"`
 
 **Requires:**
 
-- JIRA MCP configured
+- PM system configured (via `/setup`)
 - `refining-issues` skill
 
 **Chains to:**

@@ -30,7 +30,7 @@ Create a pull request with a clear, human-readable description that effectively 
 
 **Optional:**
 
-- PM system (JIRA) MCP for issue context
+- PM system configured (for issue context)
 - PR template in `.github/pull_request_template.md`
 
 ## How It Works
@@ -212,7 +212,7 @@ gh pr edit {number} --add-project "Sprint 23"
 - `creating-pull-requests` skill for PR generation logic
 - `gh` CLI for GitHub operations
 - `git` commands for repository analysis
-- PM system MCP (optional) for issue context
+- PM system (optional) for issue context
 
 **Called by:**
 

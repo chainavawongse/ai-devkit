@@ -31,7 +31,7 @@ Then automatically calls `/execute <parent-id>` to implement all feedback.
 **PR must have:**
 
 - Parent issue reference in description (added by `/pr`)
-- Format: "Closes TEAM-123" or "Implements TEAM-123"
+- Format: "Closes TEAM-123" or "Implements TEAM-123" (Jira), or equivalent for other PM systems
 
 **GitHub CLI:**
 
@@ -39,7 +39,7 @@ Then automatically calls `/execute <parent-id>` to implement all feedback.
 
 **PM System:**
 
-- JIRA MCP configured
+- PM system configured (via `/setup`)
 
 **Git Worktrees:**
 

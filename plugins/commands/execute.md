@@ -73,6 +73,8 @@ graph TB
 
 ### Step 1: Verify Prerequisites
 
+**Read PM configuration from CLAUDE.md** and use `pm-operations` for all PM interactions:
+
 ```bash
 # Check working directory
 git_status = git status --porcelain
@@ -80,8 +82,8 @@ if git_status not empty:
     ERROR: Uncommitted changes
     SUGGEST: Commit, stash, or use git worktree
 
-# Load parent issue
-parent = mcp__atlassian__get_issue(id)
+# Load parent issue using configured PM system
+parent = pm_operations.get_issue(id)
 
 # Verify sections
 if "## Specification" not in parent.description:
@@ -90,7 +92,7 @@ if "## Technical Plan" not in parent.description:
     ERROR: Run `/plan <issue-id>` first
 
 # Load sub-issues
-sub_issues = mcp__atlassian__list_issues(parentId: parent.id)
+sub_issues = pm_operations.list_children(parentId: parent.id)
 if len(sub_issues) == 0:
     ERROR: Run `/breakdown <issue-id>` first
 ```
@@ -137,7 +139,7 @@ Each subagent receives task description + relevant Specification excerpts (WHAT)
 
 ## Integration
 
-**Requires:** PM system (JIRA) MCP, parent issue with Specification + Technical Plan + sub-issues, `executing-plans` skill, `creating-pull-requests` skill, GitHub CLI authenticated.
+**Requires:** PM system configured (via `/setup`), parent issue with Specification + Technical Plan + sub-issues, `executing-plans` skill, `creating-pull-requests` skill, GitHub CLI authenticated.
 
 **Uses:** Subagents for implementation, code review per task, automatic status updates, PR creation with diagrams.
 

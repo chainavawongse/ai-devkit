@@ -25,9 +25,11 @@ This command uses the `technical-planning` skill to:
 
 ### Step 1: Verify Prerequisites
 
+**Read PM configuration from CLAUDE.md** and load issue via `pm-operations`:
+
 ```bash
-# Load issue
-issue = mcp__atlassian__get_issue(id)
+# Load issue using configured PM system
+issue = pm_operations.get_issue(id)
 
 # Verify Specification exists
 if "## Specification" not in issue.description:
@@ -73,7 +75,8 @@ Ready to break this down into implementation tasks? Run `/breakdown <ISSUE-ID>`
 
 ```markdown
 ERROR: No project management system configured
-Set up JIRA MCP server first.
+
+Run `/setup` to configure your PM system (Jira, Notion, or GitHub Issues).
 ```
 
 ### Missing Specification
@@ -139,7 +142,7 @@ ERROR: Run `/refine FEAT-45` first
 
 **Requires:**
 
-- JIRA MCP configured
+- PM system configured (via `/setup`)
 - Issue with Specification section
 - `technical-planning` skill
 
