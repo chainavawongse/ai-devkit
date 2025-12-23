@@ -35,13 +35,25 @@ Create PR at end? (yes/no/ask-later)
 
 Store response for Step 6.
 
+### Step 0.1: Validate CLAUDE.md Configuration
+
+**REQUIRED:** Call validation skill before any PM operations.
+
+```python
+# Validate CLAUDE.md exists and has required configuration
+Skill('devkit:validating-claude-md')
+
+# If validation fails, skill will STOP with clear error message
+# pointing user to run /setup
+
+# On success, proceed with validated PM configuration
+```
+
 ### Step 0.25: Phase Validation (Stage Gate)
 
 **Before execution, verify the parent issue has completed all required phases:**
 
-**First, check CLAUDE.md for PM system configuration:**
-- Look for `## Project Management` section
-- Identify system: `Jira` or `Notion`
+**Using validated PM configuration from Step 0.1:**
 
 **Load parent issue and check phase labels:**
 

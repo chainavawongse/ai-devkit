@@ -33,11 +33,21 @@ This skill fixes bugs following rigorous methodology:
 
 ## The Process
 
+### Step 0: Validate CLAUDE.md Configuration
+
+**REQUIRED:** Validate configuration before any PM operations.
+
+```python
+# Validate CLAUDE.md exists and has required configuration
+Skill('devkit:validating-claude-md')
+
+# If validation fails, skill will STOP with clear error message
+# pointing user to run /setup
+```
+
 ### Step 1: Load Bug Context
 
-**First, check CLAUDE.md for PM system configuration:**
-- Look for `## Project Management` section
-- Identify system: `Jira` or `Notion`
+**Using validated PM configuration from Step 0:**
 
 **Read ticket from PM system:**
 

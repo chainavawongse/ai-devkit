@@ -65,6 +65,18 @@ if missing critical recipes:
 fi
 ```
 
+### Step 0.5: Validate CLAUDE.md Configuration
+
+**REQUIRED if loading from PM system:** Validate configuration before any PM operations.
+
+```python
+# Validate CLAUDE.md exists and has required configuration
+Skill('devkit:validating-claude-md')
+
+# If validation fails, skill will STOP with clear error message
+# pointing user to run /setup
+```
+
 ### Step 1: Load Chore Details
 
 **From user description:**
@@ -75,9 +87,7 @@ Chore: "Upgrade all npm dependencies to latest compatible versions"
 
 **From PM system issue (optional):**
 
-**First, check CLAUDE.md for PM system configuration:**
-- Look for `## Project Management` section
-- Identify system: `Jira` or `Notion`
+**Using validated PM configuration from Step 0.5:**
 
 ```bash
 # For Jira:
