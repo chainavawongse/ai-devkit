@@ -1,6 +1,7 @@
 ---
 name: executing-chores
 description: Use when handling maintenance tasks (dependency upgrades, refactoring, cleanup) that don't require TDD but still need comprehensive quality verification
+version: 1.1.0
 ---
 
 # Executing Chores
@@ -74,14 +75,21 @@ Chore: "Upgrade all npm dependencies to latest compatible versions"
 
 **From PM system issue (optional):**
 
+**First, check CLAUDE.md for PM system configuration:**
+- Look for `## Project Management` section
+- Identify system: `Jira` or `Notion`
+
 ```bash
-# JIRA:
+# For Jira:
 issue = mcp__atlassian__get_issue(id)
-# OR JIRA:
+# OR fallback:
 issue = mcp__jira__get_issue(issue_key)
 
-chore_title = issue.title
-chore_description = issue.description
+# For Notion:
+issue = mcp__notion__notion-fetch(id=issue_id)
+
+chore_title = issue.title  # or issue.properties.Name for Notion
+chore_description = issue.description  # or issue.content for Notion
 ```
 
 **Present plan:**
@@ -299,11 +307,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 **If chore came from PM system issue:**
 
 ```bash
-# Update ticket status to Done
-# JIRA: mcp__atlassian__update_issue(id=issue_id, state='Done')
-# JIRA: mcp__jira__update_issue(issue_key=issue_id, status='Done')
-
-# Add completion comment using this template:
+# Prepare completion comment:
 completion_comment = """✅ Chore complete
 
 **Changes:**
@@ -320,8 +324,25 @@ completion_comment = """✅ Chore complete
 **Files changed:** <file list>
 """
 
-# JIRA: mcp__atlassian__create_comment(issueId=issue_id, body=completion_comment)
-# JIRA: mcp__jira__add_comment(issue_key=issue_id, comment=completion_comment)
+# For Jira:
+mcp__atlassian__update_issue(id=issue_id, state='Done')
+mcp__atlassian__create_comment(issueId=issue_id, body=completion_comment)
+# OR fallback:
+mcp__jira__update_issue(issue_key=issue_id, status='Done')
+mcp__jira__add_comment(issue_key=issue_id, comment=completion_comment)
+
+# For Notion:
+mcp__notion__notion-update-page({
+  data: {
+    page_id: issue_id,
+    command: "update_properties",
+    properties: { Status: "Done" }
+  }
+})
+mcp__notion__notion-create-comment({
+  parent: { page_id: issue_id },
+  rich_text: [{ type: "text", text: { content: completion_comment } }]
+})
 ```
 
 ### Step 7: Complete Development
@@ -353,7 +374,7 @@ Before reporting completion:
 - [ ] No regressions introduced
 - [ ] Committed with conventional commit message
 - [ ] Run final verification in affected module: `just lint format test`
-- [ ] Ticket status updated to Done (JIRA, if applicable)
+- [ ] Ticket status updated to Done (Jira or Notion, if applicable)
 - [ ] Completion summary provided
 
 **If any check fails:**

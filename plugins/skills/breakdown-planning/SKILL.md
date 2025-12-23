@@ -2,7 +2,7 @@
 name: breakdown-planning
 description: Create implementation sub-issues from Specification and Technical Plan, with each task being a complete feature/behavior implemented via TDD
 when_to_use: when Specification and Technical Plan are complete and you need to break down work into executable sub-issues
-version: 3.0.0
+version: 3.1.0
 ---
 
 # Breakdown Planning
@@ -21,11 +21,11 @@ Break down Specification + Technical Plan into executable sub-issues. Each task 
 
 | Phase | Key Activities | Tool Usage | Output |
 |-------|---------------|------------|--------|
-| **1. Load Context** | Retrieve Specification + Technical Plan | JIRA MCP | Full context loaded |
+| **1. Load Context** | Retrieve Specification + Technical Plan | PM System MCP | Full context loaded |
 | **2. Extract Phases** | Parse Technical Plan phases | — | Phase structure identified |
 | **3. Create Tasks** | Break phases into features | TodoWrite | Independent tasks with TDD |
-| **4. Create Sub-Issues** | Write to PM system | JIRA MCP | Sub-issues with full context |
-| **5. Map Dependencies** | Link blocking relationships | JIRA MCP | Dependency graph complete |
+| **4. Create Sub-Issues** | Write to PM system | PM System MCP | Sub-issues with full context |
+| **5. Map Dependencies** | Link blocking relationships | PM System MCP | Dependency graph complete |
 
 ## The Process
 
@@ -42,10 +42,19 @@ Breakdown Progress:
 
 ### Phase 1: Load Context
 
+**First, check CLAUDE.md for PM system configuration:**
+- Look for `## Project Management` section
+- Identify system: `Jira` or `Notion`
+
 **Retrieve parent issue:**
 
-- JIRA: `mcp__atlassian__get_issue` with issue ID
-- JIRA: (equivalent JIRA tool) with issue ID
+**For Jira:**
+- `mcp__atlassian__get_issue(id=parent_id)` (primary)
+- OR `mcp__jira__get_issue(issue_key=parent_id)` (fallback)
+
+**For Notion:**
+- `mcp__notion__notion-fetch(id=parent_id)`
+
 - Extract: Title, Specification section, Technical Plan section
 
 **Verify required sections:**
@@ -188,7 +197,7 @@ Sub-Issue Creation Progress:
 
 **REQUIRED SUB-SKILL:** Use `devkit:creating-tickets` for all ticket creation
 
-**For each task, create one sub-ticket in JIRA:**
+**For each task, create one sub-ticket in the PM system:**
 
 **Critical:** Every sub-ticket MUST have exactly ONE label: `feature`, `chore`, or `bug`
 
@@ -275,12 +284,26 @@ Follow test-driven-development skill (devkit:test-driven-development):
 **After each sub-issue created:**
 
 - Record the issue ID
-- Map dependencies using JIRA's relationship system
+- Map dependencies using PM system's relationship features
 
 **Dependency linking:**
 
-- For "blocks" relationship: Update blocking issue with link to blocked issue
-- For "blocked by" relationship: Update blocked issue with link to blocking issue
+**For Jira:**
+- Use `mcp__atlassian__create_dependency(from, to, type="blocks")` (primary)
+- OR `mcp__jira__create_link(inward_issue, outward_issue, link_type="Blocks")` (fallback)
+
+**For Notion:**
+- Update the "Blocks" relation property on the blocking issue:
+  ```
+  mcp__notion__notion-update-page({
+    data: {
+      page_id: blocking_issue_id,
+      command: "update_properties",
+      properties: { Blocks: [...existing_blocks, blocked_issue_id] }
+    }
+  })
+  ```
+- The "Blocked By" property is auto-populated via dual relation
 
 ### Phase 5: Document Patterns
 
@@ -309,8 +332,22 @@ Based on the task type, add pattern references:
 
 **Update each sub-issue:**
 
-- JIRA: `mcp__atlassian__update_issue` with pattern documentation
-- Add these patterns to the description (append to existing content)
+**For Jira:**
+- `mcp__atlassian__update_issue(id, description=updated_description)` (primary)
+- OR `mcp__jira__update_issue(issue_key, description=updated_description)` (fallback)
+
+**For Notion:**
+- Append patterns to page content:
+  ```
+  mcp__notion__notion-update-page({
+    data: {
+      page_id: issue_id,
+      command: "insert_content_after",
+      selection_with_ellipsis: "...last content...",
+      new_str: pattern_documentation
+    }
+  })
+  ```
 
 ### Phase 6: Summary Report
 

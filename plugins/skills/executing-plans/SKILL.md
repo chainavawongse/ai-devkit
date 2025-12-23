@@ -2,7 +2,7 @@
 name: executing-plans
 description: Execute sub-issues from parent issue (with Specification + Technical Plan), dispatching subagents with full context
 when_to_use: when parent issue has Specification, Technical Plan, and sub-issues ready for implementation
-version: 2.0.0
+version: 2.1.0
 ---
 
 # Executing Plans
@@ -77,13 +77,20 @@ git status  # Should be clean
 
 ### Step 1: Load Context from Parent Issue
 
+**First, check CLAUDE.md for PM system configuration:**
+- Look for `## Project Management` section
+- Identify system: `Jira` or `Notion`
+
 ```python
-# JIRA:
+# For Jira:
 parent = mcp__atlassian__get_issue(id=parent_id)
-# OR JIRA:
+# OR fallback:
 parent = mcp__jira__get_issue(issue_key=parent_id)
 
-# Extract sections
+# For Notion:
+parent = mcp__notion__notion-fetch(id=parent_id)
+
+# Extract sections (same for both systems)
 specification = extract_section(parent.description, "## Specification")
 technical_plan = extract_section(parent.description, "## Technical Plan")
 
@@ -95,14 +102,20 @@ if not specification or not technical_plan:
 ### Step 2: Load Sub-Issues
 
 ```python
-# JIRA:
+# For Jira:
 sub_issues = mcp__atlassian__list_issues(parentId=parent_id)
-# OR JIRA:
+# OR fallback:
 sub_issues = mcp__jira__list_issues(parent=parent_id)
 
-# Filter by status
-completed_tasks = [task for task in sub_issues if task.state in ['Done', 'Completed']]
-remaining_tasks = [task for task in sub_issues if task.state not in ['Done', 'Completed']]
+# For Notion:
+# Search within database for pages with Parent = parent_id
+database_id = config.data_source_id  # From CLAUDE.md
+results = mcp__notion__notion-search(query="", data_source_url="collection://" + database_id)
+sub_issues = [page for page in results if page.properties.Parent == parent_id]
+
+# Filter by status (same for both systems)
+completed_tasks = [task for task in sub_issues if task.status in ['Done', 'Completed']]
+remaining_tasks = [task for task in sub_issues if task.status not in ['Done', 'Completed']]
 
 # Build execution plan from remaining tasks
 ready_tasks = [task for task in remaining_tasks if no_blockers(task, completed_tasks)]
@@ -158,11 +171,11 @@ while remaining_tasks:
 
 **Each agent will:**
 
-1. Load task details from PM system (JIRA)
+1. Load task details from PM system (Jira or Notion)
 2. Extract Specification and Technical Plan context from parent issue
 3. Follow TDD checklist from sub-issue
 4. Run verification from justfile directory (`cd <module> && just test`)
-5. Update task status in PM system (JIRA)
+5. Update task status in PM system (Jira or Notion)
 6. Report completion
 
 **After each task completes:**
@@ -192,7 +205,7 @@ Use Skill('devkit:executing-{type}') for issue {ticket_id}
 2. Use test-driven-development skill
 3. Reference patterns from Technical Plan
 4. Verify with `just test` and `just lint`
-5. Update JIRA status
+5. Update PM system status (Jira or Notion)
 6. Report completion
 
 ### Step 5: Continue Until Complete

@@ -1,8 +1,8 @@
 ---
 name: refining-issues
-description: Refine rough issue descriptions into fully-formed specifications through Socratic questioning, focusing on WHAT to build not HOW, writing results directly to JIRA issues
+description: Refine rough issue descriptions into fully-formed specifications through Socratic questioning, focusing on WHAT to build not HOW, writing results directly to PM system (Jira or Notion)
 when_to_use: when partner provides issue ID or feature description that needs requirements refinement before technical planning
-version: 2.0.0
+version: 2.1.0
 ---
 
 # Refining Issues Into Specifications
@@ -64,20 +64,37 @@ Issue Refinement Progress:
 
 ### Phase 1: Load Issue
 
+**First, check CLAUDE.md for PM system configuration:**
+- Look for `## Project Management` section
+- Identify system: `Jira` or `Notion`
+
 **If issue ID provided:**
 
-- JIRA: `mcp__atlassian__get_issue(id=issue_id)`
-- OR JIRA: `mcp__jira__get_issue(issue_key=issue_id)`
+**For Jira:**
+- `mcp__atlassian__get_issue(id=issue_id)` (primary)
+- OR `mcp__jira__get_issue(issue_key=issue_id)` (fallback)
 - Extract: Title, description, labels, project/team context
+
+**For Notion:**
+- `mcp__notion__notion-fetch(id=page_id)`
+- Extract: Name (title), page content (description), Type property (label)
+
 - Present to user: "I've loaded issue [ID]: [Title]. Current description: [summary]"
 
 **If free text provided:**
 
-- Clarify which project/team this belongs to
-- JIRA: `mcp__atlassian__create_issue(title=..., team=..., description=...)`
-- OR JIRA: `mcp__jira__create_issue(summary=..., project=..., description=...)`
+- Clarify which project/team/database this belongs to
+
+**For Jira:**
+- `mcp__atlassian__create_issue(title=..., team=..., description=...)`
+- OR `mcp__jira__create_issue(summary=..., project=..., description=...)`
+
+**For Notion:**
+- Get database ID from CLAUDE.md (`Data Source ID`)
+- `mcp__notion__notion-create-pages({ parent: { data_source_id: db_id }, pages: [{ properties: { Name: title, Status: "Todo" }, content: description }] })`
+
 - Capture the created issue ID for later updates
-- Present to user: "I've created issue [ID]: [Title] in [Team/Project]"
+- Present to user: "I've created issue [ID]: [Title] in [Team/Project/Database]"
 
 ### Phase 1.5: Assess Requirement Clarity (Short-Circuit Check)
 
@@ -263,10 +280,35 @@ After specification is validated, write it to the issue:
 
 **Update the issue:**
 
-- JIRA: `mcp__atlassian__update_issue(id=issue_id, description=formatted_description, labels=['refined'])`
-- OR JIRA: `mcp__jira__update_issue(issue_key=issue_id, description=formatted_description, labels=['refined'])`
+**For Jira:**
+- `mcp__atlassian__update_issue(id=issue_id, description=formatted_description, labels=['refined'])`
+- OR `mcp__jira__update_issue(issue_key=issue_id, description=formatted_description, labels=['refined'])`
+
+**For Notion:**
+- Update page content with specification:
+  ```
+  mcp__notion__notion-update-page({
+    data: {
+      page_id: page_id,
+      command: "replace_content",
+      new_str: formatted_description
+    }
+  })
+  ```
+- Update Status property if needed:
+  ```
+  mcp__notion__notion-update-page({
+    data: {
+      page_id: page_id,
+      command: "update_properties",
+      properties: { Status: "Todo" }
+    }
+  })
+  ```
+
+**For all systems:**
 - Preserve any existing description content (append, don't replace)
-- Add label: "refined" or "ready-for-planning"
+- Add label/tag: "refined" or "ready-for-planning"
 - Update state to "Todo" if it was "Backlog" or "Triage"
 
 **Confirm with user:**

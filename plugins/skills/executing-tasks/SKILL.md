@@ -2,7 +2,7 @@
 name: executing-tasks
 description: Execute feature implementation tasks using TDD workflow with code review - dispatched by executing-plans for tickets labeled 'feature'
 when_to_use: when implementing a new feature or behavior change that requires test-driven development
-version: 1.0.0
+version: 1.1.0
 ---
 
 # Executing Tasks (Feature Implementation)
@@ -33,16 +33,22 @@ This skill implements new features following rigorous TDD:
 
 ### Step 1: Load Task Context
 
+**First, check CLAUDE.md for PM system configuration:**
+- Look for `## Project Management` section
+- Identify system: `Jira` or `Notion`
+
 **Read ticket from PM system:**
 
 ```python
-# Use your PM system's MCP tools
-# JIRA:
+# For Jira:
 ticket = mcp__atlassian__get_issue(id=ticket_id)
-# OR JIRA:
+# OR fallback:
 ticket = mcp__jira__get_issue(issue_key=ticket_id)
 
-# Extract required sections
+# For Notion:
+ticket = mcp__notion__notion-fetch(id=ticket_id)
+
+# Extract required sections (same for both systems)
 specification_context = extract_section(ticket.description, "## Specification Context")
 technical_plan = extract_section(ticket.description, "## Technical Plan Guidance")
 tdd_checklist = extract_section(ticket.description, "## TDD Implementation Checklist")
@@ -259,11 +265,7 @@ EOF
 **Mark ticket as complete in PM system:**
 
 ```python
-# Update ticket status to Done
-# JIRA: mcp__atlassian__update_issue(id=ticket_id, state='Done')
-# JIRA: mcp__jira__update_issue(issue_key=ticket_id, status='Done')
-
-# Add completion comment using this template:
+# Prepare completion comment:
 completion_comment = f"""✅ Feature implemented
 
 **Implementation:**
@@ -282,8 +284,25 @@ completion_comment = f"""✅ Feature implemented
 **Files changed:** {file_list}
 """
 
-# JIRA: mcp__atlassian__create_comment(issueId=ticket_id, body=completion_comment)
-# JIRA: mcp__jira__add_comment(issue_key=ticket_id, comment=completion_comment)
+# For Jira:
+mcp__atlassian__update_issue(id=ticket_id, state='Done')
+mcp__atlassian__create_comment(issueId=ticket_id, body=completion_comment)
+# OR fallback:
+mcp__jira__update_issue(issue_key=ticket_id, status='Done')
+mcp__jira__add_comment(issue_key=ticket_id, comment=completion_comment)
+
+# For Notion:
+mcp__notion__notion-update-page({
+  data: {
+    page_id: ticket_id,
+    command: "update_properties",
+    properties: { Status: "Done" }
+  }
+})
+mcp__notion__notion-create-comment({
+  parent: { page_id: ticket_id },
+  rich_text: [{ type: "text", text: { content: completion_comment } }]
+})
 ```
 
 ### Step 8: Report Completion
@@ -365,7 +384,7 @@ Before reporting completion:
 - [ ] Review feedback applied
 - [ ] Committed with conventional commit message
 - [ ] Run final verification in affected module: `just lint format test`
-- [ ] Ticket status updated to Done (JIRA)
+- [ ] Ticket status updated to Done (Jira or Notion)
 - [ ] Completion summary provided
 
 ## Remember
