@@ -116,9 +116,33 @@ list-commands:
     @ls -1 "plugins/commands/"
 
 # ============================================================================
+# Plugin Validation
+# ============================================================================
+
+# Validate skill files have proper frontmatter
+validate-skills:
+    @chmod +x scripts/validate-skills.sh
+    @./scripts/validate-skills.sh
+
+# Validate skill references point to existing skills
+validate-references:
+    @chmod +x scripts/validate-references.sh
+    @./scripts/validate-references.sh
+
+# Validate PM operations usage (no hard-coded MCP calls)
+validate-pm:
+    @chmod +x scripts/validate-pm-usage.sh
+    @./scripts/validate-pm-usage.sh
+
+# Run all plugin validations
+validate: validate-skills validate-references validate-pm
+    @echo ""
+    @echo "✅ All plugin validations passed"
+
+# ============================================================================
 # CI
 # ============================================================================
 
 # Run all checks for CI
-ci: check check-plugin
+ci: check check-plugin validate
     @echo "All CI checks passed"
