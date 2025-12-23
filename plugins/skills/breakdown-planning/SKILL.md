@@ -349,6 +349,36 @@ Based on the task type, add pattern references:
   })
   ```
 
+**After all sub-issues created, update parent issue with phase label:**
+
+**For Jira:**
+```python
+# Add phase:broken-down label to parent
+mcp__atlassian__update_issue(
+    id=parent_id,
+    labels=['refined', 'planned', 'phase:refined', 'phase:planned', 'phase:broken-down']
+)
+# OR fallback:
+mcp__jira__update_issue(
+    issue_key=parent_id,
+    labels=['refined', 'planned', 'phase:refined', 'phase:planned', 'phase:broken-down']
+)
+```
+
+**For Notion:**
+```python
+# Add 'broken-down' to Phase multi-select property
+mcp__notion__notion-update-page({
+    data: {
+        page_id: parent_id,
+        command: "update_properties",
+        properties: {
+            Phase: "refined, planned, broken-down"  # Multi-select accumulates
+        }
+    }
+})
+```
+
 ### Phase 6: Summary Report
 
 **Present breakdown summary:**

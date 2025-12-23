@@ -511,7 +511,7 @@ new_description = current_description + "\n\n---\n\n" + technical_plan
 mcp__atlassian__update_issue(
     id=issue_id,
     description=new_description,
-    labels=['planned', 'refined'],
+    labels=['planned', 'refined', 'phase:refined', 'phase:planned'],
     state='Todo'
 )
 
@@ -519,9 +519,31 @@ mcp__atlassian__update_issue(
 mcp__jira__update_issue(
     issue_key=issue_id,
     description=new_description,
-    labels=['planned', 'refined'],
+    labels=['planned', 'refined', 'phase:refined', 'phase:planned'],
     status='To Do'
 )
+
+# For Notion:
+# First update page content
+mcp__notion__notion-update-page({
+    data: {
+        page_id: page_id,
+        command: "replace_content",
+        new_str: new_description
+    }
+})
+
+# Then update Phase property (multi-select accumulates)
+mcp__notion__notion-update-page({
+    data: {
+        page_id: page_id,
+        command: "update_properties",
+        properties: {
+            Status: "Todo",
+            Phase: "refined, planned"  # Multi-select values
+        }
+    }
+})
 ```
 
 **Confirm with user:**

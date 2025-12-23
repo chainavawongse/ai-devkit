@@ -281,8 +281,8 @@ After specification is validated, write it to the issue:
 **Update the issue:**
 
 **For Jira:**
-- `mcp__atlassian__update_issue(id=issue_id, description=formatted_description, labels=['refined'])`
-- OR `mcp__jira__update_issue(issue_key=issue_id, description=formatted_description, labels=['refined'])`
+- `mcp__atlassian__update_issue(id=issue_id, description=formatted_description, labels=['refined', 'phase:refined'])`
+- OR `mcp__jira__update_issue(issue_key=issue_id, description=formatted_description, labels=['refined', 'phase:refined'])`
 
 **For Notion:**
 - Update page content with specification:
@@ -295,20 +295,23 @@ After specification is validated, write it to the issue:
     }
   })
   ```
-- Update Status property if needed:
+- Update Status and Phase properties:
   ```
   mcp__notion__notion-update-page({
     data: {
       page_id: page_id,
       command: "update_properties",
-      properties: { Status: "Todo" }
+      properties: {
+        Status: "Todo",
+        Phase: "refined"
+      }
     }
   })
   ```
 
 **For all systems:**
 - Preserve any existing description content (append, don't replace)
-- Add label/tag: "refined" or "ready-for-planning"
+- Add phase label: `phase:refined` (Jira) or Phase property: `refined` (Notion)
 - Update state to "Todo" if it was "Backlog" or "Triage"
 
 **Confirm with user:**

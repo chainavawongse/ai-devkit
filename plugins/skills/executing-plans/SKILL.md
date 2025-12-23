@@ -35,6 +35,79 @@ Create PR at end? (yes/no/ask-later)
 
 Store response for Step 6.
 
+### Step 0.25: Phase Validation (Stage Gate)
+
+**Before execution, verify the parent issue has completed all required phases:**
+
+**First, check CLAUDE.md for PM system configuration:**
+- Look for `## Project Management` section
+- Identify system: `Jira` or `Notion`
+
+**Load parent issue and check phase labels:**
+
+```python
+# For Jira:
+parent = mcp__atlassian__get_issue(id=parent_id)
+# OR fallback:
+parent = mcp__jira__get_issue(issue_key=parent_id)
+labels = parent.labels
+
+# For Notion:
+parent = mcp__notion__notion-fetch(id=parent_id)
+phase_property = parent.properties.Phase  # Multi-select
+
+# Check for phase labels
+has_refined = 'phase:refined' in labels  # Jira
+            or 'refined' in phase_property  # Notion
+has_planned = 'phase:planned' in labels  # Jira
+            or 'planned' in phase_property  # Notion
+has_broken_down = 'phase:broken-down' in labels  # Jira
+                or 'broken-down' in phase_property  # Notion
+```
+
+**Validation with fallback:**
+
+```python
+# If phase labels missing, fall back to section check (for existing tickets)
+if not has_refined:
+    has_refined = "## Specification" in parent.description
+if not has_planned:
+    has_planned = "## Technical Plan" in parent.description
+if not has_broken_down:
+    # Check if sub-issues exist
+    sub_issues = list_children(parent_id)
+    has_broken_down = len(sub_issues) > 0
+
+# Block if any phase is missing
+missing_phases = []
+if not has_refined:
+    missing_phases.append("refined (run /refine first)")
+if not has_planned:
+    missing_phases.append("planned (run /plan first)")
+if not has_broken_down:
+    missing_phases.append("broken-down (run /breakdown first)")
+
+if missing_phases:
+    ERROR: f"Cannot execute - missing required phases: {', '.join(missing_phases)}"
+    SUGGEST: "Complete the spec-driven development workflow in order:"
+    SUGGEST: "  1. /refine {parent_id} - Define WHAT to build"
+    SUGGEST: "  2. /plan {parent_id} - Define HOW to build it"
+    SUGGEST: "  3. /breakdown {parent_id} - Create sub-issues"
+    SUGGEST: "  4. /execute {parent_id} - Execute the plan"
+    STOP
+```
+
+**Report validation success:**
+
+```markdown
+✓ Phase validation passed:
+  - Refined: {has_refined} (Specification defined)
+  - Planned: {has_planned} (Technical Plan created)
+  - Broken down: {has_broken_down} ({N} sub-issues found)
+
+Proceeding with execution...
+```
+
 ### Step 0.5: Worktree & Branch Setup (Stage Gate)
 
 **Before execution, ensure isolated workspace:**

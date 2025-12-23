@@ -42,6 +42,16 @@ Use `mcp__notion__notion-create-database` to create this schema:
         ]
       }
     },
+    "Phase": {
+      "type": "multi_select",
+      "multi_select": {
+        "options": [
+          { "name": "refined", "color": "blue" },
+          { "name": "planned", "color": "purple" },
+          { "name": "broken-down", "color": "green" }
+        ]
+      }
+    },
     "Priority": {
       "type": "select",
       "select": {
