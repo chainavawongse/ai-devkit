@@ -1,6 +1,8 @@
 ---
 name: creating-pull-requests
 description: Create pull requests with human-readable descriptions, diagrams, and visual documentation - automatically detects PR templates and generates comprehensive PR content
+when_to_use: when implementation is complete and ready for review - generates comprehensive PR with diagrams, test coverage summary, and linked issues
+version: 1.0.0
 ---
 
 # Creating Pull Requests

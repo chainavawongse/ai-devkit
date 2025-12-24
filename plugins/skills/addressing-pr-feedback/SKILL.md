@@ -1,6 +1,8 @@
 ---
 name: addressing-pr-feedback
 description: Process PR review comments, switch to correct worktree, create sub-issues - prepares feedback for execution without implementing fixes
+when_to_use: when processing GitHub PR review comments and need to create trackable sub-issues for each feedback item before implementation
+version: 1.0.0
 ---
 
 # Addressing PR Feedback

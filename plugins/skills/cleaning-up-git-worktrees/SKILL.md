@@ -1,6 +1,8 @@
 ---
 name: cleaning-up-git-worktrees
 description: Clean up git worktrees that are related to merged branches - reviews worktrees, identifies merged branches, and prompts user for confirmation before removal
+when_to_use: when worktrees accumulate after completing features, or when disk space is needed - identifies and removes worktrees for merged branches
+version: 1.0.0
 ---
 
 # Cleaning Up Git Worktrees

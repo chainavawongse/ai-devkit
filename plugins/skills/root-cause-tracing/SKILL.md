@@ -1,6 +1,8 @@
 ---
 name: root-cause-tracing
-description: Use when errors occur deep in execution and you need to trace back to find the original trigger - systematically traces bugs backward through call stack, adding instrumentation when needed, to identify source of invalid data or incorrect behavior
+description: Trace bugs backward through call stack to identify the original source of invalid data or incorrect behavior
+when_to_use: when errors occur deep in execution and you need to trace back to find the original trigger, not just fix the symptom
+version: 1.0.0
 ---
 
 # Root Cause Tracing

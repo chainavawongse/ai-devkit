@@ -1,6 +1,7 @@
 ---
 name: executing-chores
-description: Use when handling maintenance tasks (dependency upgrades, refactoring, cleanup) that don't require TDD but still need comprehensive quality verification
+description: Execute maintenance tasks with comprehensive quality verification without TDD requirement
+when_to_use: when handling maintenance tasks (dependency upgrades, refactoring, cleanup) that don't require TDD but still need comprehensive quality verification
 version: 1.1.0
 ---
 

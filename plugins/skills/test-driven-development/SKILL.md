@@ -1,6 +1,8 @@
 ---
 name: test-driven-development
-description: Use when implementing any feature or bugfix, before writing implementation code - write the test first, watch it fail, write minimal code to pass; ensures tests actually verify behavior by requiring failure first
+description: RED-GREEN-REFACTOR cycle - write test first, watch it fail, write minimal code to pass
+when_to_use: when implementing any feature or bugfix - always write the test first before implementation code
+version: 1.0.0
 ---
 
 # Test-Driven Development (TDD)
