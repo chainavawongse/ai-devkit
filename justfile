@@ -6,7 +6,7 @@
 #   - jq (for JSON validation)
 #   - Windows users: run from Git Bash or WSL
 
-marketplace_name := "claude-code-marketplace"
+marketplace_name := "ai-devkit-marketplace"
 plugin_name := "devkit"
 repo_path := justfile_directory()
 
@@ -100,8 +100,10 @@ uninstall-plugin:
 # Check plugin structure
 check-plugin:
     @echo "Checking plugin structure..."
-    @test -f "plugins/.claude_plugin/plugin.json" || (echo "Missing plugin.json" && exit 1)
+    @test -f ".claude-plugin/marketplace.json" || (echo "Missing .claude-plugin/marketplace.json" && exit 1)
+    @test -f "plugins/.claude_plugin/plugin.json" || (echo "Missing plugins/.claude_plugin/plugin.json" && exit 1)
     @test -f "plugins/README.md" || (echo "Missing README.md" && exit 1)
+    @jq empty ".claude-plugin/marketplace.json"
     @jq empty "plugins/.claude_plugin/plugin.json"
     @echo "Plugin structure valid"
 

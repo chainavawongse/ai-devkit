@@ -1,0 +1,17 @@
+{
+  "name": "ai-devkit-marketplace",
+  "description": "AI DevKit Plugin Marketplace",
+  "version": "1.0.0",
+  "owner": {
+    "name": "Chai Navawongse",
+    "email": "chai.navawongse@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "devkit",
+      "source": "./plugins",
+      "description": "AI Development Lifecycle Plugin - Spec-driven development workflow",
+      "version": "1.0.0"
+    }
+  ]
+}
