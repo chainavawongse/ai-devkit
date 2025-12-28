@@ -7,6 +7,9 @@ version: 2.2.0
 
 # Executing Plans
 
+> **⛔ MANDATORY:** All execution MUST happen in an isolated git worktree, never on main/master.
+> This is enforced by a HARD GATE in Step 0.5 and a Pre-Task Guard before every task.
+
 ## Overview
 
 Execute sub-issues systematically. Each subagent receives Specification (WHAT) + Technical Plan (HOW) from parent issue, plus TDD checklist from their sub-issue.
@@ -14,8 +17,6 @@ Execute sub-issues systematically. Each subagent receives Specification (WHAT) +
 **Core principle:** Subagents get full context, follow TDD checklist in task.
 
 **Critical:** Plans live in parent issue (PM system), not separate files.
-
-**MANDATORY:** All execution MUST happen in an isolated git worktree, never on main/master.
 
 ## The Process
 
@@ -160,7 +161,7 @@ if current_branch in ['main', 'master']:
     Skill('devkit:using-git-worktrees')
 
     # After worktree setup, RE-VERIFY we're no longer on main/master
-    new_branch = git branch --show-current
+    new_branch = run("git branch --show-current")
     if new_branch in ['main', 'master']:
         FATAL: "Worktree setup failed - still on {new_branch}. Cannot proceed."
         STOP
@@ -369,6 +370,9 @@ def pre_task_guard():
     - Resumed sessions where Step 0.5 didn't run
     - Manual branch switches during execution
     - Corrupted or deleted worktrees
+
+    NOTE: run(cmd) is pseudocode meaning "execute the shell command
+          and return its stdout" (e.g., subprocess, Bash tool, etc.)
     """
     current_branch = run("git branch --show-current")
     current_dir = run("pwd")

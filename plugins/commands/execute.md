@@ -90,9 +90,10 @@ graph TB
 
 **Read PM configuration from CLAUDE.md** and use `pm-operations` for all PM interactions:
 
-```bash
+```python
 # FIRST: Check if on protected branch (BLOCKING)
-current_branch = git branch --show-current
+# NOTE: run(cmd) is pseudocode for executing shell commands
+current_branch = run("git branch --show-current")
 if current_branch in ['main', 'master']:
     ERROR: """
     ⛔ BLOCKED: Cannot execute on {current_branch} branch
@@ -104,7 +105,7 @@ if current_branch in ['main', 'master']:
     Skill('devkit:using-git-worktrees')
 
     # Re-verify after setup
-    new_branch = git branch --show-current
+    new_branch = run("git branch --show-current")
     if new_branch in ['main', 'master']:
         FATAL: "Worktree setup failed. Cannot proceed."
         STOP
