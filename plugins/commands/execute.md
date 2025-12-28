@@ -31,8 +31,12 @@ Orchestrates the `executing-plans` skill to:
 
 **Repository MUST have:**
 
-- Clean working directory or git worktree
+- **Isolated git worktree** (MANDATORY - execution on main/master is blocked)
+- Clean working directory
 - Justfile with test/lint/format (recommended)
+
+**⛔ CRITICAL: Execution will NOT proceed on main or master branch.**
+The skill will automatically set up a worktree at `~/worktrees/{repo}/{branch}/` if needed.
 
 ## Workflow
 
@@ -42,32 +46,43 @@ graph TB
     B -->|Missing Spec| C["ERROR: Run /refine"]
     B -->|Missing Plan| D["ERROR: Run /plan"]
     B -->|Missing Sub-issues| E["ERROR: Run /breakdown"]
-    B -->|Clean Git| F{PR at end?}
-    B -->|Dirty Git| G["ERROR: Commit or worktree"]
+    B -->|Prerequisites OK| F{On main/master?}
 
-    F --> H[Invoke executing-plans skill]
-    H --> I[Load Spec + Plan + Sub-issues]
-    I --> J[Execute sequentially]
-    J --> K[Task 1: First ready task]
-    K --> L[Task 2: Next ready task]
-    L --> M[Task N: Final task]
-    M --> N{Create PR?}
-    N -->|Yes| O[Create PR with diagrams]
-    N -->|No| P[Complete]
-    O --> P
+    F -->|Yes| G["⛔ BLOCKED: Setup worktree"]
+    G --> H[Invoke using-git-worktrees skill]
+    H --> I{Worktree ready?}
+    I -->|No| J["FATAL: Cannot proceed"]
+    I -->|Yes| K{PR at end?}
+
+    F -->|No - Feature branch| K
+
+    K --> L[Invoke executing-plans skill]
+    L --> M[Load Spec + Plan + Sub-issues]
+    M --> N["Pre-Task Guard Check"]
+    N --> O[Execute Task 1]
+    O --> P["Pre-Task Guard Check"]
+    P --> Q[Execute Task N]
+    Q --> R{Create PR?}
+    R -->|Yes| S[Create PR with diagrams]
+    R -->|No| T[Complete]
+    S --> T
 
     style A fill:#e3f2fd
-    style H fill:#fff3e0
-    style K fill:#e8f5e9
-    style L fill:#e8f5e9
-    style M fill:#e8f5e9
-    style O fill:#fff9c4
-    style P fill:#4caf50,color:#fff
+    style G fill:#ffebee
+    style J fill:#ff0000,color:#fff
+    style L fill:#fff3e0
+    style N fill:#e1bee7
+    style P fill:#e1bee7
+    style O fill:#e8f5e9
+    style Q fill:#e8f5e9
+    style S fill:#fff9c4
+    style T fill:#4caf50,color:#fff
     style C fill:#ffebee
     style D fill:#ffebee
     style E fill:#ffebee
-    style G fill:#ffebee
 ```
+
+**Note:** The "Pre-Task Guard Check" (purple) runs before EVERY task, even in resumed sessions.
 
 ## How It Works
 
@@ -76,11 +91,29 @@ graph TB
 **Read PM configuration from CLAUDE.md** and use `pm-operations` for all PM interactions:
 
 ```bash
-# Check working directory
+# FIRST: Check if on protected branch (BLOCKING)
+current_branch = git branch --show-current
+if current_branch in ['main', 'master']:
+    ERROR: """
+    ⛔ BLOCKED: Cannot execute on {current_branch} branch
+
+    Execution MUST happen in an isolated git worktree.
+    Setting up worktree now...
+    """
+    # Invoke worktree skill
+    Skill('devkit:using-git-worktrees')
+
+    # Re-verify after setup
+    new_branch = git branch --show-current
+    if new_branch in ['main', 'master']:
+        FATAL: "Worktree setup failed. Cannot proceed."
+        STOP
+
+# Check working directory is clean
 git_status = git status --porcelain
 if git_status not empty:
     ERROR: Uncommitted changes
-    SUGGEST: Commit, stash, or use git worktree
+    SUGGEST: Commit or stash before continuing
 
 # Load parent issue using configured PM system
 parent = pm_operations.get_issue(id)
@@ -145,8 +178,16 @@ Each subagent receives task description + relevant Specification excerpts (WHAT)
 
 ## Remember
 
+- **NEVER execute on main/master** - Worktree is mandatory
+- **Pre-Task Guard protects resumed sessions** - Checks branch before every task
 - Command verifies prerequisites, skill does execution
 - Subagents get full context (WHAT + HOW + TDD checklist)
 - Tests and implementation together (not split)
 - Clean working directory required
 - Respects completed sub-issues (resumable)
+
+## Session Resumption
+
+When a session is resumed (after context overflow or returning later), the Pre-Task Guard
+in the skill will automatically verify git state and block if on main/master. This ensures
+safety even when the original Step 1 checks were lost due to session boundaries.
