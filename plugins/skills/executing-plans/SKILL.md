@@ -2,10 +2,13 @@
 name: executing-plans
 description: Execute sub-issues from parent issue (with Specification + Technical Plan), dispatching subagents with full context
 when_to_use: when parent issue has Specification, Technical Plan, and sub-issues ready for implementation
-version: 2.1.0
+version: 2.2.0
 ---
 
 # Executing Plans
+
+> **⛔ MANDATORY:** All execution MUST happen in an isolated git worktree, never on main/master.
+> This is enforced by a HARD GATE in Step 0.5 and a Pre-Task Guard before every task.
 
 ## Overview
 
@@ -120,26 +123,48 @@ if missing_phases:
 Proceeding with execution...
 ```
 
-### Step 0.5: Worktree & Branch Setup (Stage Gate)
+### Step 0.5: Worktree & Branch Setup (HARD GATE - BLOCKING)
 
-**Before execution, ensure isolated workspace:**
+**⛔ THIS IS A BLOCKING GATE - EXECUTION CANNOT PROCEED WITHOUT PASSING**
+
+All implementation work MUST happen in an isolated git worktree. This protects main/master
+from accidental commits and enables clean rollback if something goes wrong.
+
+**Check current git state:**
 
 ```bash
-# Check current workspace
-git worktree list
-git branch --show-current
+# Get current branch and location
+current_branch=$(git branch --show-current)
+current_dir=$(pwd)
+repo_root=$(git rev-parse --show-toplevel)
 ```
 
-**If NOT in worktree OR on main/master branch:**
+**HARD BLOCK: If on main or master branch, STOP IMMEDIATELY:**
 
-```markdown
-⚠️  Development requires isolated worktree for safety and workspace isolation.
+```python
+if current_branch in ['main', 'master']:
+    ERROR: """
+    ⛔ BLOCKED: Cannot execute on {current_branch} branch
 
-Current state:
-- Branch: {current_branch}
-- Location: {current_directory}
+    You are currently on the {current_branch} branch at:
+    {current_dir}
 
-Setting up isolated workspace...
+    All execution MUST happen in an isolated git worktree to:
+    - Protect main/master from accidental commits
+    - Enable clean rollback if something goes wrong
+    - Allow parallel feature development
+
+    Setting up worktree now...
+    """
+
+    # MUST invoke worktree skill - do not proceed without it
+    Skill('devkit:using-git-worktrees')
+
+    # After worktree setup, RE-VERIFY we're no longer on main/master
+    new_branch = run("git branch --show-current")
+    if new_branch in ['main', 'master']:
+        FATAL: "Worktree setup failed - still on {new_branch}. Cannot proceed."
+        STOP
 ```
 
 **Use `Skill('devkit:using-git-worktrees')` to:**
@@ -147,18 +172,43 @@ Setting up isolated workspace...
 1. Create worktree at `~/worktrees/{repo}/{branch}/`
 2. Change to worktree directory
 3. Create feature branch from parent issue ID (e.g., `feature/TEAM-123`)
-4. Verify clean baseline
+4. Run `just install` if available
+5. Verify clean baseline with `just test`
 
-**Verify stage gate success:**
+**Verify stage gate success (REQUIRED before proceeding):**
 
 ```bash
-# Confirm in worktree
-pwd  # Should be ~/worktrees/{repo}/{branch}/
-git branch --show-current  # Should be feature branch
-git status  # Should be clean
+# These checks MUST all pass before continuing
+current_branch=$(git branch --show-current)
+current_dir=$(pwd)
+
+# Verify NOT on main/master
+if [[ "$current_branch" == "main" || "$current_branch" == "master" ]]; then
+    echo "FATAL: Still on protected branch. Cannot proceed."
+    exit 1
+fi
+
+# Verify in worktree directory (should contain ~/worktrees/)
+if [[ "$current_dir" != *"/worktrees/"* ]]; then
+    echo "WARNING: Not in ~/worktrees/ directory. Verify isolation."
+fi
+
+# Verify clean state
+git status --porcelain
 ```
 
-**Only proceed to Step 1 after successful worktree setup.**
+**Report gate status:**
+
+```markdown
+✅ Worktree Gate PASSED
+- Branch: {current_branch} (not main/master)
+- Location: {current_dir}
+- Git status: clean
+
+Proceeding with execution...
+```
+
+**Only proceed to Step 1 after ALL checks pass.**
 
 ### Step 1: Load Context from Parent Issue
 
@@ -302,6 +352,89 @@ doc_content = load_doc_content(relevant_docs)
 
 # Include in Task prompt (see Step 4)
 ```
+
+### Step 2.75: Pre-Task Guard (Session Resume Protection)
+
+**⚠️ THIS CHECK RUNS BEFORE EVERY TASK - INCLUDING RESUMED SESSIONS**
+
+When a session is resumed (e.g., after context overflow or user returns later), the original
+worktree verification from Step 0.5 may not have run. This guard ensures safety is maintained.
+
+**Before dispatching ANY task, verify git state:**
+
+```python
+def pre_task_guard():
+    """
+    Run before EVERY task dispatch to ensure execution safety.
+    This catches:
+    - Resumed sessions where Step 0.5 didn't run
+    - Manual branch switches during execution
+    - Corrupted or deleted worktrees
+
+    NOTE: run(cmd) is pseudocode meaning "execute the shell command
+          and return its stdout" (e.g., subprocess, Bash tool, etc.)
+    """
+    current_branch = run("git branch --show-current")
+    current_dir = run("pwd")
+
+    # BLOCK if on protected branch
+    if current_branch in ['main', 'master']:
+        ERROR: f"""
+        ⛔ PRE-TASK GUARD FAILED
+
+        Execution is on protected branch: {current_branch}
+        Location: {current_dir}
+
+        This can happen when:
+        1. Session was resumed without re-running worktree setup
+        2. Branch was manually switched during execution
+        3. Worktree was deleted and execution continued in main repo
+
+        REQUIRED ACTION: Set up isolated worktree before continuing.
+        """
+
+        # Invoke worktree skill to fix
+        Skill('devkit:using-git-worktrees')
+
+        # Re-check after fix attempt
+        new_branch = run("git branch --show-current")
+        if new_branch in ['main', 'master']:
+            FATAL: "Could not establish safe workspace. Stopping execution."
+            STOP
+
+        print(f"✅ Pre-Task Guard: Now on {new_branch}, safe to proceed")
+
+    # WARN if not in ~/worktrees/ (might be okay for some setups)
+    if "/worktrees/" not in current_dir:
+        WARN: f"""
+        ⚠️ Not in standard worktree location
+        Current: {current_dir}
+        Expected: ~/worktrees/{{repo}}/{{branch}}/
+
+        Proceeding, but verify you're in an isolated workspace.
+        """
+
+    return True  # Safe to proceed
+
+# Call before each task
+pre_task_guard()
+```
+
+**When this guard fires (session resumption detected):**
+
+```markdown
+🔄 Session Resumption Detected
+
+Previous session state may have been lost. Re-verifying workspace safety...
+
+[Runs pre_task_guard checks]
+
+If on main/master → Invokes worktree skill
+If already safe → Proceeds with task
+```
+
+**This guard ensures that even if a session overflows or is resumed days later,
+the execution will not accidentally commit to main/master.**
 
 ### Step 3: Execute Tasks Sequentially
 
@@ -456,9 +589,27 @@ else:
 
 ## Remember
 
+- **NEVER execute on main/master** - Always use isolated worktree
+- **Pre-Task Guard runs before EVERY task** - Catches resumed sessions
 - Plans in PM system (not files)
 - Both WHAT and HOW to subagents
 - TDD checklist in sub-issue
 - Tests + implementation together
 - Stop when blocked
 - Create PR at end (with confirmation)
+
+## Red Flags
+
+**NEVER:**
+
+- Execute any task while on main or master branch
+- Skip worktree setup, even if "just this once"
+- Proceed after Pre-Task Guard fails
+- Assume previous session state is preserved after context overflow
+
+**ALWAYS:**
+
+- Verify git branch before every task dispatch
+- Use `~/worktrees/{repo}/{branch}/` for isolation
+- Re-run worktree setup if Pre-Task Guard fires
+- Stop execution if unable to establish safe workspace
