@@ -48,23 +48,25 @@ test('submits form', async () => {
 
 ```typescript
 test('updates state when button clicked', () => {
-  const { container } = render(<Counter />);
-  const component = container.firstChild as any;
+  const setCount = vi.fn();
 
-  // Testing internal state
-  expect(component.state.count).toBe(0);
+  // Spying on React internals
+  vi.spyOn(React, 'useState').mockImplementation(() => [0, setCount]);
 
-  fireEvent.click(screen.getByRole('button'));
+  render(<Counter />);
 
-  expect(component.state.count).toBe(1);
+  fireEvent.click(screen.getByRole('button', { name: /increment/i }));
+
+  // Testing that internal setter was called
+  expect(setCount).toHaveBeenCalledWith(1);
 });
 ```
 
 ### Why It's Bad
 
-- Coupled to implementation
-- Breaks when refactoring (useState → useReducer)
-- Doesn't verify user experience
+- Coupled to implementation (breaks if useState → useReducer)
+- Mocking React internals is fragile
+- Doesn't verify what the user actually sees
 
 ### Good
 
