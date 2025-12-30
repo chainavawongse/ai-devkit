@@ -42,6 +42,16 @@ Use `mcp__notion__notion-create-database` to create this schema:
         ]
       }
     },
+    "Level": {
+      "type": "select",
+      "select": {
+        "options": [
+          { "name": "Feature", "color": "purple" },
+          { "name": "User Story", "color": "blue" },
+          { "name": "Task", "color": "green" }
+        ]
+      }
+    },
     "Phase": {
       "type": "multi_select",
       "multi_select": {
@@ -88,7 +98,8 @@ Use `mcp__notion__notion-create-database` to create this schema:
 |----------|------|---------|--------|
 | **Name** | title | Issue title/summary | Free text |
 | **Status** | select | Current workflow state | Todo, In Progress, Done |
-| **Type** | select | Issue classification for routing | feature, chore, bug |
+| **Type** | select | Execution workflow routing | feature, chore, bug |
+| **Level** | select | Scope hierarchy (Notion only) | Feature, User Story, Task |
 | **Priority** | select | Importance level | Low, Medium, High |
 | **Parent** | relation | Links sub-issues to parent | Self-referential |
 | **Blocks** | relation | Dependency tracking | Self-referential, creates "Blocked By" |
@@ -102,7 +113,8 @@ Use `mcp__notion__notion-create-database` to create this schema:
 | `title` | Name | Title property |
 | `description` | Page content | Stored as markdown in page body |
 | `status` | Status | Select property |
-| `type` | Type | Maps to feature/chore/bug |
+| `type` | Type | Maps to feature/chore/bug (execution workflow) |
+| `level` | Level | Maps to Feature/User Story/Task (scope hierarchy, Notion only) |
 | `parentId` | Parent | Relation to parent page |
 | `blocks` | Blocks | Relation array |
 | `blockedBy` | Blocked By | Auto-created by dual relation |
@@ -123,6 +135,29 @@ The `Type` property determines which execution skill is invoked:
 - `feature` → `Skill('devkit:executing-tasks')` - Full TDD workflow
 - `chore` → `Skill('devkit:executing-chores')` - Verification-focused
 - `bug` → `Skill('devkit:executing-bug-fixes')` - Debug + TDD fix
+
+### Level Hierarchy (Notion Only)
+
+The `Level` property defines scope hierarchy, separate from execution workflow Type:
+
+| Level | Scope | Indicators | Children |
+|-------|-------|-----------|----------|
+| **Feature** | Large | Spans multiple modules/domains; requires architectural decisions; multiple deliverables | User Stories only |
+| **User Story** | Medium | Single domain deliverable; user-visible value; coherent functionality unit | Tasks only |
+| **Task** | Small | Atomic implementation unit; single file or small file set; single behavior | None (leaf node) |
+
+**Two-dimensional classification:**
+- **Type** = execution workflow (how to build: TDD vs verification)
+- **Level** = scope hierarchy (what scope: Feature → User Story → Task)
+
+**Example:** A bug fix could be at User Story level (medium scope bug affecting one domain) with Type=`bug`.
+
+**Strict hierarchy enforcement:**
+- Feature → creates only User Stories
+- User Story → creates only Tasks
+- Task → no children (leaf node)
+
+**Level is Notion-only** - Jira uses issue types (Epic, Story, Task) for hierarchy instead.
 
 ## Page Content Structure
 
@@ -187,10 +222,11 @@ Recommended views to create after database setup:
 
 After creating the database, verify:
 
-1. All 6 properties exist with correct types
+1. All 7 core properties exist with correct types
 2. Status has exactly: Todo, In Progress, Done
 3. Type has exactly: feature, chore, bug
-4. Parent relation points to same database
-5. Blocks/Blocked By dual relation is working
+4. Level has exactly: Feature, User Story, Task
+5. Parent relation points to same database
+6. Blocks/Blocked By dual relation is working
 
 Test by creating a sample page and setting all properties.

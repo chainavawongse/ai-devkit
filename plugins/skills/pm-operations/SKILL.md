@@ -47,7 +47,8 @@ Issue {
   title: string        # Issue title/summary
   description: string  # Full description (markdown)
   status: string       # Current status (Todo, In Progress, Done)
-  type: string         # Label type (feature, chore, bug)
+  type: string         # Label type (feature, chore, bug) - execution workflow
+  level?: string       # Scope hierarchy (Feature, User Story, Task) - Notion only
   parentId?: string    # Parent issue ID if sub-issue
   blocks?: string[]    # IDs of issues this blocks
   blockedBy?: string[] # IDs of issues blocking this
@@ -93,6 +94,7 @@ page = mcp__notion__notion-fetch(id=issue_id)
   description: page.content,
   status: page.properties.Status,
   type: page.properties.Type,
+  level: page.properties.Level,  # Notion only - scope hierarchy
   parentId: page.properties.Parent[0] if Parent else null,
   blocks: page.properties.Blocks,
   blockedBy: (reverse lookup via search)
@@ -111,7 +113,8 @@ page = mcp__notion__notion-fetch(id=issue_id)
 {
   title: string           # Required - Issue title
   description: string     # Required - Full description (markdown)
-  type: string            # Required - "feature" | "chore" | "bug"
+  type: string            # Required - "feature" | "chore" | "bug" (execution workflow)
+  level?: string          # Optional - "Feature" | "User Story" | "Task" (Notion only - scope hierarchy)
   parentId?: string       # Optional - Parent issue for sub-issues
   status?: string         # Optional - Initial status (default: "Todo")
   blocks?: string[]       # Optional - Issues this will block
@@ -168,6 +171,7 @@ page = mcp__notion__notion-create-pages({
       Name: input.title,
       Status: input.status or "Todo",
       Type: input.type,
+      Level: input.level,      # Notion only - scope hierarchy (Feature/User Story/Task)
       Parent: input.parentId,  # Relation property
       Blocks: input.blocks     # Relation property
     },
@@ -175,6 +179,11 @@ page = mcp__notion__notion-create-pages({
   }]
 })
 ```
+
+**Level Classification (Notion Only):**
+- Determine level based on complexity indicators before creating
+- See `scope-classification` section in pm-operations for heuristics
+- Level is independent of Type (a bug can be Feature-level, User Story-level, or Task-level)
 </details>
 
 ---
@@ -426,6 +435,76 @@ mcp__notion__notion-update-page({
 })
 ```
 </details>
+
+---
+
+## Scope Classification (Notion Only)
+
+When using Notion, classify items by scope level before creating. This is complexity-based classification that determines hierarchy position.
+
+### Classification Heuristics
+
+| Level | Indicators | Examples |
+|-------|-----------|----------|
+| **Feature** | Spans multiple modules/domains; requires architectural decisions; has multiple distinct deliverables; needs cross-team coordination | "User authentication system", "Payment processing pipeline", "Real-time collaboration" |
+| **User Story** | Single domain deliverable; delivers user-visible value; can be broken into implementation tasks; coherent unit of functionality | "Password reset via email", "Add to cart functionality", "Export report to PDF" |
+| **Task** | Atomic implementation unit; single file or small file set; single behavior change; no further breakdown needed | "Add bcrypt password hashing", "Create CartItem component", "Implement PDF header generation" |
+
+### Classification Decision Tree
+
+```
+Analyze the scope:
+├── Spans multiple modules/domains?
+│   ├── YES → Requires architectural decisions?
+│   │          ├── YES → FEATURE
+│   │          └── NO  → USER STORY (cross-cutting but simple)
+│   └── NO  → Single coherent functionality unit?
+│              ├── YES → Can be further broken down?
+│              │          ├── YES → USER STORY
+│              │          └── NO  → TASK
+│              └── NO  → TASK (atomic change)
+```
+
+### Classification Output Format
+
+When classifying, explain reasoning:
+
+```
+Classifying: "User authentication with JWT tokens"
+
+Analysis:
+- Spans modules: YES (auth service, token service, middleware, database)
+- Architectural decisions: YES (JWT strategy, token storage, refresh mechanism)
+- Multiple deliverables: YES (login, logout, token refresh, session management)
+
+Classification: **Feature**
+Reasoning: This spans multiple domains (auth, tokens, middleware) and requires
+architectural decisions about token strategy. It will be broken into User Stories.
+```
+
+### Strict Hierarchy Rules
+
+When breaking down, enforce level transitions:
+
+| Parent Level | Valid Child Level | Invalid Child Level |
+|--------------|-------------------|---------------------|
+| Feature | User Story | Task (skip level), Feature (same level) |
+| User Story | Task | Feature (wrong direction), User Story (same level) |
+| Task | (none - leaf node) | Any (tasks have no children) |
+
+### Integration with Type
+
+Level and Type are independent dimensions:
+
+| | feature | chore | bug |
+|---|---------|-------|-----|
+| **Feature** | New capability spanning domains | Major refactoring effort | System-wide bug fix |
+| **User Story** | Single domain feature | Module-level maintenance | Domain-specific bug |
+| **Task** | Atomic feature implementation | Config/docs update | Single file bug fix |
+
+**Example:** A "Payment validation bug" might be:
+- **Level:** User Story (single domain - payments, coherent fix)
+- **Type:** bug (fixing broken behavior)
 
 ---
 
