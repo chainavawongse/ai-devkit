@@ -106,7 +106,7 @@ When dispatched via `/execute`, relevant documentation based on file patterns is
 | `.tsx`, `.jsx`, `.ts` in `components/`, `hooks/`, `stores/`, `pages/`, `features/` | `devkit:test-driven-development-frontend` |
 | All other files | `devkit:test-driven-development` |
 
-**Frontend files (`.tsx`, `.jsx`) MUST use frontend TDD skill** which enforces:
+**Frontend files (`.tsx`, `.jsx`, `.ts` in `components/`, `hooks/`, `stores/`, `pages/`, `features/`) MUST use frontend TDD skill** which enforces:
 - React Testing Library with proper query priority (`getByRole` > `getByTestId`)
 - `userEvent` over `fireEvent`
 - MSW for API mocking (never mock fetch/axios directly)
