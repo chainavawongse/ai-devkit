@@ -92,9 +92,9 @@ if parent_level == "Feature":
 elif parent_level == "User Story":
     child_level = "Task"
 elif parent_level == "Task":
-    ERROR: "Tasks cannot be broken down further - they are leaf nodes"
-    SUGGEST: "This issue is already at Task level. Implement directly without breakdown."
-    STOP
+    ERROR: "Tasks cannot be broken down further - they are leaf nodes (terminal condition: stop planning here)"
+    SUGGEST: "This issue is already at Task level. Implement directly without breakdown; do not create child issues."
+    # STOP: terminal condition – do not proceed with further breakdown for Task-level items.
 else:
     # No Level set - classify now using pm-operations heuristics
     WARN: "Parent has no Level. Classifying based on scope..."
