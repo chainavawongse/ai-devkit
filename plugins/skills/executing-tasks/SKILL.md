@@ -99,7 +99,18 @@ When dispatched via `/execute`, relevant documentation based on file patterns is
 
 ### Step 2: TDD Implementation
 
-**REQUIRED SUB-SKILL:** Use `devkit:test-driven-development`
+**REQUIRED SUB-SKILL:** Route based on file type:
+
+| File Pattern | TDD Skill to Use |
+|--------------|------------------|
+| `.tsx`, `.jsx`, `.ts` in `components/`, `hooks/`, `stores/`, `pages/`, `features/` | `devkit:test-driven-development-frontend` |
+| All other files | `devkit:test-driven-development` |
+
+**Frontend files (`.tsx`, `.jsx`) MUST use frontend TDD skill** which enforces:
+- React Testing Library with proper query priority (`getByRole` > `getByTestId`)
+- `userEvent` over `fireEvent`
+- MSW for API mocking (never mock fetch/axios directly)
+- Vitest + jest-dom assertions
 
 Follow strict TDD cycle:
 
@@ -367,7 +378,8 @@ mcp__notion__notion-create-comment({
 
 **Required workflow:**
 
-- **test-driven-development** - REQUIRED for RED-GREEN-REFACTOR cycle
+- **test-driven-development** - REQUIRED for backend RED-GREEN-REFACTOR cycle
+- **test-driven-development-frontend** - REQUIRED for frontend (React/TS) TDD with RTL, userEvent, MSW
 - **requesting-code-review** - REQUIRED after implementation
 - **receiving-code-review** - REQUIRED for handling feedback
 
@@ -385,8 +397,12 @@ Before reporting completion:
 
 - [ ] Loaded ticket context (Specification + Technical Plan)
 - [ ] Verified ticket has `feature` label
+- [ ] Used correct TDD skill (frontend-tdd for `.tsx`/`.jsx`, standard TDD otherwise)
 - [ ] Followed TDD cycle (tests first, watched fail, implemented, refactored)
 - [ ] All tests passing (no failures, no skipped)
+- [ ] **Frontend specific:** Used `getByRole`/`getByLabelText` (not `getByTestId` as first choice)
+- [ ] **Frontend specific:** Used `userEvent` (not `fireEvent`)
+- [ ] **Frontend specific:** API calls mocked with MSW (not fetch/axios mocks)
 - [ ] Lint and format checks passing
 - [ ] Build successful
 - [ ] Code review requested and passed
