@@ -90,9 +90,15 @@ Is this changing user-facing or system behavior?
 1. **Title** - Clear, concise description
 2. **Description** - Detailed context (see templates below)
 3. **Team** - Team ID or name
-4. **Label** - Exactly ONE of: feature, chore, bug
+4. **Type** - Exactly ONE of: feature, chore, bug (execution workflow)
 5. **Parent** - Parent ticket ID (for sub-tickets)
 6. **State** - Usually "Todo" for new sub-tickets
+
+**For Notion only (additional required field):**
+
+7. **Level** - Scope hierarchy: Feature, User Story, or Task
+   - Determined by classification heuristics (see pm-operations skill)
+   - Follows strict hierarchy: Feature → User Story → Task
 
 **Optional but recommended:**
 
@@ -315,7 +321,8 @@ ticket = mcp__notion__notion-create-pages({
         'properties': {
             'Name': '[Clear, concise title]',
             'Status': 'Todo',
-            'Type': 'feature' or 'chore' or 'bug',  # REQUIRED - select property
+            'Type': 'feature' or 'chore' or 'bug',  # REQUIRED - execution workflow
+            'Level': 'Feature' or 'User Story' or 'Task',  # REQUIRED - scope hierarchy
             'Parent': '[Parent page ID for sub-tickets]',  # Relation property
             'Priority': '[Only if explicitly specified]'
         },
@@ -343,7 +350,8 @@ if blocks_ids:
 | Title | `title` / `summary` | `Name` (title property) |
 | Description | `description` | Page content (markdown) |
 | Status | `state` / `status` | `Status` (select) |
-| Type/Label | `labels[]` | `Type` (select: feature/chore/bug) |
+| Type | `labels[]` | `Type` (select: feature/chore/bug) |
+| Level | (uses issue types) | `Level` (select: Feature/User Story/Task) |
 | Parent | `parentId` / `parent` | `Parent` (relation) |
 | Dependencies | `blocks` relationship | `Blocks` (relation) |
 | Priority | `priority` | `Priority` (select) |
@@ -379,6 +387,29 @@ if blocks_ids:
        WARNING: "Bug ticket should include investigation checklist"
    ```
 
+4. **Level validation (Notion only):**
+
+   ```python
+   # For Notion, Level is required
+   if pm_system == 'notion':
+       if level not in ['Feature', 'User Story', 'Task']:
+           ERROR: "Notion ticket must have Level: Feature, User Story, or Task"
+           STOP
+
+       # Validate hierarchy when creating sub-tickets
+       if parent_id:
+           parent = get_issue(parent_id)
+           if parent.level == 'Feature' and level != 'User Story':
+               ERROR: "Children of Feature must be User Story level"
+               STOP
+           if parent.level == 'User Story' and level != 'Task':
+               ERROR: "Children of User Story must be Task level"
+               STOP
+           if parent.level == 'Task':
+               ERROR: "Task level items cannot have children"
+               STOP
+   ```
+
 ## Quick Reference
 
 | Type | Label | TDD Required | Workflow Skill | Example |
@@ -403,9 +434,11 @@ if blocks_ids:
 
 ## Remember
 
-- **Every ticket needs exactly ONE type label** (feature/chore/bug)
-- **Classification determines execution workflow** (tasks/chores/bug-fixes)
+- **Every ticket needs exactly ONE Type** (feature/chore/bug) - determines execution workflow
+- **For Notion: Every ticket needs Level** (Feature/User Story/Task) - determines scope hierarchy
+- **Type and Level are independent** - a bug can be at any Level; a Task can be any Type
 - **Use appropriate template** for the ticket type
-- **Validate before creating** (labels, parent, team)
+- **Validate before creating** (Type, Level, parent, team)
 - **For sub-tickets:** Always include parent ticket ID
+- **For Notion sub-tickets:** Enforce strict Level hierarchy (Feature→User Story→Task)
 - **For features/bugs:** Always include TDD/investigation checklists

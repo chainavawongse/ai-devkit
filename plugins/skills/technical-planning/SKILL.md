@@ -24,7 +24,8 @@ Transform refined specifications (WHAT to build) into comprehensive technical im
 
 | Phase | Key Activities | Tool Usage | Output |
 |-------|---------------|------------|--------|
-| **1. Load Specification** | Retrieve refined issue | JIRA MCP tools | Specification loaded |
+| **1. Load Specification** | Retrieve refined issue | PM System MCP | Specification loaded |
+| **1b. Classify Level** | Determine scope (Notion only) | Notion MCP | Level set (Feature/User Story/Task) |
 | **2. Analyze Codebase** | Find patterns, similar code | Grep, Read | Existing patterns identified |
 | **3. Research Options** | Investigate technologies | Web search, documentation | Technology options evaluated |
 | **4. Design Architecture** | High-level component design | — | Architecture documented |
@@ -32,7 +33,7 @@ Transform refined specifications (WHAT to build) into comprehensive technical im
 | **6. Plan Testing** | Strategy per test level | — | Testing approach defined |
 | **7. Phase Implementation** | Order tasks logically | — | Implementation phases |
 | **8. Document Patterns** | Reference existing code | — | Pattern references |
-| **9. Write to Issue** | Append Technical Plan | JIRA MCP update | Issue ready for breakdown |
+| **9. Write to Issue** | Append Technical Plan | PM System MCP | Issue ready for breakdown |
 
 ## The Process
 
@@ -41,6 +42,7 @@ Copy this checklist to track progress:
 ```
 Technical Planning Progress:
 - [ ] Phase 1: Load Specification (requirements retrieved from PM system)
+- [ ] Phase 1b: Classify Scope Level (Notion only - Feature/User Story/Task)
 - [ ] Phase 2: Analyze Codebase (existing patterns identified)
 - [ ] Phase 3: Research Options (technology choices evaluated)
 - [ ] Phase 4: Design Architecture (high-level design created)
@@ -89,6 +91,68 @@ Specification Summary:
 
 I'm using the technical-planning skill to create the implementation plan.
 ```
+
+### Phase 1b: Classify Scope Level (Notion Only)
+
+**Skip this phase if using Jira** - Jira uses issue types for hierarchy instead.
+
+**For Notion, classify scope level before planning:**
+
+Use the complexity-based classification from `pm-operations` Scope Classification section:
+
+```
+Analyze the scope:
+├── Spans multiple modules/domains?
+│   ├── YES → Requires architectural decisions?
+│   │          ├── YES → FEATURE
+│   │          └── NO  → USER STORY
+│   └── NO  → Single coherent functionality unit?
+│              ├── YES → Can be further broken down?
+│              │          ├── YES → USER STORY
+│              │          └── NO  → TASK
+│              └── NO  → TASK
+```
+
+**Output classification with reasoning:**
+
+```
+Scope Classification (Notion):
+
+Analyzing: "[Issue title]"
+
+Indicators:
+- Spans multiple modules: [YES/NO] - [explanation]
+- Requires architectural decisions: [YES/NO] - [explanation]
+- Multiple deliverables: [YES/NO] - [explanation]
+
+Classification: **[Feature/User Story/Task]**
+Reasoning: [Brief explanation of why this level was chosen]
+
+Hierarchy implications:
+- If Feature → breakdown will create User Stories
+- If User Story → breakdown will create Tasks
+- If Task → no breakdown needed (implement directly)
+```
+
+**Update issue with Level property:**
+
+```python
+# For Notion only - update Level property
+mcp__notion__notion-update-page({
+    data: {
+        page_id: page_id,
+        command: "update_properties",
+        properties: {
+            Level: "[Feature/User Story/Task]"
+        }
+    }
+})
+```
+
+**Note:** Level is independent of Type. An issue can be:
+- Level=Feature, Type=bug (system-wide bug fix)
+- Level=User Story, Type=chore (module refactoring)
+- Level=Task, Type=feature (atomic feature implementation)
 
 ### Phase 2: Analyze Codebase
 

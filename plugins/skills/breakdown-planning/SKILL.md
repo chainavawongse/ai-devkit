@@ -22,9 +22,10 @@ Break down Specification + Technical Plan into executable sub-issues. Each task 
 | Phase | Key Activities | Tool Usage | Output |
 |-------|---------------|------------|--------|
 | **1. Load Context** | Retrieve Specification + Technical Plan | PM System MCP | Full context loaded |
+| **1b. Validate Level** | Check parent Level, determine child Level (Notion only) | — | Child Level determined |
 | **2. Extract Phases** | Parse Technical Plan phases | — | Phase structure identified |
 | **3. Create Tasks** | Break phases into features | TodoWrite | Independent tasks with TDD |
-| **4. Create Sub-Issues** | Write to PM system | PM System MCP | Sub-issues with full context |
+| **4. Create Sub-Issues** | Write to PM system with correct Level | PM System MCP | Sub-issues with full context |
 | **5. Map Dependencies** | Link blocking relationships | PM System MCP | Dependency graph complete |
 
 ## The Process
@@ -34,9 +35,10 @@ Copy this checklist to track progress:
 ```
 Breakdown Progress:
 - [ ] Phase 1: Load Context (Specification + Technical Plan retrieved)
+- [ ] Phase 1b: Validate Level (Notion only - determine child Level from parent)
 - [ ] Phase 2: Extract Phases (Technical Plan phases identified)
 - [ ] Phase 3: Create Tasks (independent features with TDD defined)
-- [ ] Phase 4: Create Sub-Issues (sub-issues created with full context)
+- [ ] Phase 4: Create Sub-Issues (sub-issues created with correct Level)
 - [ ] Phase 5: Map Dependencies (blocking relationships documented)
 ```
 
@@ -73,6 +75,72 @@ if "## Technical Plan" not in issue.description:
 
 - From Specification: User stories, expected behaviors, success criteria
 - From Technical Plan: Components, phases, dependencies, patterns
+
+### Phase 1b: Validate Level (Notion Only)
+
+**Skip this phase if using Jira** - Jira uses issue types for hierarchy.
+
+**For Notion, read parent's Level and determine child Level:**
+
+```python
+# Get parent's Level property
+parent_level = parent_issue.properties.Level  # Feature, User Story, or Task
+
+# Determine valid child Level based on strict hierarchy
+if parent_level == "Feature":
+    child_level = "User Story"
+elif parent_level == "User Story":
+    child_level = "Task"
+elif parent_level == "Task":
+    ERROR: "Tasks cannot be broken down further - they are leaf nodes (terminal condition: stop planning here)"
+    SUGGEST: "This issue is already at Task level. Implement directly without breakdown; do not create child issues."
+    # STOP: terminal condition – do not proceed with further breakdown for Task-level items.
+else:
+    # No Level set - classify now using pm-operations heuristics
+    WARN: "Parent has no Level. Classifying based on scope..."
+    # Apply classification from pm-operations Scope Classification
+    # Then determine child level
+```
+
+**Strict hierarchy enforcement:**
+
+| Parent Level | Child Level | Action |
+|--------------|-------------|--------|
+| Feature | User Story | Create User Stories (medium scope deliverables) |
+| User Story | Task | Create Tasks (atomic implementation units) |
+| Task | (none) | STOP - cannot break down Tasks |
+| (not set) | Classify first | Use pm-operations classification, then apply rules |
+
+**Output:**
+
+```
+Level Hierarchy Check (Notion):
+
+Parent: "[Issue title]"
+Parent Level: [Feature/User Story/Task]
+
+Child Level: [User Story/Task]
+Reasoning: Strict hierarchy - [Feature → User Story / User Story → Task]
+
+All sub-issues will be created with Level = [Child Level]
+```
+
+**If parent Level is not set, classify and update:**
+
+```python
+# Classify parent using pm-operations heuristics
+# Then update parent's Level property
+mcp__notion__notion-update-page({
+    data: {
+        page_id: parent_id,
+        command: "update_properties",
+        properties: {
+            Level: "[Classified Level]"
+        }
+    }
+})
+# Then proceed with appropriate child level
+```
 
 ### Phase 2: Extract Phases
 
@@ -199,13 +267,21 @@ Sub-Issue Creation Progress:
 
 **For each task, create one sub-ticket in the PM system:**
 
-**Critical:** Every sub-ticket MUST have exactly ONE label: `feature`, `chore`, or `bug`
+**Critical:** Every sub-ticket MUST have:
+- Exactly ONE Type label: `feature`, `chore`, or `bug` (execution workflow)
+- For Notion: Level property set to child level determined in Phase 1b
 
-**Determine ticket type:**
+**Determine ticket Type:**
 
 - New functionality or behavior change? → `feature` label
 - Maintenance, refactoring, docs? → `chore` label
 - Fixing broken behavior? → `bug` label
+
+**Determine ticket Level (Notion only):**
+
+Use child level from Phase 1b (strict hierarchy):
+- Parent is Feature → child Level = "User Story"
+- Parent is User Story → child Level = "Task"
 
 **Sub-ticket structure:**
 
@@ -279,7 +355,8 @@ Follow test-driven-development skill (devkit:test-driven-development):
 - Implementation guidance specific to this component
 - Clear acceptance criteria
 - Tests and implementation in ONE task (TDD for features/bugs)
-- Proper label (feature/chore/bug) determines execution workflow
+- Proper Type label (feature/chore/bug) determines execution workflow
+- For Notion: Level property set correctly (User Story or Task based on parent)
 
 **After each sub-issue created:**
 
