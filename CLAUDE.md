@@ -24,7 +24,7 @@ ai-devkit/
 │   ├── skills/                 # Reusable workflow units
 │   ├── agents/                 # Specialized subagents
 │   └── hooks/                  # Quality enforcement scripts
-└── .github/workflows/          # GitHub Actions (claude-code-review, pr-size-labeler)
+└── .github/workflows/          # GitHub Actions (auto-version)
 ```
 
 ## Plugin
@@ -44,6 +44,40 @@ The main plugin provides a spec-driven development workflow:
 
 Full plugin documentation: `plugins/README.md`
 AI development guide: `plugins/CLAUDE.md`
+
+## Versioning
+
+The plugin uses **semantic versioning** with automatic version bumps based on **conventional commits**.
+
+### Version Files
+
+Two files track the plugin version (kept in sync automatically):
+- `.claude-plugin/marketplace.json` → `plugins[0].version`
+- `plugins/.claude_plugin/plugin.json` → `version`
+
+### Automatic Version Bumps
+
+On merge to `main`, GitHub Actions analyzes commit messages:
+
+| Commit Prefix | Bump Type | Example |
+|---------------|-----------|---------|
+| `feat:` | Minor (1.2.1 → 1.3.0) | `feat: add new workflow command` |
+| `fix:`, `chore:`, `docs:`, etc. | Patch (1.2.1 → 1.2.2) | `fix: correct typo in skill` |
+| `feat!:` or `BREAKING CHANGE:` | Major (1.2.1 → 2.0.0) | `feat!: redesign API` |
+
+### Conventional Commit Format
+
+```
+<type>[optional scope][!]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+**Common types:** `feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `style`
+
+**Breaking changes:** Add `!` after type or include `BREAKING CHANGE:` in footer.
 
 ## Key Design Decisions
 

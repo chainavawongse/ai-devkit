@@ -1,0 +1,116 @@
+name: Auto Version Bump
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'plugins/**'
+      - '.claude-plugin/**'
+
+jobs:
+  version-bump:
+    runs-on: ubuntu-latest
+    # Skip if commit is from this workflow (prevents infinite loop)
+    if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, 'chore: bump version')"
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Determine version bump type
+        id: bump-type
+        run: |
+          # Get commits since last version bump
+          LAST_BUMP=$(git log --oneline --grep="chore: bump version" -1 --format="%H" 2>/dev/null || echo "")
+
+          if [ -z "$LAST_BUMP" ]; then
+            # No previous bump found, check all commits
+            COMMITS=$(git log --oneline --format="%s" -50)
+          else
+            # Get commits since last bump
+            COMMITS=$(git log --oneline --format="%s" ${LAST_BUMP}..HEAD)
+          fi
+
+          echo "Analyzing commits for version bump type..."
+          echo "$COMMITS"
+
+          # Check for breaking changes (major bump)
+          if echo "$COMMITS" | grep -qiE "^.*!:|BREAKING CHANGE"; then
+            echo "bump=major" >> $GITHUB_OUTPUT
+            echo "Detected: MAJOR bump (breaking change)"
+          # Check for features (minor bump)
+          elif echo "$COMMITS" | grep -qiE "^feat(\(.*\))?:"; then
+            echo "bump=minor" >> $GITHUB_OUTPUT
+            echo "Detected: MINOR bump (new feature)"
+          # Default to patch for fixes, chores, docs, etc.
+          else
+            echo "bump=patch" >> $GITHUB_OUTPUT
+            echo "Detected: PATCH bump (fixes/improvements)"
+          fi
+
+      - name: Get current version
+        id: current-version
+        run: |
+          VERSION=$(jq -r '.version' plugins/.claude_plugin/plugin.json)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Current version: $VERSION"
+
+      - name: Calculate new version
+        id: new-version
+        run: |
+          CURRENT="${{ steps.current-version.outputs.version }}"
+          BUMP="${{ steps.bump-type.outputs.bump }}"
+
+          # Parse version components
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+
+          case $BUMP in
+            major)
+              NEW_VERSION="$((MAJOR + 1)).0.0"
+              ;;
+            minor)
+              NEW_VERSION="${MAJOR}.$((MINOR + 1)).0"
+              ;;
+            patch)
+              NEW_VERSION="${MAJOR}.${MINOR}.$((PATCH + 1))"
+              ;;
+          esac
+
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "New version: $NEW_VERSION (${BUMP} bump)"
+
+      - name: Update version files
+        run: |
+          NEW_VERSION="${{ steps.new-version.outputs.new_version }}"
+
+          # Update plugins/.claude_plugin/plugin.json
+          jq --arg v "$NEW_VERSION" '.version = $v' plugins/.claude_plugin/plugin.json > tmp.json
+          mv tmp.json plugins/.claude_plugin/plugin.json
+
+          # Update .claude-plugin/marketplace.json (plugins[0].version)
+          jq --arg v "$NEW_VERSION" '.plugins[0].version = $v' .claude-plugin/marketplace.json > tmp.json
+          mv tmp.json .claude-plugin/marketplace.json
+
+          echo "Updated version to $NEW_VERSION in both files"
+
+      - name: Commit and push
+        run: |
+          NEW_VERSION="${{ steps.new-version.outputs.new_version }}"
+          BUMP="${{ steps.bump-type.outputs.bump }}"
+
+          git add plugins/.claude_plugin/plugin.json .claude-plugin/marketplace.json
+          git commit -m "chore: bump version to ${NEW_VERSION} [skip ci]" \
+            -m "Automatic ${BUMP} version bump based on conventional commits."
+          git push
