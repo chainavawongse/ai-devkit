@@ -1,7 +1,7 @@
 # Plugin - AI Development Guide
 
 **Version:** 1.0.0
-**Last Updated:** 2025-11-02
+**Last Updated:** 2025-12-30
 
 ## Purpose
 
