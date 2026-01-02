@@ -43,7 +43,7 @@ Then automatically calls `/execute <parent-id>` to implement all feedback.
 
 **Git Worktrees:**
 
-- Original work in `~/worktrees/<repo-name>/`
+- Original work in `<parent>/worktrees/<repo-name>/`
 
 ## How It Works
 
@@ -85,7 +85,7 @@ Execution handles:
 # Addressing-PR-Feedback Skill:
 Processing PR #145...
 ✓ Found parent issue: TEAM-123 (from PR)
-✓ Found worktree: ~/worktrees/my-repo/feature-auth
+✓ Found worktree: /Projects/worktrees/my-repo/feature-auth
 ✓ Switched to worktree
 ✓ Fetched 10 review comments
 

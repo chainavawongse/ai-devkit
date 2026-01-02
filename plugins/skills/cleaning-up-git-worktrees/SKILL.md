@@ -68,19 +68,19 @@ Display categorized list:
 ```markdown
 ## Merged Worktrees (Safe to Remove)
 
-1. ~/worktrees/my-repo/feature-auth
+1. /Projects/worktrees/my-repo/feature-auth
    Branch: feature/auth
    Status: Merged into main
    Clean: Yes
 
-2. ~/worktrees/my-repo/fix-login-bug
+2. /Projects/worktrees/my-repo/fix-login-bug
    Branch: fix/login-bug
    Status: Merged into main
    Clean: Yes
 
 ## Merged Worktrees with Uncommitted Changes (⚠️ Data Loss Warning)
 
-3. ~/worktrees/my-repo/feature-dashboard
+3. /Projects/worktrees/my-repo/feature-dashboard
    Branch: feature/dashboard
    Status: Merged into main
    Clean: No - 3 files modified
@@ -88,12 +88,12 @@ Display categorized list:
 
 ## Unmerged Worktrees (Keep)
 
-4. ~/worktrees/my-repo/feature-new-feature
+4. /Projects/worktrees/my-repo/feature-new-feature
    Branch: feature/new-feature
    Status: Not merged
    Reason: Active development
 
-5. ~/worktrees/my-repo/experiment-refactor
+5. /Projects/worktrees/my-repo/experiment-refactor
    Branch: experiment/refactor
    Status: Not merged
    Reason: Branch exists on remote
@@ -133,8 +133,8 @@ git worktree prune
 **Report each removal:**
 
 ```
-✓ Removed ~/worktrees/my-repo/feature-auth (branch: feature/auth)
-✓ Removed ~/worktrees/my-repo/fix-login-bug (branch: fix/login-bug)
+✓ Removed /Projects/worktrees/my-repo/feature-auth (branch: feature/auth)
+✓ Removed /Projects/worktrees/my-repo/fix-login-bug (branch: fix/login-bug)
 ```
 
 ### Step 7: Optional Branch Cleanup
@@ -244,11 +244,11 @@ You: I'm using the cleaning-up-git-worktrees skill to clean up merged worktrees.
 Found 3 worktrees related to merged branches:
 
 Clean worktrees (safe to remove):
-1. ~/worktrees/my-repo/feature-auth (merged into main)
-2. ~/worktrees/my-repo/fix-bug-123 (merged into main)
+1. /Projects/worktrees/my-repo/feature-auth (merged into main)
+2. /Projects/worktrees/my-repo/fix-bug-123 (merged into main)
 
 Worktrees with uncommitted changes (⚠️):
-3. ~/worktrees/my-repo/feature-dashboard (3 files modified)
+3. /Projects/worktrees/my-repo/feature-dashboard (3 files modified)
 
 Would you like to:
 1. Remove 2 clean worktrees
@@ -259,8 +259,8 @@ Would you like to:
 User: 1
 
 Removing clean worktrees...
-✓ Removed ~/worktrees/my-repo/feature-auth
-✓ Removed ~/worktrees/my-repo/fix-bug-123
+✓ Removed /Projects/worktrees/my-repo/feature-auth
+✓ Removed /Projects/worktrees/my-repo/fix-bug-123
 
 Also delete local branches? (yes/no)
 User: yes

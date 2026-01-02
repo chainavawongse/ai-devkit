@@ -78,20 +78,20 @@ When you invoke this command, Claude will:
 
    ```
    ## Merged Worktrees (Safe to Remove)
-   1. ~/worktrees/my-repo/feature-auth
+   1. /Projects/worktrees/my-repo/feature-auth
       Branch: feature/auth
       Status: Merged into main
       Clean: Yes
 
    ## Merged Worktrees with Uncommitted Changes (⚠️)
-   2. ~/worktrees/my-repo/feature-dashboard
+   2. /Projects/worktrees/my-repo/feature-dashboard
       Branch: feature/dashboard
       Status: Merged into main
       Clean: No - 3 files modified
       Warning: Removing will delete uncommitted changes
 
    ## Unmerged Worktrees (Keep)
-   3. ~/worktrees/my-repo/feature-new-feature
+   3. /Projects/worktrees/my-repo/feature-new-feature
       Branch: feature/new-feature
       Status: Not merged
    ```
@@ -133,7 +133,7 @@ When you invoke this command, Claude will:
 7. **Report results:**
 
    ```
-   ✓ Removed ~/worktrees/my-repo/feature-auth
+   ✓ Removed /Projects/worktrees/my-repo/feature-auth
    ✓ Deleted branch feature/auth
 
    Cleanup complete! Freed 450MB.
@@ -160,8 +160,8 @@ Options:
 
 > 1
 
-✓ Removed ~/worktrees/my-repo/feature-auth
-✓ Removed ~/worktrees/my-repo/fix-bug-123
+✓ Removed /Projects/worktrees/my-repo/feature-auth
+✓ Removed /Projects/worktrees/my-repo/fix-bug-123
 ✓ Deleted branches: feature/auth, fix/bug-123
 
 Cleanup complete! Freed 450MB.

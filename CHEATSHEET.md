@@ -106,7 +106,7 @@ Creates:
 
 **Requires:** Issue with sub-issues from `/breakdown`
 **Does:**
-- Creates worktree at `~/worktrees/<repo>/<ticket>/`
+- Creates worktree at `<parent>/worktrees/<repo>/<ticket>/`
 - Executes tasks sequentially (respects dependencies)
 - TDD for features/bugs, verification for chores
 - Code review after each task

@@ -11,7 +11,7 @@ sequenceDiagram
 
     User->>Orchestrator: /execute (parent ticket)
     Orchestrator->>Orchestrator: Verify parent ticket ready\n(Spec + Technical Plan)
-    Orchestrator->>Worktree: Create isolated worktree\n~/worktrees/<repo>/<branch>
+    Orchestrator->>Worktree: Create isolated worktree\n<parent>/worktrees/<repo>/<branch>
     Orchestrator->>Orchestrator: Analyze dependencies & build waves
     Orchestrator->>Router: Map tickets by label
     rect rgb(230,240,250)

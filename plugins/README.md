@@ -101,7 +101,7 @@ Each command can run standalone or chain automatically to the next, creating a s
                                          ▼
                               ┌─────────────────────┐
                               │  /execute      │  Create worktree
-                              │                     │  ~/worktrees/<repo>/<ticket>
+                              │                     │  <parent>/worktrees/<repo>/<ticket>
                               └──────────┬──────────┘
                                          │
                     ┌────────────────────┴────────────────────┐
@@ -175,7 +175,7 @@ Each command can run standalone or chain automatically to the next, creating a s
 - **Sequential execution:** Tasks execute one at a time in dependency order
 - **Dependency-aware orchestration:** Process ready tasks, check for newly unblocked, repeat
 - **Proper task ordering:** Respect blocking relationships, maintain execution order
-- **Isolated environment:** All work in `~/worktrees/<repo>/<ticket>/`
+- **Isolated environment:** All work in `<parent>/worktrees/<repo>/<ticket>/`
 - **Dual code review:** Per-task reviews (in execution skills) + final branch review
 - **Error handling:** Retry (3x) → skip → continue with independent tickets
 - **Proper routing:** Ticket labels (feature/chore/bug) determine execution workflow
@@ -320,7 +320,7 @@ Dependency graph created. Ready to execute sequentially?
 **Process:**
 
 1. **Verify:** Checks parent ticket has all required sections and sub-tickets
-2. **Isolate:** Creates git worktree at `~/worktrees/<repo>/<ticket>/` (asks user first time)
+2. **Isolate:** Creates git worktree at `<parent>/worktrees/<repo>/<ticket>/` (asks user first time)
 3. **Analyze:** Loads sub-tickets and builds dependency graph
 4. **Dispatch:** Sequential Task() calls for ready tickets (one task at a time)
 5. **Route:** Each ticket routed by label:
@@ -343,7 +343,7 @@ Dependency graph created. Ready to execute sequentially?
 ✓ Parent ticket verified (Specification + Technical Plan present)
 ✓ Found 7 sub-tickets, all properly labeled
 
-Creating isolated worktree at ~/worktrees/myproject/CORE-45...
+Creating isolated worktree at /Projects/worktrees/myproject/CORE-45...
 ✓ Worktree ready, baseline tests passing
 
 Dependency analysis:

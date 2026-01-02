@@ -36,7 +36,7 @@ Orchestrates the `executing-plans` skill to:
 - Justfile with test/lint/format (recommended)
 
 **⛔ CRITICAL: Execution will NOT proceed on main or master branch.**
-The skill will automatically set up a worktree at `~/worktrees/{repo}/{branch}/` if needed.
+The skill will automatically set up a worktree at `<parent>/worktrees/{repo}/{branch}/` if needed.
 
 ## Workflow
 

@@ -93,9 +93,10 @@ RED (write failing test) → GREEN (minimal implementation) → REFACTOR (clean 
 
 ### 4. Sequential Execution with Isolation
 
-**Git worktrees at `~/worktrees/<repo>/<branch>/`:**
+**Git worktrees at `<parent>/worktrees/<repo>/<branch>/`:**
 
 - Each execution runs in isolated worktree outside main workspace
+- Worktrees are created as siblings to the repository under a `worktrees/` folder
 - Sub-issues execute sequentially, one at a time
 - Dependencies respected; execution order preserved
 
@@ -198,11 +199,14 @@ while remaining_tasks:
 
 ### 2. Worktree Standard Location
 
-**Always use:** `~/worktrees/<repo-name>/<branch-name>/`
+**Always use:** `<parent>/worktrees/<repo-name>/<branch-name>/`
 
+Example: If repo is at `/Projects/MyProject`, worktrees go to `/Projects/worktrees/MyProject/<branch-name>`
+
+- Close to project (easy to find)
 - Outside repository (no .gitignore needed)
 - Parallel-execution safe
-- Easy cleanup: `rm -rf ~/worktrees` when done
+- Easy cleanup: `rm -rf <parent>/worktrees` when done
 - Consistent across all workflows
 
 ### 3. Completed Tasks Respected
@@ -552,16 +556,19 @@ If we started with Technical Plan, we might choose Redis without understanding t
 
 **Trade-off:** Slower execution time for large features with many independent tasks
 
-### Why ~/worktrees/ Standard Location?
+### Why `<parent>/worktrees/` Standard Location?
 
 **Alternatives considered:**
 
 1. `.worktrees/` in repo (original implementation)
 2. `/tmp/worktrees/`
-3. User-specified location
+3. `~/worktrees/` (too far from project)
+4. User-specified location
 
-**Why ~/worktrees/:**
+**Why `<parent>/worktrees/`:**
 
+- Close to project (easy to find and navigate)
+- Organized by project within worktrees folder
 - Persistent across sessions (unlike /tmp)
 - Outside repo (no .gitignore concerns)
 - Isolation for clean workspace
@@ -630,7 +637,7 @@ One of JIRA MCP server is **required** for most plugin workflows to function:
 
 **Commands Used:**
 
-- `git worktree add ~/worktrees/<repo>/<branch> -b <branch>`
+- `git worktree add <parent>/worktrees/<repo>/<branch> -b <branch>`
 - `git worktree list` - Enumerate existing worktrees
 - `git worktree remove` - Cleanup after merge
 

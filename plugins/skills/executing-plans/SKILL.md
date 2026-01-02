@@ -169,7 +169,7 @@ if current_branch in ['main', 'master']:
 
 **Use `Skill('devkit:using-git-worktrees')` to:**
 
-1. Create worktree at `~/worktrees/{repo}/{branch}/`
+1. Create worktree at `<parent>/worktrees/{repo}/{branch}/`
 2. Change to worktree directory
 3. Create feature branch from parent issue ID (e.g., `feature/TEAM-123`)
 4. Run `just install` if available
@@ -188,9 +188,9 @@ if [[ "$current_branch" == "main" || "$current_branch" == "master" ]]; then
     exit 1
 fi
 
-# Verify in worktree directory (should contain ~/worktrees/)
+# Verify in worktree directory (should contain /worktrees/)
 if [[ "$current_dir" != *"/worktrees/"* ]]; then
-    echo "WARNING: Not in ~/worktrees/ directory. Verify isolation."
+    echo "WARNING: Not in worktrees directory. Verify isolation."
 fi
 
 # Verify clean state
@@ -404,12 +404,12 @@ def pre_task_guard():
 
         print(f"✅ Pre-Task Guard: Now on {new_branch}, safe to proceed")
 
-    # WARN if not in ~/worktrees/ (might be okay for some setups)
+    # WARN if not in worktrees directory (might be okay for some setups)
     if "/worktrees/" not in current_dir:
         WARN: f"""
         ⚠️ Not in standard worktree location
         Current: {current_dir}
-        Expected: ~/worktrees/{{repo}}/{{branch}}/
+        Expected: <parent>/worktrees/{{repo}}/{{branch}}/
 
         Proceeding, but verify you're in an isolated workspace.
         """
@@ -610,6 +610,6 @@ else:
 **ALWAYS:**
 
 - Verify git branch before every task dispatch
-- Use `~/worktrees/{repo}/{branch}/` for isolation
+- Use `<parent>/worktrees/{repo}/{branch}/` for isolation
 - Re-run worktree setup if Pre-Task Guard fires
 - Stop execution if unable to establish safe workspace

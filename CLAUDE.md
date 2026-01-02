@@ -85,7 +85,7 @@ On merge to `main`, GitHub Actions analyzes commit messages:
 - **TDD enforced** - Features/bugs require test-first; chores run verification only
 - **Just abstraction** - All workflows use `just` commands making plugin stack-agnostic
 - **Sequential execution** - Sub-tickets execute one at a time in dependency order
-- **Worktrees at ~/worktrees/** - Isolated execution outside main workspace
+- **Worktrees at `<parent>/worktrees/`** - Isolated execution as sibling to main workspace
 
 ## Working with This Repository
 

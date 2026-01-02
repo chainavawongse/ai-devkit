@@ -53,7 +53,7 @@ Executes sub-issues sequentially in isolated worktrees.
 /execute TEAM-123
 ```
 
-- Creates worktree at `~/worktrees/<repo>/<branch>/`
+- Creates worktree at `<parent>/worktrees/<repo>/<branch>/`
 - Follows TDD (RED → GREEN → REFACTOR)
 - Runs tests and linters after each task
 - Updates JIRA status in real-time
@@ -127,7 +127,7 @@ Shortcut workflow for chores (refactoring, dependencies, etc.).
 # → "Ready to execute?" > yes
 
 # Automatic chaining to execution
-# → Creates worktree ~/worktrees/myapp/notif-45/
+# → Creates worktree /Projects/worktrees/myapp/notif-45/
 # → Executes tasks sequentially with TDD
 # → "Create pull request?" > yes
 
@@ -155,7 +155,7 @@ Shortcut workflow for chores (refactoring, dependencies, etc.).
 - Tests and implementation are never split
 
 **Isolated Worktrees**
-- Execution happens in `~/worktrees/`, not your main workspace
+- Execution happens in `<parent>/worktrees/`, not your main workspace
 - Work on multiple features simultaneously
 
 **Resumable Execution**
