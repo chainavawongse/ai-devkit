@@ -142,6 +142,27 @@ validate: validate-skills validate-references validate-pm
     @echo "✅ All plugin validations passed"
 
 # ============================================================================
+# Autonomy Configuration
+# ============================================================================
+
+# Show autonomy allowlist report (level 1-3)
+show-allowlist level="1":
+    @chmod +x scripts/generate-allowlist.sh
+    @./scripts/generate-allowlist.sh {{level}} report
+
+# Generate .claude/settings.local.json with autonomy allowlist
+configure-autonomy level="2":
+    @chmod +x scripts/generate-allowlist.sh
+    @./scripts/generate-allowlist.sh {{level}} json
+    @echo ""
+    @echo "To apply, copy entries to your Claude Code settings or commit .claude/settings.local.json"
+
+# Output raw allowlist entries (for copying to settings)
+raw-allowlist level="2":
+    @chmod +x scripts/generate-allowlist.sh
+    @./scripts/generate-allowlist.sh {{level}} raw
+
+# ============================================================================
 # CI
 # ============================================================================
 
