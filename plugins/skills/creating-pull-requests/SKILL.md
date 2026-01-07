@@ -21,6 +21,38 @@ See `docs/git-conventions.md` for complete branching, commit, and PR conventions
 
 ## Process
 
+### Step 0: Ensure Code Formatting
+
+**Run formatter before creating PR (MANDATORY):**
+
+```bash
+# Check if fmt or format command exists
+if just --list 2>/dev/null | grep -q "^  fmt"; then
+    FMT_CMD="fmt"
+elif just --list 2>/dev/null | grep -q "^  format"; then
+    FMT_CMD="format"
+else
+    FMT_CMD=""
+fi
+
+if [ -n "$FMT_CMD" ]; then
+    echo "→ Running code formatter..."
+    just $FMT_CMD
+
+    # Check if formatter made any changes
+    if ! git diff --quiet; then
+        echo "⚠ Formatter made changes - staging and committing..."
+        git add -A
+        git commit -m "style: format code"
+        echo "✓ Formatting fixes committed"
+    else
+        echo "✓ Code already formatted"
+    fi
+fi
+```
+
+**Why:** Prevents PR check failures due to formatting issues. Auto-fixes and commits formatting changes before PR creation.
+
 ### Step 1: Gather Context
 
 **Check current branch and commits:**

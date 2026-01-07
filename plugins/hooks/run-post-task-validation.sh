@@ -169,6 +169,48 @@ else
     echo -e "${YELLOW}ℹ  No 'dev' command in justfile, skipping dev server check${NC}" >&2
 fi
 
+# 4. Validate code formatting (BLOCKING - ensures code is formatted before PR)
+echo "" >&2
+echo -e "${BLUE}Step 4: Validating code formatting...${NC}" >&2
+
+# Check if 'just fmt' or 'just format' command exists
+if just --list 2>/dev/null | grep -q "^  fmt"; then
+    FMT_CMD="fmt"
+elif just --list 2>/dev/null | grep -q "^  format"; then
+    FMT_CMD="format"
+else
+    FMT_CMD=""
+fi
+
+if [ -n "$FMT_CMD" ]; then
+    # Run formatter and check if it made any changes
+    FORMAT_OUTPUT=$(mktemp)
+
+    if just $FMT_CMD > "$FORMAT_OUTPUT" 2>&1; then
+        # Format ran successfully - check if there are now unstaged changes
+        if git diff --quiet 2>/dev/null; then
+            echo -e "${GREEN}✓${NC} Code formatting validated" >&2
+        else
+            # Format made changes - this means code wasn't formatted
+            echo -e "${RED}✗${NC} Code formatting issues detected and auto-fixed" >&2
+            echo -e "${YELLOW}Files modified by formatter:${NC}" >&2
+            git diff --name-only 2>/dev/null | head -10 >&2
+            echo -e "${YELLOW}💡 Tip: Stage and commit the formatting fixes before proceeding${NC}" >&2
+            echo -e "${YELLOW}   Run: git add -A && git commit -m 'style: format code'${NC}" >&2
+            VALIDATION_PASSED=false
+        fi
+    else
+        echo -e "${RED}✗${NC} Format command failed" >&2
+        cat "$FORMAT_OUTPUT" >&2
+        echo -e "${YELLOW}💡 Tip: Run 'cd $JUSTFILE_DIR && just $FMT_CMD' to see details${NC}" >&2
+        VALIDATION_PASSED=false
+    fi
+
+    rm -f "$FORMAT_OUTPUT"
+else
+    echo -e "${YELLOW}ℹ  No 'fmt' or 'format' command in justfile, skipping format check${NC}" >&2
+fi
+
 # Final summary
 echo "" >&2
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}" >&2

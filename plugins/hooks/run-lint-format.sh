@@ -78,19 +78,27 @@ else
     echo -e "${YELLOW}ℹ  No 'lint' command in justfile, skipping lint check${NC}" >&2
 fi
 
-# Check if 'just format' command exists
-if just --list 2>/dev/null | grep -q "^  format"; then
+# Check if 'just fmt' or 'just format' command exists
+if just --list 2>/dev/null | grep -q "^  fmt"; then
+    FMT_CMD="fmt"
+elif just --list 2>/dev/null | grep -q "^  format"; then
+    FMT_CMD="format"
+else
+    FMT_CMD=""
+fi
+
+if [ -n "$FMT_CMD" ]; then
     echo -e "${GREEN}→${NC} Running format check..." >&2
-    if just format 2>&1; then
+    if just $FMT_CMD 2>&1; then
         echo -e "${GREEN}✓${NC} Format check passed" >&2
     else
         echo -e "${RED}✗${NC} Format check found issues" >&2
-        echo -e "${YELLOW}💡 Tip: Run 'cd $JUSTFILE_DIR && just format' to fix formatting${NC}" >&2
+        echo -e "${YELLOW}💡 Tip: Run 'cd $JUSTFILE_DIR && just $FMT_CMD' to fix formatting${NC}" >&2
         # Exit code 2 shows stderr to Claude
         exit 2
     fi
 else
-    echo -e "${YELLOW}ℹ  No 'format' command in justfile, skipping format check${NC}" >&2
+    echo -e "${YELLOW}ℹ  No 'fmt' or 'format' command in justfile, skipping format check${NC}" >&2
 fi
 
 echo -e "${GREEN}✓${NC} All checks passed for changes in $JUSTFILE_DIR" >&2
