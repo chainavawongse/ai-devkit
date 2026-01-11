@@ -108,6 +108,8 @@ Start implementation? (yes/no)
 ✓ All 10 feedback items implemented
 ✓ PR #145 updated
 ✓ Ready for re-review
+
+💡 After PR is merged: /post-merged-clean-up
 ```
 
 ## Integration

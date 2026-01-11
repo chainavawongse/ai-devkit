@@ -75,6 +75,7 @@ echo "Next steps:"
 echo "1. Review description and edit if needed"
 echo "2. Request reviewers: gh pr edit <number> --add-reviewer @username"
 echo "3. Track feedback: /address-feedback <number>"
+echo "4. After PR is merged: /post-merged-clean-up"
 ```
 
 ## Error Handling
