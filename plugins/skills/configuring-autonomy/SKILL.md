@@ -238,6 +238,9 @@ def generate_settings(level, categorized_skills):
 
     allowlist = []
 
+    # Read tool - always allowed (read-only, safe)
+    allowlist.append("Read")
+
     # Skills
     skill_entries = generate_skill_allowlist(
         categorized_skills,
