@@ -152,6 +152,14 @@ def generate_bash_allowlist():
         "Bash(git fetch:*)",
         "Bash(git merge:*)",
         "Bash(git symbolic-ref:*)",
+        "Bash(git stash:*)",
+        "Bash(git pull:*)",
+        "Bash(git show:*)",
+        "Bash(git rev-parse:*)",
+        "Bash(git cherry-pick:*)",
+        "Bash(git tag:*)",
+        "Bash(git remote:*)",
+        "Bash(git rebase:*)",
 
         # Just commands (project-defined, safe)
         "Bash(just:*)",
@@ -177,8 +185,16 @@ def generate_bash_allowlist():
         # GitHub CLI (read operations)
         "Bash(gh pr view:*)",
         "Bash(gh pr checks:*)",
-        "Bash(gh api:*)",
+        "Bash(gh pr diff:*)",
+        "Bash(gh pr status:*)",
         "Bash(gh pr list:*)",
+        "Bash(gh issue view:*)",
+        "Bash(gh issue list:*)",
+        "Bash(gh repo view:*)",
+        "Bash(gh run list:*)",
+        "Bash(gh run view:*)",
+        "Bash(gh release list:*)",
+        "Bash(gh api:*)",
 
         # Package managers (local, reversible)
         "Bash(uv:*)",
@@ -234,8 +250,8 @@ Choose your preferred autonomy level:
 - Require approval: Destructive operations, git push
 
 ### Level 3: Maximum (For experienced users with good backups)
-- Auto-allow: Almost everything except destructive operations
-- Require approval: Only truly destructive operations (force push, delete)
+- Auto-allow: Almost everything including git push and PR creation
+- Require approval: Destructive ops (force, delete), PR merge, issue/PR close
 
 Which level? (1/2/3)
 ```
@@ -278,12 +294,11 @@ def generate_settings(level, categorized_skills):
     # Bash commands
     allowlist.extend(generate_bash_allowlist())
 
-    # Add push for level 3
+    # Add push/create for level 3 (merge still requires approval)
     if level >= 3:
         allowlist.extend([
             "Bash(git push:*)",
             "Bash(gh pr create:*)",
-            "Bash(gh pr merge:*)",
         ])
 
     # MCP tools
@@ -293,9 +308,23 @@ def generate_settings(level, categorized_skills):
         "permissions": {
             "allow": allowlist,
             "deny": [
-                "Bash(git push --force:*)",
+                # Force flags - always dangerous
+                "Bash(*-f:*)",
+                "Bash(*--force:*)",
+                "Bash(*--force-with-lease:*)",
+
+                # Git destructive operations
                 "Bash(git reset --hard:*)",
+                "Bash(git clean:*)",
+
+                # File system destructive
                 "Bash(rm -rf:*)",
+                "Bash(rm -r:*)",
+
+                # GitHub state changes (require approval)
+                "Bash(gh pr merge:*)",
+                "Bash(gh pr close:*)",
+                "Bash(gh issue close:*)",
             ]
         }
     }
