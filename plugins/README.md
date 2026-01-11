@@ -13,8 +13,11 @@ plugin transforms the software development lifecycle into a powerful command pip
 2. **`/plan`** - Create Technical Plans from Specifications (HOW to build)
 3. **`/breakdown`** - Break plans into sub-tickets with dependencies and proper labels
 4. **`/execute`** - **Sequential execution** of sub-tickets in isolated worktree with code review
+5. **`/pr`** - Create comprehensive pull request with diagrams and documentation
+6. **`/address-feedback`** - Process and implement PR review feedback
+7. **`/post-merged-clean-up`** - Complete cleanup after PR merge (worktree, branches, tickets)
 
-Each command can run standalone or chain automatically to the next, creating a seamless workflow from idea to pull request with dependency-aware execution.
+Each command can run standalone or chain automatically to the next, creating a seamless workflow from idea to merged PR with complete cleanup.
 
 ## Core Philosophy
 
@@ -166,8 +169,26 @@ Each command can run standalone or chain automatically to the next, creating a s
                         └──────────────┬───────────────┘
                                        │
                                        ▼
-                              ✅ Complete!
-                           Worktree cleaned up
+  ┌──────────────────────────────────────────────────────────────────────────┐
+  │                    POST-MERGE CLEANUP PHASE                               │
+  └──────────────────────────────────────────────────────────────────────────┘
+                                       │
+                              (After PR is merged)
+                                       │
+                                       ▼
+                        ┌──────────────────────────────┐
+                        │  /post-merged-clean-up      │
+                        │   • Verify PR merged        │
+                        │   • Delete worktree         │
+                        │   • Delete local branch     │
+                        │   • Delete remote branch    │
+                        │   • Pull latest main        │
+                        │   • Update tickets → Done   │
+                        └──────────────┬───────────────┘
+                                       │
+                                       ▼
+                              ✅ Workflow Complete!
+                            Ready for next feature
 ```
 
 **Key Features:**
@@ -484,6 +505,77 @@ Root cause: JWT secret not loaded from environment
 Ready to push and create PR?
 ```
 
+---
+
+### `/post-merged-clean-up [branch | pr-url]`
+
+Complete cleanup after a PR has been merged: removes worktree, deletes branches, syncs main, and updates PM tickets.
+
+**Accepts:**
+
+- No arguments (auto-detects from current context)
+- Branch name: `/post-merged-clean-up feature/TEAM-123-auth`
+- PR URL: `/post-merged-clean-up https://github.com/org/repo/pull/123`
+
+**Process:**
+
+1. Verifies PR was actually merged (not just closed)
+2. Confirms cleanup plan with user
+3. Deletes worktree folder
+4. Deletes local branch
+5. Deletes remote branch (if not auto-deleted)
+6. Switches to main repo and pulls latest
+7. Prunes stale remote references
+8. Updates PM tickets to Done
+9. Prints summary
+
+**Output:** Clean workspace ready for next task, all tickets closed.
+
+**Example:**
+
+```bash
+/post-merged-clean-up
+
+# Verification
+Verifying PR merge status...
+✓ Branch feature/TEAM-123-auth merged into main
+
+# Cleanup Plan
+## Post-Merge Cleanup Plan
+- Delete worktree: /Projects/worktrees/my-repo/feature-auth
+- Delete local branch: feature/TEAM-123-auth
+- Delete remote branch: origin/feature/TEAM-123-auth
+- Update tickets: TEAM-123 → Done
+
+Proceed? yes
+
+# Execution
+✓ Worktree removed
+✓ Local branch deleted
+✓ Remote branch already deleted by GitHub
+✓ Switched to /Projects/my-repo (on main)
+✓ Main branch updated
+✓ Ticket TEAM-123 updated to Done
+
+🎉 Cleanup complete! Ready for next task.
+```
+
+**When to use:**
+
+- Immediately after your PR is merged
+- After `/address-feedback` completes and PR is approved
+- To prepare your workspace for the next feature
+
+**Workflow position:**
+
+```
+/refine → /plan → /breakdown → /execute → /pr → /address-feedback → /post-merged-clean-up
+                                                                              ↑
+                                                                        (Final step)
+```
+
+---
+
 ## Skills
 
 Commands leverage these skills for detailed guidance:
@@ -495,6 +587,7 @@ Commands leverage these skills for detailed guidance:
 - **`executing-plans`** - Execution pattern with review gates
 - **`executing-chores`** - Maintenance task execution with quality verification
 - **`executing-bug-fixes`** - Systematic bug investigation and TDD-based fixing
+- **`post-merged-cleanup`** - Complete cleanup after PR merge
 
 ### Supporting Skills
 
@@ -506,7 +599,7 @@ Commands leverage these skills for detailed guidance:
 
 ## Workflow Examples
 
-### Full Workflow: Idea to PR
+### Full Workflow: Idea to Merged PR
 
 ```bash
 # 1. Refine the idea
@@ -514,14 +607,31 @@ Commands leverage these skills for detailed guidance:
 # ... Socratic dialogue ...
 # ✓ Created issue NOTIF-45 with validated design
 
-# 2. Break down into tasks
+# 2. Create technical plan
+/plan NOTIF-45
+# ✓ Technical plan added to NOTIF-45
+
+# 3. Break down into tasks
 /breakdown NOTIF-45
 # ✓ Created 12 sub-issues with dependencies
 
-# 3. Execute implementation
+# 4. Execute implementation
 /execute NOTIF-45
 # ✓ All 12 tasks implemented
-# ✓ PR created and ready for review
+
+# 5. Create PR
+/pr
+# ✓ PR #123 created and ready for review
+
+# 6. Address review feedback (if any)
+/address-feedback 123
+# ✓ All feedback addressed
+
+# 7. After PR is merged on GitHub...
+/post-merged-clean-up
+# ✓ Worktree removed, branches deleted
+# ✓ Main updated, tickets closed
+# ✓ Ready for next feature!
 ```
 
 ### Refine Existing Issue

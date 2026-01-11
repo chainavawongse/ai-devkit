@@ -8,6 +8,7 @@ sequenceDiagram
     participant Router as route_to_skill
     participant Executor as Executor\n(feature/chore/bug)
     participant Reviewer as Code Reviewer
+    participant Cleanup as post-merged-cleanup
 
     User->>Orchestrator: /execute (parent ticket)
     Orchestrator->>Orchestrator: Verify parent ticket ready\n(Spec + Technical Plan)
@@ -29,4 +30,18 @@ sequenceDiagram
     Orchestrator->>Reviewer: Final full-branch code review
     Reviewer-->>Orchestrator: Review result
     Orchestrator->>User: PR ready / Merge instructions
+    Note over User: PR merged on GitHub
+    User->>Cleanup: /post-merged-clean-up
+    Cleanup->>Cleanup: Verify PR merged
+    Cleanup->>Worktree: Delete worktree
+    Cleanup->>Cleanup: Delete local/remote branches
+    Cleanup->>Cleanup: Pull latest main
+    Cleanup->>Cleanup: Update tickets → Done
+    Cleanup->>User: Cleanup complete!
+```
+
+## Complete Workflow
+
+```
+/refine → /plan → /breakdown → /execute → /pr → /address-feedback → [PR merged] → /post-merged-clean-up
 ```
