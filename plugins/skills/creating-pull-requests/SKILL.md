@@ -27,9 +27,9 @@ See `docs/git-conventions.md` for complete branching, commit, and PR conventions
 
 ```bash
 # Check if fmt or format command exists
-if just --list 2>/dev/null | grep -q "^  fmt"; then
+if just --summary 2>/dev/null | tr ' ' '\n' | grep -qx "fmt"; then
     FMT_CMD="fmt"
-elif just --list 2>/dev/null | grep -q "^  format"; then
+elif just --summary 2>/dev/null | tr ' ' '\n' | grep -qx "format"; then
     FMT_CMD="format"
 else
     FMT_CMD=""

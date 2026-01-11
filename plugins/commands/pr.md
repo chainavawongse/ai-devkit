@@ -227,13 +227,14 @@ gh pr edit {number} --add-project "Sprint 23"
 
 ## Best Practices
 
-1. **Run when ready** - All tests passing, code reviewed by self
-2. **Clean branch** - Rebase/squash commits if needed before PR
-3. **Link issues** - Ensure commits reference issue IDs
-4. **Review description** - Edit generated description if needed
-5. **Add reviewers** - Request reviews promptly after creation
-6. **Use draft** - Mark as draft if not ready for review
-7. **Update template** - If project has template, keep it current
+1. **Formatting runs automatically** - `just format` runs before PR creation
+2. **Run when ready** - All tests passing, code reviewed by self
+3. **Clean branch** - Rebase/squash commits if needed before PR
+4. **Link issues** - Ensure commits reference issue IDs
+5. **Review description** - Edit generated description if needed
+6. **Add reviewers** - Request reviews promptly after creation
+7. **Use draft** - Mark as draft if not ready for review
+8. **Update template** - If project has template, keep it current
 
 ## Remember
 
