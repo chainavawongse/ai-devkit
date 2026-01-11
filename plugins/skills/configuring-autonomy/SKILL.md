@@ -166,6 +166,13 @@ def generate_bash_allowlist():
         "Bash(find:*)",
         "Bash(cat:*)",
         "Bash(ls:*)",
+        "Bash(rg:*)",
+        "Bash(fd:*)",
+        "Bash(pwd)",
+        "Bash(which:*)",
+
+        # File operations (local, reversible)
+        "Bash(mkdir:*)",
 
         # GitHub CLI (read operations)
         "Bash(gh pr view:*)",
@@ -173,12 +180,17 @@ def generate_bash_allowlist():
         "Bash(gh api:*)",
         "Bash(gh pr list:*)",
 
-        # Testing
+        # Package managers (local, reversible)
+        "Bash(uv:*)",
+        "Bash(npm install:*)",
+        "Bash(pip install:*)",
+
+        # Testing & build
         "Bash(npm test:*)",
         "Bash(npm run test:*)",
         "Bash(python -m pytest:*)",
         "Bash(cargo test:*)",
-        "Bash(dotnet test:*)",
+        "Bash(dotnet:*)",
     ]
 ```
 
@@ -238,8 +250,23 @@ def generate_settings(level, categorized_skills):
 
     allowlist = []
 
-    # Read tool - always allowed (read-only, safe)
-    allowlist.append("Read")
+    # Read-only tools - always allowed (no side effects)
+    allowlist.extend([
+        "Read",
+        "Glob",
+        "Grep",
+        "WebFetch",
+        "WebSearch",
+        "Task",
+        "TodoWrite",
+    ])
+
+    # Local-reversible tools - level 2+ (git can undo)
+    if level >= 2:
+        allowlist.extend([
+            "Write",
+            "Edit",
+        ])
 
     # Skills
     skill_entries = generate_skill_allowlist(
