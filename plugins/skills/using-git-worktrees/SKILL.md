@@ -2,7 +2,7 @@
 name: using-git-worktrees
 description: Create isolated git worktrees for feature work without affecting current workspace
 when_to_use: when starting feature work that needs isolation from current workspace or before executing implementation plans
-version: 1.0.0
+version: 1.1.0
 ---
 
 # Using Git Worktrees
@@ -120,7 +120,28 @@ git worktree add "$path" -b "$BRANCH_NAME"
 cd "$path"
 ```
 
-### 2. Run Project Setup
+### 2. Symlink User Settings
+
+User-specific settings (like autonomy configuration) should be symlinked from the main repo:
+
+```bash
+# Symlink .claude/settings.local.json if it exists in main repo
+# This step is optional - skipped silently if no settings file exists
+MAIN_SETTINGS="$REPO_ROOT/.claude/settings.local.json"
+if [ -f "$MAIN_SETTINGS" ]; then
+    mkdir -p "$path/.claude"
+    ln -sf "$MAIN_SETTINGS" "$path/.claude/settings.local.json"
+    echo "Symlinked autonomy settings from main repo"
+fi
+# No error if file doesn't exist - user may not have configured autonomy yet
+```
+
+**Why symlink (not copy):**
+- User autonomy settings are personal preferences
+- Symlink ensures changes in main repo propagate to all worktrees
+- No drift between worktrees and main repo
+
+### 3. Run Project Setup
 
 Use the project's justfile for consistent setup:
 
@@ -153,7 +174,7 @@ Run `/setup` to create a justfile with standard recipes:
 Would you like me to run /setup now?
 ```
 
-### 3. Verify Clean Baseline
+### 4. Verify Clean Baseline
 
 Use the project's justfile for consistent testing:
 
@@ -166,7 +187,7 @@ just test
 
 **If tests pass:** Report ready.
 
-### 4. Report Location
+### 5. Report Location
 
 ```
 Worktree ready at <parent>/worktrees/<repo-name>/<branch-name>
@@ -180,6 +201,7 @@ Ready to implement <feature-name>
 |-----------|--------|
 | First time using worktrees | Ask user to confirm location (<parent>/worktrees/ default) |
 | Worktrees directory missing | Create with `mkdir -p "$PARENT_DIR/worktrees/$REPO_NAME"` |
+| Main repo has `.claude/settings.local.json` | Symlink to worktree for autonomy settings |
 | No justfile | Suggest running `/setup` to create one |
 | Tests fail during baseline | Report failures + ask |
 
@@ -216,10 +238,12 @@ User: "Yes"
 [Create directory: mkdir -p /Projects/worktrees/my-project]
 [Create worktree: git worktree add /Projects/worktrees/my-project/feature-auth -b feature/auth]
 [cd /Projects/worktrees/my-project/feature-auth]
+[Symlink settings: ln -sf /Projects/my-project/.claude/settings.local.json .claude/settings.local.json]
 [Run just install]
 [Run just test - 47 passing]
 
 Worktree ready at /Projects/worktrees/my-project/feature-auth
+Autonomy settings: symlinked from main repo
 Tests passing (47 tests, 0 failures)
 Ready to implement auth feature
 ```
@@ -238,6 +262,7 @@ Ready to implement auth feature
 - Confirm worktree location on first use (default: `<parent>/worktrees/`)
 - Use `<parent>/worktrees/<repo-name>/` directory (plugin standard)
 - Create `<parent>/worktrees/<repo-name>/` directory if missing
+- Symlink `.claude/settings.local.json` if it exists (user autonomy settings)
 - Use `just install` for setup (repository-agnostic)
 - Use `just test` for baseline verification
 - Suggest `/setup` if no justfile exists
