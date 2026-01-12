@@ -2,7 +2,7 @@
 name: configuring-autonomy
 description: Configure Claude Code for maximum safe autonomy by analyzing skills/commands and generating allowlist entries
 when_to_use: when setting up a repository for autonomous Claude Code operation, or when adding new skills/commands that should be auto-allowed
-version: 1.0.0
+version: 1.1.0
 ---
 
 # Configuring Autonomy
@@ -12,6 +12,39 @@ version: 1.0.0
 Analyzes plugin skills and commands to generate allowlist entries that enable Claude Code to run autonomously without requiring user approval for safe operations.
 
 **Core principle:** Maximize autonomy while preserving safety. Read-only and reversible operations are auto-allowed; destructive and external mutations require approval.
+
+## Three-Tier Permission Model
+
+Claude Code uses three permission tiers:
+
+| Tier | Behavior | Use For |
+|------|----------|---------|
+| **Allowlist** | Auto-approved (no prompt) | Safe, reversible operations |
+| **Not Listed** | Requires approval (prompts user) | External writes, state changes |
+| **Denylist** | Always blocked (rejected) | Dangerous, destructive, irreversible |
+
+**Critical insight:** Commands NOT in the allowlist are NOT blocked - they prompt for approval. Only commands explicitly in the denylist are blocked.
+
+### What Goes Where
+
+**Allowlist (auto-approved):**
+- Read-only operations (git log, git diff, gh pr view)
+- Local reversible operations (git add, git commit, git checkout)
+- Just commands (project-defined, safe)
+- File exploration (tree, ls, rg, fd)
+
+**Required Approval (not listed anywhere):**
+- `git push` - Sends commits to remote (reversible but external)
+- `gh pr create` - Creates external PR (state change)
+- `gh pr merge` - Merges PR (state change, requires confirmation)
+- `gh pr close` - Closes PR (state change)
+- `gh issue close` - Closes issue (state change)
+
+**Denylist (always blocked):**
+- Force operations: `git push --force`, `git push -f`, `git push --force-with-lease`
+- Hard resets: `git reset --hard`
+- Clean operations: `git clean -fd`, `git clean -f`
+- Destructive file ops: `rm -rf`, `rm -r`
 
 ## The Process
 
@@ -241,17 +274,25 @@ Present autonomy levels:
 
 Choose your preferred autonomy level:
 
+**Remember the three tiers:**
+- Allowlist = Auto-approved (no prompt)
+- Not listed = Prompts for approval (user can accept/reject)
+- Denylist = Always blocked (force ops, destructive ops)
+
 ### Level 1: Conservative (Recommended for new users)
-- Auto-allow: Read-only operations, local git, just commands
-- Require approval: External writes (PM, GitHub), destructive operations
+- **Auto-allow:** Read-only operations, local git, just commands
+- **Prompts for approval:** External writes (PM, GitHub), git push, PR creation
+- **Always blocked:** Force push, hard reset, rm -rf
 
 ### Level 2: Balanced (Recommended for trusted workflows)
-- Auto-allow: All of Level 1 + external writes to PM system
-- Require approval: Destructive operations, git push
+- **Auto-allow:** All of Level 1 + Write/Edit tools + external PM writes
+- **Prompts for approval:** git push, gh pr create, gh pr merge
+- **Always blocked:** Force push, hard reset, rm -rf
 
-### Level 3: Maximum (For experienced users with good backups)
-- Auto-allow: Almost everything including git push and PR creation
-- Require approval: Destructive ops (force, delete), PR merge, issue/PR close
+### Level 3: Maximum (For experienced users)
+- **Auto-allow:** Almost everything including git push and gh pr create
+- **Prompts for approval:** gh pr merge, gh pr close, gh issue close
+- **Always blocked:** Force push, hard reset, rm -rf
 
 Which level? (1/2/3)
 ```
@@ -304,28 +345,36 @@ def generate_settings(level, categorized_skills):
     # MCP tools
     allowlist.extend(generate_mcp_allowlist(include_writes=(level >= 2)))
 
+    # Denylist: ONLY truly dangerous, irreversible operations
+    # NOTE: Commands not in allowlist will prompt for approval (not blocked)
+    # So git push, gh pr create, gh pr merge are NOT in denylist - they prompt
+    denylist = [
+        # Force push - can destroy remote history
+        "Bash(git push --force:*)",
+        "Bash(git push -f:*)",
+        "Bash(git push --force-with-lease:*)",
+        "Bash(git push origin --force:*)",
+        "Bash(git push origin -f:*)",
+
+        # Hard reset - loses uncommitted work
+        "Bash(git reset --hard:*)",
+
+        # Clean - deletes untracked files permanently
+        "Bash(git clean -f:*)",
+        "Bash(git clean -fd:*)",
+        "Bash(git clean -fx:*)",
+        "Bash(git clean -fdx:*)",
+
+        # File system destructive
+        "Bash(rm -rf:*)",
+        "Bash(rm -r:*)",
+        "Bash(rm -fr:*)",
+    ]
+
     return {
         "permissions": {
             "allow": allowlist,
-            "deny": [
-                # Force flags - always dangerous
-                "Bash(*-f:*)",
-                "Bash(*--force:*)",
-                "Bash(*--force-with-lease:*)",
-
-                # Git destructive operations
-                "Bash(git reset --hard:*)",
-                "Bash(git clean:*)",
-
-                # File system destructive
-                "Bash(rm -rf:*)",
-                "Bash(rm -r:*)",
-
-                # GitHub state changes (require approval)
-                "Bash(gh pr merge:*)",
-                "Bash(gh pr close:*)",
-                "Bash(gh issue close:*)",
-            ]
+            "deny": denylist
         }
     }
 ```
@@ -401,9 +450,10 @@ The skill produces:
 
 ## Remember
 
+- **Three tiers:** Allow (auto), Not Listed (prompts), Deny (blocked)
 - Conservative by default (Level 1)
-- Never auto-allow destructive operations
-- Local git operations are safe (reversible)
-- External writes are opt-in
-- Generate deny list for dangerous patterns
+- **Denylist is for truly dangerous ops only:** force push, hard reset, rm -rf
+- **State changes (git push, gh pr create) prompt for approval** - not in denylist
+- Local git operations are safe (reversible) → allowlist
+- External writes are opt-in at higher levels
 - Report what was configured
