@@ -5,6 +5,7 @@ JWT authentication with OAuth social provider support (Google, GitHub, Apple, Mi
 ## Overview
 
 This guide covers a flexible authentication strategy:
+
 - **JWT tokens** for API authentication
 - **OAuth providers** for social login (Google, GitHub, Apple, Microsoft)
 - **Unified user identity** regardless of authentication method

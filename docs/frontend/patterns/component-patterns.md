@@ -369,7 +369,7 @@ export function ProductListView({
 
 ## Best Practices
 
-### ✅ DO:
+### ✅ DO
 
 - Use `memo()` for expensive components with stable props
 - Define types/interfaces above the component
@@ -377,7 +377,7 @@ export function ProductListView({
 - Provide accessible labels for interactive elements
 - Export named components (not default when possible)
 
-### ❌ DON'T:
+### ❌ DON'T
 
 - Don't use `any` type for props
 - Don't forget key prop in lists

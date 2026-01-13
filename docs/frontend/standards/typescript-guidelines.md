@@ -347,7 +347,7 @@ type UserResponse = ApiResponse<User>;
 
 ## Best Practices
 
-### ✅ DO:
+### ✅ DO
 
 - Enable all strict mode flags
 - Use `unknown` instead of `any`
@@ -355,7 +355,7 @@ type UserResponse = ApiResponse<User>;
 - Use discriminated unions for state
 - Leverage utility types
 
-### ❌ DON'T:
+### ❌ DON'T
 
 - Don't use `any` (use `unknown` + type guards)
 - Don't use `@ts-ignore` (use `@ts-expect-error` if needed)

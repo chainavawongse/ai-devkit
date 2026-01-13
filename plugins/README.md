@@ -721,6 +721,7 @@ claude mcp add --transport sse atlassian https://mcp.atlassian.com/v1/sse
 ```
 
 Then authenticate:
+
 1. Restart Claude Code
 2. Open "Search & Tools" menu
 3. Select "Connect Atlassian Account"
@@ -731,6 +732,7 @@ See [Atlassian MCP Server Setup](https://support.atlassian.com/atlassian-rovo-mc
 #### Option 2: Notion
 
 The Notion MCP server may already be available in Claude. If not:
+
 1. Configure Notion MCP in your Claude settings
 2. Authenticate with your Notion workspace
 3. Grant access to the databases you want to use
@@ -738,6 +740,7 @@ The Notion MCP server may already be available in Claude. If not:
 #### Option 3: GitHub Issues
 
 No MCP server needed. Uses the `gh` CLI:
+
 ```bash
 gh auth login
 ```
@@ -767,6 +770,7 @@ Run `/setup` in your repository to configure and verify PM integration.
 Add project management context to your CLAUDE.md (created by `/setup`):
 
 **For Jira:**
+
 ```markdown
 ## Project Management
 
@@ -775,6 +779,7 @@ Add project management context to your CLAUDE.md (created by `/setup`):
 ```
 
 **For Notion:**
+
 ```markdown
 ## Project Management
 
@@ -785,6 +790,7 @@ Add project management context to your CLAUDE.md (created by `/setup`):
 ```
 
 **For GitHub Issues:**
+
 ```markdown
 ## Project Management
 
@@ -920,6 +926,7 @@ Status updates provide visibility to your team. `/execute` handles this automati
 ### "No project management system configured"
 
 Run `/setup` to configure your PM system. The setup wizard will:
+
 - Detect available MCP servers
 - Guide you through authentication
 - Configure project/database settings

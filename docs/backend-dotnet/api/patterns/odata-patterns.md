@@ -82,6 +82,7 @@ GET /api/products?$select=id,name,price
 ```
 
 Response:
+
 ```json
 [
   { "id": 1, "name": "Widget", "price": 29.99 },
@@ -136,6 +137,7 @@ GET /api/products?$count=true
 ```
 
 Response:
+
 ```json
 {
   "@odata.count": 150,

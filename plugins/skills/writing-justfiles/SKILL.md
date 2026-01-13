@@ -217,15 +217,18 @@ migrate-rollback VERSION:
 ### Migration Guidelines
 
 **Naming conventions:**
+
 - Use descriptive names: `AddUserEmailIndex`, `CreateOrdersTable`, `RemoveDeprecatedColumns`
 - Include ticket reference if applicable: `TEAM123_AddUserEmailIndex`
 
 **Remote environment execution:**
+
 - ⚠️ **NEVER run migrations directly against production databases**
 - Migrations to remote environments should ONLY run through CI/CD pipelines
 - Use `migrate-script` to generate SQL for review before production deployment
 
 **For detailed migration patterns and best practices, see:**
+
 - .NET/EF Core: `docs/backend-dotnet/api/data/entity-framework.md`
 - Python/Alembic: `docs/backend-python/api/data/alembic.md`
 

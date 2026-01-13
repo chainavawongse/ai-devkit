@@ -52,6 +52,7 @@ The plugin uses **semantic versioning** with automatic version bumps based on **
 ### Version Files
 
 Two files track the plugin version (kept in sync automatically):
+
 - `.claude-plugin/marketplace.json` → `plugins[0].version`
 - `plugins/.claude_plugin/plugin.json` → `version`
 
@@ -96,5 +97,6 @@ When modifying this repo:
 - **Agents** (`*.md` in agents dirs): Subagent definitions invoked via Task() tool
 
 When copying to other repos:
+
 - Copy `.claude/` directory for agents, commands, and settings
 - Copy `.github/workflows/` for PR workflows

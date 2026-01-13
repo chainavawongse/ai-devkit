@@ -137,6 +137,7 @@ fi
 ```
 
 **Why symlink (not copy):**
+
 - User autonomy settings are personal preferences
 - Symlink ensures changes in main repo propagate to all worktrees
 - No drift between worktrees and main repo

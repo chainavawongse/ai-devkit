@@ -254,7 +254,7 @@ Where does the data come from?
 
 ## Best Practices
 
-### ✅ DO:
+### ✅ DO
 
 - Use React Query for ALL server state
 - Use Zustand selectors to prevent re-renders
@@ -262,7 +262,7 @@ Where does the data come from?
 - Keep URL state for filters/pagination
 - Invalidate queries after mutations
 
-### ❌ DON'T:
+### ❌ DON'T
 
 - Don't store API data in Zustand
 - Don't use React Context for frequently changing state

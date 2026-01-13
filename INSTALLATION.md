@@ -27,6 +27,7 @@ claude mcp add --transport sse atlassian https://mcp.atlassian.com/v1/sse
 ```
 
 Then authenticate:
+
 1. Restart Claude Code
 2. Open "Search & Tools" menu
 3. Select "Connect Atlassian Account"
@@ -58,6 +59,7 @@ gh auth login
 ### Verify Configuration
 
 After installation, run `/setup` in your repository to configure PM integration. The setup wizard will:
+
 - Detect available MCP servers
 - Verify authentication
 - Configure project/database settings
@@ -81,11 +83,13 @@ just uninstall-plugin
 ## Troubleshooting
 
 **Commands not showing in /help**
+
 1. Restart Claude Code
 2. Verify plugin: `claude plugin marketplace list`
 3. Reinstall: `just uninstall-plugin && just install-plugin`
 
 **PM system connection issues**
+
 - Re-authenticate via your MCP server settings
 - Run `/setup` to reconfigure project management
 - Test: Ask Claude to fetch an issue from your PM system

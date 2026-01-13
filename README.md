@@ -11,6 +11,7 @@ AI DevKit is a spec-driven development workflow integrated with JIRA:
 ```
 
 **Core features:**
+
 - **Spec-driven** - Separates WHAT (Specification) from HOW (Technical Plan)
 - **Test-driven** - TDD enforced at all levels (RED → GREEN → REFACTOR)
 - **Sequential execution** - Tasks run in dependency order in isolated worktrees
@@ -18,6 +19,7 @@ AI DevKit is a spec-driven development workflow integrated with JIRA:
 - **JIRA integration** - All context lives in tickets, real-time status updates
 
 **Get started:**
+
 - [Installation Guide](INSTALLATION.md)
 - [Quick Start & Usage](plugins/QUICK-START.md)
 - [Full Documentation](plugins/README.md)

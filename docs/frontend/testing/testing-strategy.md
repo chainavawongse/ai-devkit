@@ -539,26 +539,31 @@ test.describe('Products', () => {
 Use in this order:
 
 1. **`getByRole`** - Most accessible
+
    ```typescript
    screen.getByRole('button', { name: /submit/i });
    ```
 
 2. **`getByLabelText`** - Best for form fields
+
    ```typescript
    screen.getByLabelText(/email/i);
    ```
 
 3. **`getByPlaceholderText`** - For inputs
+
    ```typescript
    screen.getByPlaceholderText(/search/i);
    ```
 
 4. **`getByText`** - For non-interactive content
+
    ```typescript
    screen.getByText(/welcome/i);
    ```
 
 5. **`getByTestId`** - Last resort
+
    ```typescript
    screen.getByTestId('product-card');
    ```
@@ -567,7 +572,7 @@ Use in this order:
 
 ## Best Practices
 
-### ✅ DO:
+### ✅ DO
 
 - Test behavior, not implementation
 - Use accessible queries (getByRole, getByLabelText)
@@ -576,7 +581,7 @@ Use in this order:
 - Keep tests focused and isolated
 - Use meaningful test descriptions
 
-### ❌ DON'T:
+### ❌ DON'T
 
 - Don't test implementation details
 - Don't test third-party libraries
@@ -589,12 +594,14 @@ Use in this order:
 ## Testing Checklist
 
 **Before Committing:**
+
 - [ ] All tests pass
 - [ ] New features have tests
 - [ ] Bug fixes have regression tests
 - [ ] Coverage meets thresholds
 
 **Test Coverage:**
+
 - [ ] Happy path
 - [ ] Error states
 - [ ] Loading states

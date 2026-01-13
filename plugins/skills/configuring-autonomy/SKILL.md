@@ -28,12 +28,14 @@ Claude Code uses three permission tiers:
 ### What Goes Where
 
 **Allowlist (auto-approved):**
+
 - Read-only operations (git log, git diff, gh pr view)
 - Local reversible operations (git add, git commit, git checkout)
 - Just commands (project-defined, safe)
 - File exploration (tree, ls, rg, fd)
 
 **Required Approval (not listed anywhere):**
+
 - `git push` - Sends commits to remote (reversible but external)
 - `gh pr create` - Creates external PR (state change)
 - `gh pr merge` - Merges PR (state change, requires confirmation)
@@ -41,6 +43,7 @@ Claude Code uses three permission tiers:
 - `gh issue close` - Closes issue (state change)
 
 **Denylist (always blocked):**
+
 - Force operations: `git push --force`, `git push -f`, `git push --force-with-lease`
 - Hard resets: `git reset --hard`
 - Clean operations: `git clean -fd`, `git clean -f`

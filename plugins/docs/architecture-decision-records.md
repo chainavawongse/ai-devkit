@@ -190,12 +190,14 @@ Proposed → Accepted → [Deprecated | Superseded]
 ### Keep ADRs Immutable
 
 Once accepted, don't modify the content of an ADR. If the decision changes:
+
 1. Create a new ADR
 2. Mark the old one as "Superseded by [new ADR link]"
 
 ### Be Specific About Context
 
 Future readers need to understand:
+
 - What problem you were solving
 - What constraints existed at the time
 - What alternatives were available
@@ -203,6 +205,7 @@ Future readers need to understand:
 ### Document the "Why"
 
 The decision itself is often obvious in hindsight. Focus on:
+
 - Why this solution over alternatives
 - What trade-offs were accepted
 - What assumptions were made
@@ -210,12 +213,14 @@ The decision itself is often obvious in hindsight. Focus on:
 ### Include Dissenting Views
 
 If there was significant debate:
+
 - Mention the main counterarguments
 - Explain why they weren't decisive
 
 ## Reviewing ADRs
 
 ADRs should be reviewed as part of:
+
 - PR review for the implementing change
 - Architecture review meetings
 - Onboarding new team members to a codebase

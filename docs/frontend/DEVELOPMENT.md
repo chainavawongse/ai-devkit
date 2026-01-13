@@ -5,12 +5,14 @@ Quick reference for development standards and best practices. This project uses 
 ## 📚 Documentation Index
 
 ### Standards
+
 - **[Naming Conventions](./standards/naming-conventions.md)** - File, variable, function, component naming rules
 - **[Code Quality & Tooling](./standards/code-quality.md)** - ESLint, Prettier, pre-commit hooks
 - **[TypeScript Guidelines](./standards/typescript-guidelines.md)** - Type safety and TS best practices
 - **[Accessibility Standards](./standards/accessibility.md)** - a11y requirements and patterns
 
 ### Architecture
+
 - **[Folder Structure](./architecture/folder-structure.md)** - Complete project organization
 - **[State Management](./architecture/state-management.md)** - Zustand + React Query strategy
 - **[Error Handling](./architecture/error-handling.md)** - Centralized error handling approach
@@ -19,17 +21,20 @@ Quick reference for development standards and best practices. This project uses 
 - **[CI/CD Pipeline](./architecture/ci-cd.md)** - GitHub Actions workflows for CI/CD
 
 ### Patterns
+
 - **[API Integration](./patterns/api-integration.md)** - Axios + React Query patterns
 - **[Component Patterns](./patterns/component-patterns.md)** - React component best practices
 - **[Form Patterns](./patterns/form-patterns.md)** - React Hook Form + Zod patterns
 - **[Performance Optimization](./patterns/performance.md)** - Code splitting, memoization, optimization
 
 ### Testing
+
 - **[Testing Strategy](./testing/testing-strategy.md)** - Overall testing approach
 - **[Unit Testing](./testing/unit-testing.md)** - Vitest + React Testing Library
 - **[E2E Testing](./testing/e2e-testing.md)** - Playwright end-to-end tests
 
 ### Examples
+
 - **[Component Template](./examples/component-template.tsx)** - Reference component implementation
 - **[Hook Template](./examples/hook-template.ts)** - Reference custom hook
 - **[API Template](./examples/api-template.ts)** - Reference API integration
@@ -111,6 +116,7 @@ npm run check               # Run all checks (type-check, lint, format, test)
 ### Environment Setup
 
 1. Copy environment template:
+
    ```bash
    cp .env.example .env.local
    ```
@@ -126,6 +132,7 @@ npm run check               # Run all checks (type-check, lint, format, test)
 ### Creating a New Feature
 
 1. **Create feature folder**
+
    ```bash
    mkdir -p src/features/my-feature/{components,hooks,api,types}
    ```
@@ -146,11 +153,13 @@ This project is optimized for spec-driven development with Claude Code:
 
 1. **Write a specification** describing what you want to build
 2. **Reference relevant docs** when invoking Claude Code:
+
    ```bash
    claude-code "Implement user profile editing feature per spec.md.
    Follow patterns in docs/patterns/form-patterns.md and 
    docs/architecture/error-handling.md"
    ```
+
 3. **Review and iterate** on the implementation
 
 ---
@@ -240,20 +249,24 @@ Before committing code:
 ## 🐛 Common Issues
 
 ### Import Errors
+
 - Use path aliases: `@/components/ui/Button` not `../../../components/ui/Button`
 - Ensure `tsconfig.json` and `vite.config.ts` have matching path aliases
 
 ### Type Errors
+
 - Never use `any` - use `unknown` and type guards instead
 - Enable all strict TypeScript flags
 - See [TypeScript Guidelines](./standards/typescript-guidelines.md)
 
 ### Test Failures
+
 - Mock API calls in unit tests
 - Use `renderWithProviders` for components that need React Query
 - See [Unit Testing](./testing/unit-testing.md)
 
 ### Performance Issues
+
 - Lazy load routes and heavy components
 - Use React Query's `staleTime` to reduce refetches
 - Virtualize long lists (100+ items)

@@ -3,6 +3,7 @@
 This file provides instructions for AI coding assistants (Claude Code, GitHub Copilot, Cursor, Codex, Gemini, etc.) when working on this project.
 
 > **Tool-specific setup:**
+>
 > - **Claude Code**: Symlinked as `CLAUDE.md` (auto-detected)
 > - **Gemini Code Assist**: Symlinked as `GEMINI.md` and `.gemini/instructions.md` (auto-detected)
 > - **GitHub Copilot**: Symlinked as `.github/copilot-instructions.md` (auto-detected)
@@ -12,6 +13,7 @@ This file provides instructions for AI coding assistants (Claude Code, GitHub Co
 ## Project Overview
 
 This is a full-stack application with:
+
 - **Frontend**: React/TypeScript with Vite, Tailwind CSS, React Query, and Zustand. Guidelines in `frontend/`
 - **Backend (.NET)**: .NET 8 API with Clean Architecture, CQRS, MediatR, and Entity Framework Core. Guidelines in `backend-dotnet/`
 - **Backend (Python)**: FastAPI with Pydantic, SQLAlchemy 2.0, and async PostgreSQL. Guidelines in `backend-python/`
@@ -200,6 +202,7 @@ When implementing features, read documentation in this order:
 ### When Uncertain
 
 Ask the user for clarification when:
+
 - The task requires choosing between multiple valid architectural approaches
 - The feature doesn't fit clearly into an existing feature module
 - Security implications are unclear
@@ -207,6 +210,7 @@ Ask the user for clarification when:
 - Performance trade-offs need user input
 
 Do NOT ask when:
+
 - The pattern is clearly documented
 - It's a straightforward implementation following existing examples
 - The decision is easily reversible

@@ -38,9 +38,11 @@ If no configuration found, prompt user to run `/setup` first.
 **Purpose:** Retrieve a single issue/ticket by ID
 
 **Input:**
+
 - `id` - Issue identifier (Jira key like "TEAM-123" or Notion page ID)
 
 **Output:**
+
 ```
 Issue {
   id: string           # Unique identifier
@@ -79,6 +81,7 @@ issue = mcp__jira__get_issue(issue_key=issue_id)
   blockedBy: issue.blocked_by
 }
 ```
+
 </details>
 
 <details>
@@ -100,6 +103,7 @@ page = mcp__notion__notion-fetch(id=issue_id)
   blockedBy: (reverse lookup via search)
 }
 ```
+
 </details>
 
 ---
@@ -109,6 +113,7 @@ page = mcp__notion__notion-fetch(id=issue_id)
 **Purpose:** Create a new issue/ticket
 
 **Input:**
+
 ```
 {
   title: string           # Required - Issue title
@@ -155,6 +160,7 @@ issue = mcp__jira__create_issue({
 for blocked_id in input.blocks:
   create_dependency(issue.id, blocked_id)
 ```
+
 </details>
 
 <details>
@@ -181,9 +187,11 @@ page = mcp__notion__notion-create-pages({
 ```
 
 **Level Classification (Notion Only):**
+
 - Determine level based on complexity indicators before creating
 - See `scope-classification` section in pm-operations for heuristics
 - Level is independent of Type (a bug can be Feature-level, User Story-level, or Task-level)
+
 </details>
 
 ---
@@ -193,8 +201,10 @@ page = mcp__notion__notion-create-pages({
 **Purpose:** Update an existing issue's properties or content
 
 **Input:**
+
 - `id` - Issue identifier
 - Updates object (all optional):
+
 ```
 {
   title?: string        # New title
@@ -234,6 +244,7 @@ mcp__jira__update_issue(
   labels=[input.type] if input.type else undefined
 )
 ```
+
 </details>
 
 <details>
@@ -274,6 +285,7 @@ if input.description:
       }
     })
 ```
+
 </details>
 
 ---
@@ -283,6 +295,7 @@ if input.description:
 **Purpose:** Get all sub-issues/child tickets of a parent
 
 **Input:**
+
 - `parentId` - Parent issue identifier
 
 **Output:** Array of issue objects
@@ -311,6 +324,7 @@ return issues.map(issue => ({
   blockedBy: issue.blocked_by
 }))
 ```
+
 </details>
 
 <details>
@@ -340,6 +354,7 @@ return children.map(page => ({
   parentId: parentId
 }))
 ```
+
 </details>
 
 ---
@@ -349,6 +364,7 @@ return children.map(page => ({
 **Purpose:** Add a comment to an issue
 
 **Input:**
+
 - `id` - Issue identifier
 - `text` - Comment text (markdown)
 
@@ -366,6 +382,7 @@ mcp__atlassian__create_comment(issueId=id, body=text)
 # Fallback
 mcp__jira__add_comment(issue_key=id, comment=text)
 ```
+
 </details>
 
 <details>
@@ -380,6 +397,7 @@ mcp__notion__notion-create-comment({
   }]
 })
 ```
+
 </details>
 
 ---
@@ -389,6 +407,7 @@ mcp__notion__notion-create-comment({
 **Purpose:** Create a blocking dependency (fromId blocks toId)
 
 **Input:**
+
 - `fromId` - Blocking issue ID
 - `toId` - Blocked issue ID
 
@@ -414,6 +433,7 @@ mcp__jira__create_link(
   link_type="Blocks"
 )
 ```
+
 </details>
 
 <details>
@@ -434,6 +454,7 @@ mcp__notion__notion-update-page({
   }
 })
 ```
+
 </details>
 
 ---
@@ -503,6 +524,7 @@ Level and Type are independent dimensions:
 | **Task** | Atomic feature implementation | Config/docs update | Single file bug fix |
 
 **Example:** A "Payment validation bug" might be:
+
 - **Level:** User Story (single domain - payments, coherent fix)
 - **Type:** bug (fixing broken behavior)
 

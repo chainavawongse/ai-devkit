@@ -25,6 +25,7 @@ This runs three validation scripts:
 ### Level 2: Plugin Installation Test
 
 1. **Install the plugin:**
+
    ```bash
    just install-plugin
    ```
@@ -72,6 +73,7 @@ git add . && git commit -m "add package.json"
 **Option A: GitHub Issues (easiest - no MCP needed)**
 
 1. Push repo to GitHub:
+
    ```bash
    gh repo create test-plugin-repo --public --source=. --push
    ```
@@ -79,6 +81,7 @@ git add . && git commit -m "add package.json"
 2. Run `/setup` and select "GitHub Issues"
 
 3. Test the workflow:
+
    ```bash
    /refine "Add a hello world function"
    # → Should create GitHub issue, ask clarifying questions
@@ -123,6 +126,7 @@ git add . && git commit -m "add package.json"
 Test that errors are handled gracefully:
 
 1. **Missing PM configuration:**
+
    ```bash
    # In a repo without /setup run
    /refine "test"
@@ -130,6 +134,7 @@ Test that errors are handled gracefully:
    ```
 
 2. **Missing sections:**
+
    ```bash
    /plan <issue-without-specification>
    # → Should suggest running /refine first
@@ -139,6 +144,7 @@ Test that errors are handled gracefully:
    ```
 
 3. **Invalid issue ID:**
+
    ```bash
    /refine INVALID-999
    # → Should show helpful error message
@@ -153,6 +159,7 @@ just ci
 ```
 
 Which executes:
+
 - `check` (lint, link check, JSON validation)
 - `check-plugin` (plugin structure validation)
 - `validate` (skill and reference validation)
@@ -176,4 +183,4 @@ If you find issues during testing:
 1. Note the command that failed
 2. Copy the error message
 3. Check if it's a known warning in `just validate`
-4. Report at: https://github.com/chainavawongse/ai-devkit/issues
+4. Report at: <https://github.com/chainavawongse/ai-devkit/issues>

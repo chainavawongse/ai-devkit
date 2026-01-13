@@ -34,6 +34,7 @@ git diff
 **Quick Review (default):** Inline review in current context - fast, good for small changes.
 
 **Deep Review (`--deep`):** Dispatch `code-reviewer` agent for comprehensive analysis including:
+
 - Security scoring (A-F)
 - Architecture impact assessment
 - SOLID principle compliance
@@ -43,34 +44,40 @@ git diff
 ### Step 3: Review Criteria
 
 **Correctness:**
+
 - Logic errors, edge cases, off-by-one errors
 - Null/undefined checks
 - Promise rejection handling
 
 **Security:**
+
 - Input validation
 - SQL injection, XSS, CSRF
 - Authentication/authorization
 - Hardcoded secrets or API keys
 
 **Performance:**
+
 - Algorithmic complexity
 - N+1 queries
 - Memory leaks
 - Unnecessary loops
 
 **Maintainability:**
+
 - Code style consistency
 - Naming conventions
 - Function/method size
 - Documentation
 
 **Testing:**
+
 - Tests for new functionality
 - Edge case coverage
 - Test determinism
 
 **Architecture:**
+
 - Follows existing patterns
 - Proper module boundaries
 - Dependency direction
@@ -156,6 +163,7 @@ HEAD_SHA=$(git rev-parse HEAD)
 ```
 
 The code-reviewer agent provides:
+
 - Severity-tagged issues (Critical/Major/Minor)
 - SOLID principle analysis
 - Dependency direction checks
@@ -176,11 +184,13 @@ The code-reviewer agent provides:
 ## Integration
 
 **Uses:**
+
 - `code-reviewer` agent (for `--deep` mode)
 - `just lint` and `just test` (if available)
 - Git diff commands
 
 **Related skills:**
+
 - `requesting-code-review` - For dispatching reviews during task execution
 - `receiving-code-review` - For processing review feedback
 

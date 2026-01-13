@@ -29,6 +29,7 @@ chore/PAS-789-upgrade-dependencies
 - Description should match the ticket title intent
 
 **Examples:**
+
 ```bash
 feature/PAS-123-add-user-authentication
 feature/PAS-124-implement-password-reset
@@ -70,11 +71,13 @@ chore(PAS-789): upgrade React to v18
 ```
 
 **Short description:**
+
 - Imperative mood ("add" not "added")
 - No period at end
 - Max 72 characters
 
 **Body (when needed):**
+
 - Explain what changed and why
 - Wrap at 72 characters
 - Separate from subject with blank line
@@ -135,6 +138,7 @@ PAS-789: Upgrade React to v18
 ### PR Description
 
 Include in the PR body:
+
 - Summary of changes
 - Link to Jira ticket (auto-linked if ticket number in title)
 - Test plan or verification steps

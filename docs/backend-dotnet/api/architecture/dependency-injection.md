@@ -385,6 +385,7 @@ builder.Host.UseLamar((context, registry) =>
 ```
 
 Lamar provides:
+
 - Assembly scanning with conventions
 - Better diagnostics (`container.WhatDoIHave()`)
 - More advanced decorator support

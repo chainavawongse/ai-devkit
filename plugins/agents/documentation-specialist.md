@@ -70,6 +70,7 @@ Short description.
 ````
 
 ### OpenAPI stub
+
 ```yaml
 openapi: 3.0.0
 info:

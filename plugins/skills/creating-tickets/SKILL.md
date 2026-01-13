@@ -96,7 +96,7 @@ Is this changing user-facing or system behavior?
 
 **For Notion only (additional required field):**
 
-7. **Level** - Scope hierarchy: Feature, User Story, or Task
+1. **Level** - Scope hierarchy: Feature, User Story, or Task
    - Determined by classification heuristics (see pm-operations skill)
    - Follows strict hierarchy: Feature → User Story → Task
 
@@ -147,6 +147,7 @@ Is this changing user-facing or system behavior?
 ```
 
 **Template guidelines:**
+
 - **Summary:** Keep concise (fits in Jira title)
 - **Requirements vs Acceptance Criteria:** Requirements = *what* to build; Acceptance Criteria = *how we know it's done*
 - **Optional sections:** Only include if they add value - don't pad with empty sections
@@ -282,7 +283,7 @@ Follow systematic-debugging and test-driven-development skills:
 
 **Check CLAUDE.md for configured PM system, then use appropriate MCP tools:**
 
-### If Jira (Atlassian MCP):
+### If Jira (Atlassian MCP)
 
 ```python
 ticket = mcp__atlassian__create_issue({
@@ -296,7 +297,7 @@ ticket = mcp__atlassian__create_issue({
 })
 ```
 
-### If Jira (Alternative MCP):
+### If Jira (Alternative MCP)
 
 ```python
 ticket = mcp__jira__create_issue({
@@ -309,7 +310,7 @@ ticket = mcp__jira__create_issue({
 })
 ```
 
-### If Notion:
+### If Notion
 
 ```python
 # Get database ID from CLAUDE.md: ## Project Management > Data Source ID

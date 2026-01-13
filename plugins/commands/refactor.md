@@ -6,7 +6,7 @@ description: Refactor code to improve structure and readability while preserving
 
 Refactor code to improve its structure, readability, and maintainability without changing its behavior.
 
-## Process:
+## Process
 
 1. **Understand the scope:**
    - Ask the user what they want to refactor if not specified
@@ -21,6 +21,7 @@ Refactor code to improve its structure, readability, and maintainability without
 
 3. **Plan the refactoring:**
    Present the refactoring plan:
+
    ```
    ## Refactoring Plan
    
@@ -40,7 +41,7 @@ Refactor code to improve its structure, readability, and maintainability without
    ```
 
 4. **Execute refactoring (one step at a time):**
-   
+
    Common refactoring patterns:
    - **Extract Method**: Pull out code into a well-named function
    - **Rename**: Give better names to variables, functions, classes
@@ -63,7 +64,8 @@ Refactor code to improve its structure, readability, and maintainability without
    - Check performance if applicable
    - Ensure documentation is updated if needed
 
-## Refactoring Checklist:
+## Refactoring Checklist
+
 - [ ] Tests pass before starting
 - [ ] Each refactoring step is small
 - [ ] Tests pass after each step
@@ -73,7 +75,8 @@ Refactor code to improve its structure, readability, and maintainability without
 - [ ] No performance degradation
 - [ ] Documentation updated
 
-## Common Code Smells to Fix:
+## Common Code Smells to Fix
+
 - Long methods (>20 lines)
 - Large classes (>200 lines)
 - Long parameter lists (>3 params)
@@ -83,7 +86,8 @@ Refactor code to improve its structure, readability, and maintainability without
 - Inappropriate intimacy (classes know too much about each other)
 - Comments explaining bad code (fix the code instead)
 
-## Output Format:
+## Output Format
+
 ```
 ## Refactoring Complete
 
@@ -104,7 +108,8 @@ Refactor code to improve its structure, readability, and maintainability without
 ### All tests: ✅ PASSING
 ```
 
-## Important:
+## Important
+
 - Never change behavior during refactoring
 - Make one type of change at a time
 - Commit frequently with clear messages

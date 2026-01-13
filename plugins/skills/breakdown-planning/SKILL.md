@@ -45,16 +45,19 @@ Breakdown Progress:
 ### Phase 1: Load Context
 
 **First, check CLAUDE.md for PM system configuration:**
+
 - Look for `## Project Management` section
 - Identify system: `Jira` or `Notion`
 
 **Retrieve parent issue:**
 
 **For Jira:**
+
 - `mcp__atlassian__get_issue(id=parent_id)` (primary)
 - OR `mcp__jira__get_issue(issue_key=parent_id)` (fallback)
 
 **For Notion:**
+
 - `mcp__notion__notion-fetch(id=parent_id)`
 
 - Extract: Title, Specification section, Technical Plan section
@@ -268,6 +271,7 @@ Sub-Issue Creation Progress:
 **For each task, create one sub-ticket in the PM system:**
 
 **Critical:** Every sub-ticket MUST have:
+
 - Exactly ONE Type label: `feature`, `chore`, or `bug` (execution workflow)
 - For Notion: Level property set to child level determined in Phase 1b
 
@@ -280,6 +284,7 @@ Sub-Issue Creation Progress:
 **Determine ticket Level (Notion only):**
 
 Use child level from Phase 1b (strict hierarchy):
+
 - Parent is Feature → child Level = "User Story"
 - Parent is User Story → child Level = "Task"
 
@@ -366,11 +371,14 @@ Follow test-driven-development skill (devkit:test-driven-development):
 **Dependency linking:**
 
 **For Jira:**
+
 - Use `mcp__atlassian__create_dependency(from, to, type="blocks")` (primary)
 - OR `mcp__jira__create_link(inward_issue, outward_issue, link_type="Blocks")` (fallback)
 
 **For Notion:**
+
 - Update the "Blocks" relation property on the blocking issue:
+
   ```
   mcp__notion__notion-update-page({
     data: {
@@ -380,6 +388,7 @@ Follow test-driven-development skill (devkit:test-driven-development):
     }
   })
   ```
+
 - The "Blocked By" property is auto-populated via dual relation
 
 ### Phase 5: Document Patterns
@@ -410,11 +419,14 @@ Based on the task type, add pattern references:
 **Update each sub-issue:**
 
 **For Jira:**
+
 - `mcp__atlassian__update_issue(id, description=updated_description)` (primary)
 - OR `mcp__jira__update_issue(issue_key, description=updated_description)` (fallback)
 
 **For Notion:**
+
 - Append patterns to page content:
+
   ```
   mcp__notion__notion-update-page({
     data: {
@@ -429,6 +441,7 @@ Based on the task type, add pattern references:
 **After all sub-issues created, update parent issue with phase label:**
 
 **For Jira:**
+
 ```python
 # Add phase:broken-down label to parent
 mcp__atlassian__update_issue(
@@ -443,6 +456,7 @@ mcp__jira__update_issue(
 ```
 
 **For Notion:**
+
 ```python
 # Add 'broken-down' to Phase multi-select property
 mcp__notion__notion-update-page({

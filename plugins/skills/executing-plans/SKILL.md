@@ -213,6 +213,7 @@ Proceeding with execution...
 ### Step 1: Load Context from Parent Issue
 
 **First, check CLAUDE.md for PM system configuration:**
+
 - Look for `## Project Management` section
 - Identify system: `Jira` or `Notion`
 

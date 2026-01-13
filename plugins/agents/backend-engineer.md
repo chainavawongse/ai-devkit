@@ -79,7 +79,7 @@ Create **secure, performant, maintainable** backend functionality—authenticati
 
 | File Present           | Stack Indicator                       |
 | ---------------------- | ------------------------------------- |
-| *.csproj / *.sln       | .NET/C# (ASP.NET Core, Minimal APIs)  |
+| *.csproj /*.sln       | .NET/C# (ASP.NET Core, Minimal APIs)  |
 | package.json           | Node.js (Express, Next.js, Fastify)   |
 | pyproject.toml         | Python (FastAPI, Django, Flask)       |
 

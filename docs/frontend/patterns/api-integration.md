@@ -29,6 +29,7 @@ export const productKeys = {
 ## Query Hooks
 
 ### Basic Query
+
 ```typescript
 export function useProducts(filters?: ProductFilters) {
   return useQuery({
@@ -44,6 +45,7 @@ export function useProducts(filters?: ProductFilters) {
 ```
 
 ### Query with Parameter
+
 ```typescript
 export function useProduct(id: string) {
   return useQuery({
@@ -58,6 +60,7 @@ export function useProduct(id: string) {
 ```
 
 ### Component Usage
+
 ```typescript
 export function ProductList() {
   const { data: products, isLoading, error } = useProducts();
@@ -85,6 +88,7 @@ export function ProductList() {
 ## Mutation Hooks
 
 ### Create Mutation
+
 ```typescript
 export function useCreateProduct() {
   const queryClient = useQueryClient();
@@ -103,6 +107,7 @@ export function useCreateProduct() {
 ```
 
 ### Update Mutation
+
 ```typescript
 export function useUpdateProduct() {
   const queryClient = useQueryClient();
@@ -127,6 +132,7 @@ export function useUpdateProduct() {
 ```
 
 ### Delete Mutation
+
 ```typescript
 export function useDeleteProduct() {
   const queryClient = useQueryClient();
@@ -145,6 +151,7 @@ export function useDeleteProduct() {
 ```
 
 ### Mutation Usage in Components
+
 ```typescript
 export function CreateProductForm() {
   const navigate = useNavigate();
@@ -507,7 +514,7 @@ export function ProductLink({ productId }: { productId: string }) {
 
 ## Best Practices
 
-### ✅ DO:
+### ✅ DO
 
 - Always use async/await in query/mutation functions
 - Create query key factories for each feature
@@ -517,7 +524,7 @@ export function ProductLink({ productId }: { productId: string }) {
 - Show loading and error states
 - Provide user feedback (toasts) for mutations
 
-### ❌ DON'T:
+### ❌ DON'T
 
 - Don't store API data in local state (useState)
 - Don't manually trigger refetches without a reason

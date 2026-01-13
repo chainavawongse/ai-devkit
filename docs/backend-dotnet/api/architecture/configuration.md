@@ -210,6 +210,7 @@ dotnet user-secrets remove "SomeKey" --project src/MyApp.Api
 ```
 
 Secrets are stored in:
+
 - Windows: `%APPDATA%\Microsoft\UserSecrets\<user_secrets_id>\secrets.json`
 - macOS/Linux: `~/.microsoft/usersecrets/<user_secrets_id>/secrets.json`
 
@@ -481,6 +482,7 @@ Command-line arguments
 ```
 
 Later sources override earlier sources. This allows:
+
 - Default values in `appsettings.json`
 - Environment-specific overrides
 - Secrets outside of source control

@@ -347,26 +347,31 @@ Is it used by multiple features?
 ## Principles
 
 ### 1. Feature Isolation
+
 - Each feature is self-contained
 - Features don't import from other features directly
 - Shared code goes in `components/`, `hooks/`, `lib/`
 
 ### 2. Co-location
+
 - Tests live next to the code they test
 - Types live close to where they're used
 - Feature-specific code stays in the feature
 
 ### 3. Clear Boundaries
+
 - Import from features through `index.ts`
 - Don't reach into feature internals
 - Keep the public API minimal
 
 ### 4. Shared vs Feature-Specific
+
 - If 2+ features need it → move to shared
 - If only one feature needs it → keep in feature
 - When in doubt, start in feature, move to shared when needed
 
 ### 5. Flat Where Possible
+
 - Avoid deep nesting (max 3-4 levels)
 - Flatten when structure becomes unwieldy
 - Group by feature, not by type
@@ -411,6 +416,7 @@ touch src/features/my-feature/components/MyFeatureList.tsx
 ```
 
 Then follow the patterns in:
+
 - [Component Patterns](../patterns/component-patterns.md)
 - [API Integration](../patterns/api-integration.md)
 - [Testing Strategy](../testing/testing-strategy.md)

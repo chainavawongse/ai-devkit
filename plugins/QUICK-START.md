@@ -147,18 +147,22 @@ Shortcut workflow for chores (refactoring, dependencies, etc.).
 ## Key Concepts
 
 **Spec-Driven Development**
+
 - Specification (WHAT) comes before Technical Plan (HOW)
 - Requirements drive design, design drives implementation
 
 **Test-Driven Development**
+
 - Every task follows RED → GREEN → REFACTOR
 - Tests and implementation are never split
 
 **Isolated Worktrees**
+
 - Execution happens in `<parent>/worktrees/`, not your main workspace
 - Work on multiple features simultaneously
 
 **Resumable Execution**
+
 - Interrupted? Just re-run `/execute`
 - Completed tasks are skipped automatically
 

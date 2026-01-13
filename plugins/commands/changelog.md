@@ -6,7 +6,7 @@ description: Generate changelog from git commits organized by conventional commi
 
 Generate a changelog from git commits and organize them into a readable format.
 
-## Process:
+## Process
 
 1. **Determine version range:**
    - Check for existing tags: `git tag --list`
@@ -14,6 +14,7 @@ Generate a changelog from git commits and organize them into a readable format.
    - Default to commits since last tag: `git describe --tags --abbrev=0`
 
 2. **Gather commits:**
+
    ```bash
    # Since last tag
    git log $(git describe --tags --abbrev=0)..HEAD --oneline
@@ -37,6 +38,7 @@ Generate a changelog from git commits and organize them into a readable format.
    - Link commits to issues/PRs where possible
 
 5. **Generate changelog structure:**
+
    ```markdown
    # Changelog
    
@@ -79,7 +81,8 @@ Generate a changelog from git commits and organize them into a readable format.
    - New features → Minor version bump (x.Y.0)
    - Only fixes → Patch version bump (x.y.Z)
 
-## Conventional Commit Types:
+## Conventional Commit Types
+
 - `feat:` New feature
 - `fix:` Bug fix
 - `docs:` Documentation only
@@ -91,14 +94,16 @@ Generate a changelog from git commits and organize them into a readable format.
 - `build:` Build system changes
 - `ci:` CI configuration changes
 
-## Output Format:
+## Output Format
 
-### For file output (CHANGELOG.md):
+### For file output (CHANGELOG.md)
+
 - Update existing CHANGELOG.md if it exists
 - Add new version section at the top
 - Keep previous versions intact
 
-### For display:
+### For display
+
 ```
 ## Changelog Generated
 
@@ -116,7 +121,8 @@ Based on: [breaking/features/fixes]
 Would you like me to update the CHANGELOG.md file?
 ```
 
-## Important:
+## Important
+
 - Keep descriptions user-focused (what changed, not how)
 - Group similar changes together
 - Highlight breaking changes prominently

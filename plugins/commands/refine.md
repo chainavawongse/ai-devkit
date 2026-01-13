@@ -38,6 +38,7 @@ This command uses the `refining-issues` skill to:
 **Existing issue:**
 
 Use PM operations from `pm-operations` skill:
+
 - Jira: `mcp__atlassian__get_issue(id)` or `mcp__jira__get_issue(issue_key)`
 - Notion: `mcp__notion__notion-fetch(id)`
 - GitHub: `gh issue view <number>`

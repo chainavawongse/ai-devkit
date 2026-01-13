@@ -5,6 +5,7 @@ Policy-based authorization with custom requirements and handlers.
 ## Overview
 
 Authorization determines what authenticated users can do:
+
 - **Role-based**: User has role "Admin", "Manager", etc.
 - **Policy-based**: User meets custom requirements
 - **Resource-based**: User has permission for specific resource

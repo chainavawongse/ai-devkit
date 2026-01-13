@@ -349,27 +349,32 @@ describe('useProducts', () => {
 Use queries in this order:
 
 1. **`getByRole`** - Most accessible
+
    ```typescript
    screen.getByRole('button', { name: /submit/i });
    screen.getByRole('textbox', { name: /email/i });
    ```
 
 2. **`getByLabelText`** - Form fields
+
    ```typescript
    screen.getByLabelText(/email/i);
    ```
 
 3. **`getByPlaceholderText`** - Inputs
+
    ```typescript
    screen.getByPlaceholderText(/search/i);
    ```
 
 4. **`getByText`** - Static content
+
    ```typescript
    screen.getByText(/welcome/i);
    ```
 
 5. **`getByTestId`** - Last resort
+
    ```typescript
    screen.getByTestId('product-card');
    ```
@@ -393,7 +398,7 @@ Use queries in this order:
 
 ## Best Practices
 
-### ✅ DO:
+### ✅ DO
 
 - Test behavior, not implementation
 - Use accessible queries
@@ -401,7 +406,7 @@ Use queries in this order:
 - Mock API calls
 - Use `userEvent` over `fireEvent`
 
-### ❌ DON'T:
+### ❌ DON'T
 
 - Don't test implementation details
 - Don't test third-party libraries

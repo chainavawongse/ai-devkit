@@ -5,6 +5,7 @@ Consistent naming is critical for maintainability and for Claude Code to generat
 ## Files & Folders
 
 ### Components
+
 ```bash
 ✅ PascalCase for component files
 src/components/ui/Button/Button.tsx
@@ -18,6 +19,7 @@ src/components/ui/Button/Button.test.tsx
 ```
 
 ### Non-Component Files
+
 ```bash
 ✅ camelCase for utilities, hooks, services
 src/lib/utils/formatDate.ts
@@ -31,6 +33,7 @@ playwright.config.ts
 ```
 
 ### Type Files
+
 ```bash
 ✅ Suffix with .types.ts
 src/types/api.types.ts
@@ -40,6 +43,7 @@ src/features/auth/types/auth.types.ts
 ```
 
 ### Test Files
+
 ```bash
 ✅ Same name as source + .test.ts(x)
 Button.test.tsx
@@ -49,6 +53,7 @@ authApi.test.ts
 ```
 
 ### Folders
+
 ```bash
 ✅ kebab-case for multi-word folders
 src/features/user-profile/
@@ -65,6 +70,7 @@ src/lib/
 ## TypeScript Types & Interfaces
 
 ### Naming
+
 ```typescript
 ✅ PascalCase for types and interfaces
 type User = { ... };
@@ -92,6 +98,7 @@ type LoadingState = 'idle' | 'loading' | 'success' | 'error';
 ```
 
 ### Enums
+
 ```typescript
 ✅ PascalCase for enum names, SCREAMING_SNAKE_CASE for values
 enum ErrorType {
@@ -115,6 +122,7 @@ type ErrorType = typeof ErrorType[keyof typeof ErrorType];
 ## Variables & Constants
 
 ### Regular Variables
+
 ```typescript
 ✅ camelCase
 const userName = 'John';
@@ -124,6 +132,7 @@ const productList = [];
 ```
 
 ### Constants (Module-Level)
+
 ```typescript
 ✅ SCREAMING_SNAKE_CASE for true constants
 const API_BASE_URL = 'https://api.example.com';
@@ -138,6 +147,7 @@ const apiConfig = {
 ```
 
 ### Boolean Variables
+
 ```typescript
 ✅ Prefix with is, has, can, should
 const isLoading = false;
@@ -152,6 +162,7 @@ const visible = true;   // ❌ Use isVisible
 ```
 
 ### Arrays & Collections
+
 ```typescript
 ✅ Plural names
 const users = [];
@@ -172,6 +183,7 @@ items.forEach((item, index) => { ... });
 ## Functions & Methods
 
 ### Regular Functions
+
 ```typescript
 ✅ camelCase, verb-based names
 function fetchUser() { ... }
@@ -190,6 +202,7 @@ function handleInputChange() { ... }
 ```
 
 ### React Hooks
+
 ```typescript
 ✅ Must start with 'use'
 function useAuth() { ... }
@@ -208,6 +221,7 @@ function useAuth(): {
 ```
 
 ### React Query Hooks
+
 ```typescript
 ✅ Prefix with 'use', describe the action/data
 function useProducts() { ... }          // Query
@@ -218,6 +232,7 @@ function useDeleteProduct() { ... }     // Mutation
 ```
 
 ### API Functions (Non-Hook)
+
 ```typescript
 ✅ Verb-based, describe the action
 async function loginUser(credentials: LoginRequest) { ... }
@@ -232,6 +247,7 @@ async function deleteProduct(id: string) { ... }
 ## React Components
 
 ### Component Names
+
 ```typescript
 ✅ PascalCase, noun-based
 function Button() { ... }
@@ -248,6 +264,7 @@ function UserProfileComponent() { ... }   // ❌ Redundant
 ```
 
 ### Component Props
+
 ```typescript
 ✅ Define props type with component name + 'Props'
 type ButtonProps = {
@@ -297,6 +314,7 @@ function getButtonClasses(variant: string, disabled: boolean): string {
 ## Git Conventions
 
 ### Branch Names
+
 ```bash
 ✅ kebab-case, prefix with type
 feature/user-authentication
@@ -310,6 +328,7 @@ fix/PROJ-456-login-bug
 ```
 
 ### Commit Messages (Conventional Commits)
+
 ```bash
 ✅ Format: <type>(<scope>): <description>
 
@@ -324,6 +343,7 @@ test(auth): add login form tests
 ```
 
 ### Environment Variables
+
 ```bash
 ✅ SCREAMING_SNAKE_CASE with VITE_ prefix
 VITE_API_BASE_URL=https://api.example.com

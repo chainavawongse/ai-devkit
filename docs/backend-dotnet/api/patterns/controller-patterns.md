@@ -362,6 +362,7 @@ public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll(
 ```
 
 This allows:
+
 - Client-side request cancellation
 - Server timeout enforcement
 - Graceful shutdown handling

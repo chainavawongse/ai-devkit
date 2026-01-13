@@ -6,7 +6,7 @@ description: Update project dependencies safely with security and breaking chang
 
 Update project dependencies safely and systematically.
 
-## Process:
+## Process
 
 1. **Detect package manager and current state:**
    - Node.js: npm, yarn, pnpm, bun (check package.json)
@@ -21,6 +21,7 @@ Update project dependencies safely and systematically.
    - Ruby: `bundle outdated`
 
 3. **Analyze update safety:**
+
    ```
    ## Dependency Update Analysis
    
@@ -41,17 +42,17 @@ Update project dependencies safely and systematically.
    ```
 
 4. **Update strategy:**
-   
+
    **For patch/minor updates:**
    - Update directly
    - Run tests after each group
-   
+
    **For major updates:**
    - Update one at a time
    - Check migration guide/changelog
    - Update code if needed
    - Run tests thoroughly
-   
+
    **For security updates:**
    - Prioritize and update immediately
    - Even if major version change
@@ -73,27 +74,32 @@ Update project dependencies safely and systematically.
    - Commit lock files (package-lock.json, poetry.lock, etc.)
    - Ensure reproducible builds
 
-## Update Commands:
+## Update Commands
 
-### Node.js:
+### Node.js
+
 - Check: `npm outdated`, `npm audit`
 - Update: `npm update`, `npm install package@version`
 - Update all: `npm update --save`
 
-### Python:
+### Python
+
 - Check: `pip list --outdated`
 - Update: `pip install --upgrade package`
 - With poetry: `poetry update`, `poetry update package`
 
-### .NET:
+### .NET
+
 - Check: `dotnet list package --outdated`
 - Update: `dotnet add package PackageName --version X.Y.Z`
 
-### Ruby:
+### Ruby
+
 - Check: `bundle outdated`
 - Update: `bundle update`, `bundle update gem-name`
 
-## Output Format:
+## Output Format
+
 ```
 ## Dependency Update Summary
 
@@ -115,7 +121,8 @@ Update project dependencies safely and systematically.
 - Consider updating dev dependencies
 ```
 
-## Important:
+## Important
+
 - Always run tests after updates
 - Update incrementally, not all at once
 - Read changelogs for major updates

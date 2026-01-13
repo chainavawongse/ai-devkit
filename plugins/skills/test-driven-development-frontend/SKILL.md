@@ -114,9 +114,11 @@ grep -E "(FAIL|failed|✗)" .tdd-red-phase.log
 **Test name:** "submits form with user-entered data"
 **Failure output:**
 ```
+
 FAIL src/components/ContactForm.test.tsx
   ✗ submits form with user-entered data
     Unable to find an accessible element with the role "textbox" and name "/name/i"
+
 ```
 **Reason:** Component not implemented yet (correct RED state)
 ```

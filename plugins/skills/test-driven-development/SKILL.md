@@ -151,10 +151,12 @@ grep -E "(FAIL|failed|failing|✗|×)" .tdd-red-phase.log
 **Test name:** "should do expected behavior"
 **Failure output:**
 ```
+
 FAIL path/to/test.test.ts
   ✗ should do expected behavior
     Expected: <expected value>
     Received: undefined (or error message)
+
 ```
 **Failure reason:** Feature not implemented yet (correct RED state)
 ```

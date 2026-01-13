@@ -44,6 +44,7 @@ cd ai-devkit && just install-plugin
 ## Command Details
 
 ### `/setup`
+
 **Run first in any new repo**
 
 ```bash
@@ -51,6 +52,7 @@ cd ai-devkit && just install-plugin
 ```
 
 Creates:
+
 - `CLAUDE.md` - repo documentation for agents
 - `justfile` - standardized commands (test, lint, format, build)
 - PM system configuration (Jira/Notion/GitHub Issues)
@@ -58,6 +60,7 @@ Creates:
 ---
 
 ### `/refine <idea or issue-id>`
+
 **Define WHAT to build (not HOW)**
 
 ```bash
@@ -72,6 +75,7 @@ Creates:
 ---
 
 ### `/plan <issue-id>`
+
 **Define HOW to build it**
 
 ```bash
@@ -85,6 +89,7 @@ Creates:
 ---
 
 ### `/breakdown <issue-id>`
+
 **Create implementation tasks**
 
 ```bash
@@ -98,6 +103,7 @@ Creates:
 ---
 
 ### `/execute <issue-id>`
+
 **Build everything**
 
 ```bash
@@ -106,6 +112,7 @@ Creates:
 
 **Requires:** Issue with sub-issues from `/breakdown`
 **Does:**
+
 - Creates worktree at `<parent>/worktrees/<repo>/<ticket>/`
 - Executes tasks sequentially (respects dependencies)
 - TDD for features/bugs, verification for chores
@@ -117,6 +124,7 @@ Creates:
 ---
 
 ### `/chore <description or issue-id>`
+
 **Maintenance without TDD**
 
 ```bash
@@ -131,6 +139,7 @@ Creates:
 ---
 
 ### `/bug-fix <description or issue-id>`
+
 **Fix bugs with TDD**
 
 ```bash
@@ -145,6 +154,7 @@ Creates:
 ---
 
 ### `/pr`
+
 **Create pull request**
 
 ```bash
@@ -159,6 +169,7 @@ Creates:
 ---
 
 ### `/address-feedback <pr-number>`
+
 **Implement PR review comments**
 
 ```bash
@@ -183,6 +194,7 @@ Creates:
 ## Common Workflows
 
 ### New Feature (Full Pipeline)
+
 ```bash
 /refine "Add real-time notifications"
 /plan NOTIF-45
@@ -191,24 +203,28 @@ Creates:
 ```
 
 ### Quick Maintenance
+
 ```bash
 /chore "Update all npm dependencies"
 /pr
 ```
 
 ### Bug Fix
+
 ```bash
 /bug-fix BUG-123
 /pr
 ```
 
 ### Resume Interrupted Work
+
 ```bash
 # Just re-run - it skips completed tasks
 /execute TEAM-123
 ```
 
 ### Handle PR Feedback
+
 ```bash
 /address-feedback 145
 # Automatically implements all feedback

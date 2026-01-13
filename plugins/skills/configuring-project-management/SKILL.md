@@ -60,7 +60,7 @@ Which project management tool does this repository use?
 
 ### 2. Verify MCP Integration
 
-#### If Jira:
+#### If Jira
 
 Check if Jira MCP server is available:
 
@@ -87,7 +87,7 @@ After installation, run this setup command again.
 
 **Stop workflow** - cannot proceed without MCP server.
 
-#### If Notion:
+#### If Notion
 
 Check if Notion MCP tools are available:
 
@@ -117,7 +117,7 @@ After installation, run this setup command again.
 
 **Stop workflow** - cannot proceed without MCP server.
 
-#### If GitHub Issues:
+#### If GitHub Issues
 
 No MCP server needed. Use `gh` CLI:
 
@@ -136,7 +136,7 @@ gh auth login
 
 ### 3. Test Authentication
 
-#### For Jira:
+#### For Jira
 
 Try listing projects to verify authentication:
 
@@ -161,7 +161,7 @@ Please verify:
 Check your MCP configuration file and restart Claude.
 ```
 
-#### For Notion:
+#### For Notion
 
 Try searching to verify authentication:
 
@@ -185,7 +185,7 @@ Please verify:
 Re-authenticate and restart Claude.
 ```
 
-#### For GitHub Issues:
+#### For GitHub Issues
 
 ```bash
 # Verify gh authentication
@@ -199,7 +199,7 @@ gh repo view --json name
 
 ### 4. Configure Project/Database
 
-#### If Jira:
+#### If Jira
 
 Ask user:
 
@@ -221,7 +221,7 @@ mcp__atlassian__get_issue(id=provided_id)
 mcp__jira__get_issue(issue_key=provided_id)
 ```
 
-#### If Notion:
+#### If Notion
 
 Ask user:
 
@@ -316,6 +316,7 @@ mcp__notion__notion-fetch(id=database_url_or_id)
 ```
 
 **Verify required properties exist:**
+
 - Name (title)
 - Status (select with Todo, In Progress, Done)
 - Type (select with feature, chore, bug)
@@ -340,7 +341,7 @@ mcp__notion__notion-update-database({
 })
 ```
 
-#### If GitHub Issues:
+#### If GitHub Issues
 
 Record repository name (auto-detected from git remote):
 
@@ -361,6 +362,7 @@ git remote get-url origin
 Add or update the project management section:
 
 **For Jira:**
+
 ```markdown
 ## Project Management
 
@@ -374,6 +376,7 @@ Add or update the project management section:
 ```
 
 **For Notion:**
+
 ```markdown
 ## Project Management
 
@@ -389,6 +392,7 @@ Add or update the project management section:
 ```
 
 **For GitHub Issues:**
+
 ```markdown
 ## Project Management
 
@@ -422,12 +426,14 @@ Store this temporarily for later documentation generation.
 **Run one more connectivity test:**
 
 **For Jira:**
+
 ```bash
 # Test read access
 mcp__atlassian__get_issue(id=test_issue_id)
 ```
 
 **For Notion:**
+
 ```bash
 # Test create and delete a page
 test_page = mcp__notion__notion-create-pages({
@@ -439,6 +445,7 @@ mcp__notion__notion-fetch(id=test_page.id)
 ```
 
 **For GitHub Issues:**
+
 ```bash
 # Verify can list issues
 gh issue list --limit 1
@@ -503,29 +510,34 @@ With project management configured, you can now use:
 ## Error Handling
 
 **MCP server not installed:**
+
 - Provide clear installation instructions
 - Link to official documentation
 - Stop workflow gracefully
 - Instruct user to re-run setup after installation
 
 **Authentication fails:**
+
 - Explain what authentication is needed
 - Provide troubleshooting steps
 - Link to MCP configuration documentation
 - Allow user to fix and retry
 
 **Project/database not found:**
+
 - Verify user has access
 - Check for typos in ID/URL
 - Offer to list available options (if MCP supports it)
 - Allow user to skip and configure manually later
 
 **Schema validation fails (Notion):**
+
 - List missing or incorrect properties
 - Offer to add/update properties automatically
 - Provide manual fix instructions
 
 **Write access issues:**
+
 - Confirm API/integration has write permissions
 - Check user's role in project
 - Provide instructions to update permissions
@@ -536,22 +548,26 @@ With project management configured, you can now use:
 ## Notes
 
 **MCP Server Responsibility:**
+
 - Plugin does NOT install MCP servers
 - Users install MCP servers separately
 - This skill only verifies installation and authentication
 
 **Integration with Other Skills:**
+
 - Called from `/setup` command Phase 1
 - Configuration used by all PM operations via `pm-operations` skill
 - Skills read config from CLAUDE.md to determine which MCP tools to use
 
 **Configuration Persistence:**
+
 - Stored in top-level CLAUDE.md (primary)
 - Can also store in `.devkit/config.json` if needed
 - Should survive documentation regeneration
 
 **Supported Systems:**
-- Jira (via mcp__atlassian__* or mcp__jira__*)
+
+- Jira (via mcp__atlassian__*or mcp__jira__*)
 - Notion (via mcp__notion__*)
 - GitHub Issues (via gh CLI)
 - Future: Linear, Monday.com, Asana

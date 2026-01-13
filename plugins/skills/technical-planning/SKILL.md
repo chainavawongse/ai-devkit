@@ -150,6 +150,7 @@ mcp__notion__notion-update-page({
 ```
 
 **Note:** Level is independent of Type. An issue can be:
+
 - Level=Feature, Type=bug (system-wide bug fix)
 - Level=User Story, Type=chore (module refactoring)
 - Level=Task, Type=feature (atomic feature implementation)
@@ -355,6 +356,7 @@ sequenceDiagram
 ```
 
 **Diagram guidelines:**
+
 - Include at least one class/flowchart diagram (component structure)
 - Include at least one sequence diagram (data/user flow)
 - Add erDiagram when database schema changes are involved

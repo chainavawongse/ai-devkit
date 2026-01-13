@@ -65,17 +65,20 @@ Issue Refinement Progress:
 ### Phase 1: Load Issue
 
 **First, check CLAUDE.md for PM system configuration:**
+
 - Look for `## Project Management` section
 - Identify system: `Jira` or `Notion`
 
 **If issue ID provided:**
 
 **For Jira:**
+
 - `mcp__atlassian__get_issue(id=issue_id)` (primary)
 - OR `mcp__jira__get_issue(issue_key=issue_id)` (fallback)
 - Extract: Title, description, labels, project/team context
 
 **For Notion:**
+
 - `mcp__notion__notion-fetch(id=page_id)`
 - Extract: Name (title), page content (description), Type property (label)
 
@@ -86,10 +89,12 @@ Issue Refinement Progress:
 - Clarify which project/team/database this belongs to
 
 **For Jira:**
+
 - `mcp__atlassian__create_issue(title=..., team=..., description=...)`
 - OR `mcp__jira__create_issue(summary=..., project=..., description=...)`
 
 **For Notion:**
+
 - Get database ID from CLAUDE.md (`Data Source ID`)
 - `mcp__notion__notion-create-pages({ parent: { data_source_id: db_id }, pages: [{ properties: { Name: title, Status: "Todo" }, content: description }] })`
 
@@ -103,6 +108,7 @@ Issue Refinement Progress:
 This is a judgment call based on content clarity, not specific format or section headers.
 
 **Assessment criteria:**
+
 - Is WHAT we're building clear?
 - Is WHY we're building it understood?
 - Could an engineer start work without needing clarification?
@@ -126,6 +132,7 @@ Should we discuss: performance expectations, security considerations, scalabilit
 ```
 
 Use AskUserQuestion:
+
 - "Yes, let's clarify non-functional requirements" → Continue to Phase 2 focused on NFRs
 - "No, proceed without them" → Allow skip to /plan or /breakdown
 - "No, they're covered elsewhere" → Allow skip to /plan or /breakdown
@@ -281,11 +288,14 @@ After specification is validated, write it to the issue:
 **Update the issue:**
 
 **For Jira:**
+
 - `mcp__atlassian__update_issue(id=issue_id, description=formatted_description, labels=['refined', 'phase:refined'])`
 - OR `mcp__jira__update_issue(issue_key=issue_id, description=formatted_description, labels=['refined', 'phase:refined'])`
 
 **For Notion:**
+
 - Update page content with specification:
+
   ```
   mcp__notion__notion-update-page({
     data: {
@@ -295,7 +305,9 @@ After specification is validated, write it to the issue:
     }
   })
   ```
+
 - Update Status and Phase properties:
+
   ```
   mcp__notion__notion-update-page({
     data: {
@@ -310,6 +322,7 @@ After specification is validated, write it to the issue:
   ```
 
 **For all systems:**
+
 - Preserve any existing description content (append, don't replace)
 - Add phase label: `phase:refined` (Jira) or Phase property: `refined` (Notion)
 - Update state to "Todo" if it was "Backlog" or "Triage"

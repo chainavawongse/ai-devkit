@@ -289,11 +289,13 @@ Or use Tailwind utilities:
 ## Testing Checklist
 
 **Automated:**
+
 - [ ] ESLint jsx-a11y plugin passes
 - [ ] Lighthouse accessibility audit > 90
 - [ ] axe DevTools shows no violations
 
 **Manual:**
+
 - [ ] Navigate with keyboard only (Tab, Enter, Escape)
 - [ ] Test with screen reader (VoiceOver/NVDA)
 - [ ] Test at 200% zoom

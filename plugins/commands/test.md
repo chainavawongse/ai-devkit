@@ -54,11 +54,13 @@ If no justfile, detect and run appropriate command:
 ### Step 4: Report Results
 
 **On Success:**
+
 ```
 All tests passed (42 tests in 3.2s)
 ```
 
 **On Failure:**
+
 ```
 Test Failures
 
@@ -119,12 +121,14 @@ dotnet watch test
 ## Integration with the plugin
 
 **Used by skills:**
+
 - `test-driven-development` - RED-GREEN-REFACTOR cycle
 - `executing-tasks` - Verification after implementation
 - `executing-chores` - Verification-only workflows
 - `executing-bug-fixes` - Reproduction and fix verification
 
 **Expected just recipes:**
+
 ```justfile
 # Minimal test recipe
 test:
@@ -146,6 +150,7 @@ test-coverage:
 ## Troubleshooting
 
 **No test command found:**
+
 ```
 No test command detected.
 
@@ -159,6 +164,7 @@ Please configure a test command or create a justfile with a `test` recipe.
 ```
 
 **Tests timing out:**
+
 ```bash
 # Increase timeout
 just test --timeout 120

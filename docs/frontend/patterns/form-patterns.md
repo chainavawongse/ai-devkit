@@ -703,7 +703,7 @@ export function ProductVariantsForm() {
 
 ## Best Practices
 
-### ✅ DO:
+### ✅ DO
 
 - Use Zod for all form validation
 - Infer types from Zod schemas (`z.infer<typeof schema>`)
@@ -714,7 +714,7 @@ export function ProductVariantsForm() {
 - Use `aria-invalid` and `aria-describedby` for accessibility
 - Provide clear error messages
 
-### ❌ DON'T:
+### ❌ DON'T
 
 - Don't mix validation approaches (pick Zod)
 - Don't forget to handle API validation errors

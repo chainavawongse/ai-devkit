@@ -6,7 +6,7 @@ description: Automatically fix linting and type errors using just commands with 
 
 Automatically fix linting and type errors in the codebase.
 
-## Process:
+## Process
 
 1. **Detect project type and tools:**
    - Check for ESLint, Prettier (JavaScript/TypeScript)
@@ -46,24 +46,29 @@ Automatically fix linting and type errors in the codebase.
    - Ensure no new issues introduced
    - Run tests to ensure nothing broke
 
-## Common Commands:
+## Common Commands
 
-### JavaScript/TypeScript:
+### JavaScript/TypeScript
+
 - Check: `npm run lint`, `npm run typecheck`
 - Fix: `npm run lint:fix`, `npm run format`
 
-### Python:
+### Python
+
 - Check: `ruff check`, `mypy .`, `black --check .`
 - Fix: `ruff --fix`, `black .`, `isort .`
 
-### .NET:
+### .NET
+
 - Check: `dotnet build`
 - Fix: `dotnet format`
 
-### Makefile:
+### Makefile
+
 - Often: `make lint`, `make format`, `make fix`
 
-## Output:
+## Output
+
 ```
 ## Fix Summary
 
@@ -82,7 +87,8 @@ Automatically fix linting and type errors in the codebase.
 [What the user should do next, if anything]
 ```
 
-## Important:
+## Important
+
 - Always run tests after fixes to ensure nothing broke
 - Don't suppress warnings without good reason
 - Fix root causes, not symptoms

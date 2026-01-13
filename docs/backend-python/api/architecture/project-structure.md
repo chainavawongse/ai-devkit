@@ -82,6 +82,7 @@ project-root/
 **Purpose**: HTTP request handling, input validation, response formatting
 
 **Responsibilities**:
+
 - Define routes and HTTP methods
 - Parse and validate request data (via Pydantic)
 - Call services for business logic
@@ -89,6 +90,7 @@ project-root/
 - Handle HTTP-specific concerns (status codes, headers)
 
 **Does NOT**:
+
 - Contain business logic
 - Access database directly
 - Handle authentication logic (delegated to dependencies)
@@ -117,12 +119,14 @@ async def create_product(
 **Purpose**: Business logic and orchestration
 
 **Responsibilities**:
+
 - Implement business rules
 - Coordinate database operations
 - Call external services
 - Emit events/logs
 
 **Does NOT**:
+
 - Handle HTTP concerns
 - Know about request/response formats
 - Manage database sessions (receives session via DI)
@@ -162,12 +166,14 @@ class ProductService:
 **Purpose**: Database schema definition (SQLAlchemy ORM)
 
 **Responsibilities**:
+
 - Define table structure
 - Define relationships
 - Define indexes and constraints
 - Provide model-level methods (if any)
 
 **Does NOT**:
+
 - Contain business logic
 - Handle validation (that's Pydantic's job)
 
@@ -195,12 +201,14 @@ class Product(Base, TimestampMixin):
 **Purpose**: Data validation and serialization (Pydantic)
 
 **Responsibilities**:
+
 - Validate input data
 - Define API response shapes
 - Transform data between layers
 - Document API contracts (OpenAPI)
 
 **Does NOT**:
+
 - Access database
 - Contain business logic
 
@@ -248,6 +256,7 @@ class ProductResponse(ProductBase):
 **Purpose**: Pure utility functions with no business logic
 
 **Examples**:
+
 - Logging setup
 - Date/time helpers
 - String formatting

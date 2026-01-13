@@ -223,6 +223,7 @@ function logout() {
 ### Use SameSite Cookies
 
 Backend should set cookies with:
+
 ```
 Set-Cookie: token=xxx; HttpOnly; Secure; SameSite=Strict
 ```
@@ -387,29 +388,34 @@ export const apiClient = axios.create({
 ## Security Checklist
 
 ### Authentication
+
 - [ ] Tokens stored securely (HttpOnly cookies or memory)
 - [ ] Access tokens are short-lived
 - [ ] Refresh token rotation implemented
 - [ ] Logout clears all sensitive data
 
 ### Input/Output
+
 - [ ] All user input validated with Zod
 - [ ] No dangerouslySetInnerHTML with unsanitized content
 - [ ] URLs validated before use
 - [ ] Sensitive data masked in UI
 
 ### Data Protection
+
 - [ ] No sensitive data in console logs
 - [ ] No secrets in client-side code
 - [ ] Environment variables properly scoped
 - [ ] HTTPS enforced in production
 
 ### Dependencies
+
 - [ ] Regular npm audit runs
 - [ ] Lock files committed
 - [ ] Dependencies from trusted sources
 
 ### Headers
+
 - [ ] CSP headers configured
 - [ ] CSRF protection enabled
 - [ ] Secure cookie flags set

@@ -39,20 +39,24 @@ Implements {TICKET-ID}
 ## Usage Notes
 
 ### Summary Section
+
 - Lead with the ticket ID (e.g., "Implements PAS-123")
 - Explain what changed and why
 - Keep it concise but informative
 
 ### Type of Change
+
 - Check exactly one primary type
 - Check documentation update if README, docs, or comments were updated
 
 ### Testing Section
+
 - List specific tests added or run
 - Include steps to reproduce manual testing if applicable
 - Reference test files if helpful
 
 ### Checklist
+
 - All items should be checked before requesting review
 - If an item doesn't apply, explain why in the description
 
@@ -61,17 +65,23 @@ Implements {TICKET-ID}
 For complex PRs, you may add:
 
 ### Architecture Diagrams
+
 When introducing new components or significant refactoring:
+
 ```mermaid
 {diagram showing component relationships}
 ```
 
 ### Breaking Changes
+
 When changes affect existing functionality:
+
 - List affected APIs or interfaces
 - Provide migration instructions
 
 ### Screenshots
+
 When changes affect UI:
+
 - Include before/after screenshots
 - Show key user flows

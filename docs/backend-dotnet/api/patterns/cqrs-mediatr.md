@@ -5,10 +5,12 @@ Command/Query Responsibility Segregation pattern using MediatR.
 ## Overview
 
 **CQRS separates reads (Queries) from writes (Commands):**
+
 - **Commands** - Change state, return result or nothing
 - **Queries** - Read state, never modify data
 
 **MediatR provides:**
+
 - Decoupling between controllers and business logic
 - Pipeline behaviors for cross-cutting concerns
 - Simple in-process messaging

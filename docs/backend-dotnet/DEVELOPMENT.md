@@ -5,11 +5,13 @@ Quick reference for .NET API development standards and best practices. This proj
 ## Documentation Index
 
 ### Architecture
+
 - **[Solution Structure](./api/architecture/solution-structure.md)** - Clean Architecture + CQRS organization
 - **[Dependency Injection](./api/architecture/dependency-injection.md)** - Service registration patterns
 - **[Configuration](./api/architecture/configuration.md)** - Settings, secrets, and environment management
 
 ### Patterns
+
 - **[Controller Patterns](./api/patterns/controller-patterns.md)** - RESTful API design and base controllers
 - **[CQRS with MediatR](./api/patterns/cqrs-mediatr.md)** - Command/Query separation
 - **[Validation Patterns](./api/patterns/validation-patterns.md)** - FluentValidation integration
@@ -19,22 +21,28 @@ Quick reference for .NET API development standards and best practices. This proj
 - **[Middleware Patterns](./api/patterns/middleware-patterns.md)** - Custom middleware
 
 ### Data Access
+
 - **[Entity Framework Core](./api/data/entity-framework.md)** - Best practices, gotchas, PostgreSQL extensions
 
 ### Security
+
 - **[Authentication](./api/security/authentication.md)** - JWT + OAuth social providers
 - **[Authorization](./api/security/authorization.md)** - Policy-based access control
 
 ### Standards
+
 - **[Naming Conventions](./api/standards/naming-conventions.md)** - File, class, method naming and C# style
 
 ### Observability
+
 - **[Logging & Monitoring](./api/observability/logging-monitoring.md)** - Serilog, correlation IDs, health checks
 
 ### Testing
+
 - **[Testing Strategy](./api/testing/testing-strategy.md)** - Unit, integration, and API testing
 
 ### Examples
+
 - **[Controller Template](./api/examples/ControllerTemplate.cs)** - Reference controller
 - **[Command Handler Template](./api/examples/CommandHandlerTemplate.cs)** - Reference command handler
 - **[Query Handler Template](./api/examples/QueryHandlerTemplate.cs)** - Reference query handler
@@ -154,6 +162,7 @@ dotnet format --verify-no-changes
 ### Working with AI Coding Assistants
 
 Reference relevant docs when prompting:
+
 ```
 "Implement a product creation endpoint.
 Follow patterns in api/patterns/controller-patterns.md and

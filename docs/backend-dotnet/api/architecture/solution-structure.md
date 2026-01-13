@@ -129,6 +129,7 @@ MySolution/
 **Purpose:** HTTP entry point, request/response handling
 
 **Contains:**
+
 - Controllers (thin, delegate to MediatR)
 - Exception filters
 - Middleware
@@ -162,6 +163,7 @@ public class ProductsController(IMediator mediator) : ControllerBase
 **Purpose:** Business logic, orchestration, CQRS handlers
 
 **Contains:**
+
 - Command handlers (write operations)
 - Query handlers (read operations)
 - Pipeline behaviors (validation, logging)
@@ -198,6 +200,7 @@ public class CreateProductCommandHandler(
 **Purpose:** DTOs, commands, queries, interfaces - the "what"
 
 **Contains:**
+
 - Command/Query record definitions
 - Request/Response DTOs
 - Service interfaces
@@ -230,6 +233,7 @@ public record CreateProductDto
 **Purpose:** Persistence, database access, external integrations
 
 **Contains:**
+
 - EF Core DbContext
 - Entity classes
 - Entity configurations (Fluent API)
@@ -262,6 +266,7 @@ public class ProductRepository(AppDbContext context)
 **Purpose:** Shared utilities, exceptions, constants
 
 **Contains:**
+
 - Extension methods
 - Custom exceptions
 - Constants

@@ -332,7 +332,7 @@ test('handles API error', async ({ page }) => {
 
 ## Best Practices
 
-### ✅ DO:
+### ✅ DO
 
 - Use accessible locators (`getByRole`, `getByLabel`)
 - Create page objects for reusable interactions
@@ -340,7 +340,7 @@ test('handles API error', async ({ page }) => {
 - Run in CI/CD pipeline
 - Use `test.describe` to group related tests
 
-### ❌ DON'T:
+### ❌ DON'T
 
 - Don't test implementation details
 - Don't rely on CSS selectors

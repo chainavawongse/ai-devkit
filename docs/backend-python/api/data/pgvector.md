@@ -119,6 +119,7 @@ Index(
 ```
 
 **Guidelines for `lists` parameter:**
+
 - Up to 1M rows: `lists = rows / 1000`
 - Over 1M rows: `lists = sqrt(rows)`
 

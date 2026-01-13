@@ -431,15 +431,18 @@ jobs:
 ## Quality Checks Summary
 
 **Local Development:**
+
 1. VSCode auto-formats on save (Prettier)
 2. VSCode shows lint errors inline (ESLint)
 3. TypeScript errors in editor
 
 **On Commit (Husky):**
+
 1. lint-staged runs Prettier + ESLint on changed files
 2. commitlint validates commit message format
 
 **On Push (CI/CD):**
+
 1. Type checking
 2. Linting
 3. Format checking
