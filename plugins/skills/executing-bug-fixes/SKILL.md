@@ -159,15 +159,18 @@ Before proceeding to implement the fix, you MUST document the RED phase completi
 **Test name:** "should <expected behavior>"
 **Failure output:**
 ```
+
 FAIL path/to/bug-fix.test.ts
   ✗ should <expected behavior>
     Expected: <correct behavior>
     Received: <buggy behavior matching bug report>
+
 ```
 **Confirms bug reproduction:** Failure matches reported bug behavior
 ```
 
 **STOP if:**
+
 - Test passes immediately (bug already fixed or wrong test)
 - Test fails for different reason than bug report (wrong reproduction)
 - Cannot capture failure output (something is wrong)
@@ -262,6 +265,17 @@ Note: Review based on change summary, not git commits (parallel execution in sha
 - Re-request review if needed
 
 ### Step 7: Commit with Root Cause Documentation
+
+**Run formatting before commit (REQUIRED):**
+
+```bash
+# Run format to fix any remaining issues
+if just --list 2>/dev/null | grep -q "^  fmt"; then
+    just fmt
+elif just --list 2>/dev/null | grep -q "^  format"; then
+    just format
+fi
+```
 
 **Document root cause in code:**
 

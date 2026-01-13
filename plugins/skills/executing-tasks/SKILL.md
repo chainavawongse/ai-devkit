@@ -107,6 +107,7 @@ When dispatched via `/execute`, relevant documentation based on file patterns is
 | All other files | `devkit:test-driven-development` |
 
 **Frontend files (`.tsx`, `.jsx`, `.ts` in `components/`, `hooks/`, `stores/`, `pages/`, `features/`) MUST use frontend TDD skill** which enforces:
+
 - React Testing Library with proper query priority (`getByRole` > `getByTestId`)
 - `userEvent` over `fireEvent`
 - MSW for API mocking (never mock fetch/axios directly)
@@ -120,9 +121,11 @@ Follow strict TDD cycle:
 2. Review Technical Plan Guidance (patterns to follow)
 3. Write tests for each behavior specified
 4. Run tests and capture failure output:
+
    ```bash
    just test path/to/test.test.ts 2>&1 | tee .tdd-red-phase.log
    ```
+
 5. Confirm each test fails because feature is missing (not typos/errors)
 
 **⚠️ RED PHASE CHECKPOINT (MANDATORY - Cannot skip):**
@@ -136,15 +139,18 @@ Before proceeding to GREEN, you MUST document the RED phase completion:
 **Test name:** "should do expected behavior"
 **Failure output:**
 ```
+
 FAIL path/to/test.test.ts
   ✗ should do expected behavior
     Expected: <expected value>
     Received: undefined
+
 ```
 **Failure reason:** Feature not implemented yet
 ```
 
 **STOP if:**
+
 - Tests pass immediately (wrong test - fix it)
 - Tests error instead of fail (fix syntax/imports first)
 - Cannot capture failure output (something is wrong)
@@ -249,6 +255,17 @@ just build
 - May indicate architectural issue or unclear requirements
 
 ### Step 6: Commit Changes
+
+**Run formatting before commit (REQUIRED):**
+
+```bash
+# Run format to fix any remaining issues
+if just --list 2>/dev/null | grep -q "^  fmt"; then
+    just fmt
+elif just --list 2>/dev/null | grep -q "^  format"; then
+    just format
+fi
+```
 
 **Generate conventional commit message:**
 

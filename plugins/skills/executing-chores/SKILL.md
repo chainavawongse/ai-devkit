@@ -263,6 +263,17 @@ All verification now passing!
 
 ### Step 5: Commit Changes
 
+**Run formatting before commit (REQUIRED):**
+
+```bash
+# Run format to fix any remaining issues (not just check)
+if just --list 2>/dev/null | grep -q "^  fmt"; then
+    just fmt
+elif just --list 2>/dev/null | grep -q "^  format"; then
+    just format
+fi
+```
+
 **Generate appropriate commit message:**
 
 ```bash
